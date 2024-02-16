@@ -78,12 +78,25 @@ export default {
       chainId: 10243,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
+    blastSepolia: {
+      url: 'https://sepolia.blast.io',
+      gasPrice: 1e9,
+      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
+    },
   },
   etherscan: {
-    // Your API key for Etherscan
-    // Obtain one at https://etherscan.io/
-    apiKey: `${POLYGONSCAN_API_KEY}`,
+    apiKey: {
+      blastSepolia: 'blastSepolia', // apiKey is not required, just set a placeholder
+    },
     customChains: [
+      {
+        network: 'blastSepolia',
+        chainId: 168587773,
+        urls: {
+          apiURL: 'https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan',
+          browserURL: 'https://testnet.blastscan.io',
+        },
+      },
       {
         network: 'mantleTestnet',
         chainId: 5001,
