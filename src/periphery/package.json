@@ -38,9 +38,8 @@
     "expand-abi": "hardhat expand-abi",
     "precommit": "pretty-quick --staged --pattern **/*.sol",
     "solhint": "solhint ./contracts/**/*.sol",
-    "coverage": "npm --prefix ../core run compile && hardhat coverage",
-    "prepublish": "hardhat clean && npm run compile && npm run expand-abi"
-  },
+    "coverage": "npm --prefix ../core run compile && hardhat coverage"
+    },
   "engines": {
     "npm": ">=8.0.0",
     "node": ">=14.0.0"
