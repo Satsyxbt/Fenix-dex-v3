@@ -1,0 +1,11 @@
+node_modules
+**/.env
+**/cache
+**/artifacts
+**/typechain
+.idea
+.vscode
+bytecode
+**/coverage
+**/crytic-export
+**/coverage.json
