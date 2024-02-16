@@ -23,10 +23,10 @@
     "!artifacts/contracts/base/**/*"
   ],
   "dependencies": {
-    "@openzeppelin/contracts": "4.9.3",
+    "@cryptoalgebra/integral-base-plugin": "^1.0.0",
     "@cryptoalgebra/integral-core": "1.0.0",
     "@cryptoalgebra/integral-periphery": "1.0.0",
-    "@cryptoalgebra/integral-base-plugin": "1.0.0"
+    "@openzeppelin/contracts": "4.9.3"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.170",
