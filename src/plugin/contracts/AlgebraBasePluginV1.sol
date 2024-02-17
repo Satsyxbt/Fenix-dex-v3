@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.8.20;
 
-import '@cryptoalgebra/integral-core/contracts/base/common/Timestamp.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/Plugins.sol';
-
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/plugin/IAlgebraPlugin.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/pool/IAlgebraPoolState.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraPool.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
+import './base/TimestampUpgradeable.sol';
 import './interfaces/IAlgebraBasePluginV1.sol';
 import './interfaces/IBasePluginV1Factory.sol';
 import './interfaces/IAlgebraVirtualPool.sol';
@@ -19,7 +19,7 @@ import './types/AlgebraFeeConfigurationU144.sol';
 
 /// @title Algebra Integral 1.0 default plugin
 /// @notice This contract stores timepoints and calculates adaptive fee and statistical averages
-contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, Timestamp, IAlgebraPlugin {
+contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializable, TimestampUpgradeable {
   using Plugins for uint8;
   using AlgebraFeeConfigurationU144Lib for AlgebraFeeConfiguration;
 
@@ -33,9 +33,9 @@ contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, Timestamp, IAlgebraPlugin 
   uint8 public constant override defaultPluginConfig = uint8(Plugins.AFTER_INIT_FLAG | Plugins.BEFORE_SWAP_FLAG | Plugins.DYNAMIC_FEE);
 
   /// @inheritdoc IFarmingPlugin
-  address public immutable override pool;
-  address private immutable factory;
-  address private immutable pluginFactory;
+  address public override pool;
+  address private factory;
+  address private pluginFactory;
 
   /// @inheritdoc IVolatilityOracle
   VolatilityOracle.Timepoint[UINT16_MODULO] public override timepoints;
@@ -63,7 +63,12 @@ contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, Timestamp, IAlgebraPlugin 
     _;
   }
 
-  constructor(address _pool, address _factory, address _pluginFactory) {
+  constructor() {
+    _disableInitializers();
+  }
+
+  /// @inheritdoc IAlgebraBasePluginV1
+  function initialize(address _pool, address _factory, address _pluginFactory) external override initializer {
     (factory, pool, pluginFactory) = (_factory, _pool, _pluginFactory);
   }
 
@@ -317,4 +322,11 @@ contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, Timestamp, IAlgebraPlugin 
       IAlgebraPool(pool).setFee(newFee);
     }
   }
+
+  /**
+   * @dev This empty reserved space is put in place to allow future versions to add new
+   * variables without shifting down storage in the inheritance chain.
+   * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+   */
+  uint256[50] private __gap;
 }

@@ -13,4 +13,8 @@ interface IAlgebraBasePluginV1 is IVolatilityOracle, IDynamicFeeManager, IFarmin
   /// @notice Initialize the plugin externally
   /// @dev This function allows to initialize the plugin if it was created after the pool was created
   function initialize() external;
+
+  /// @notice Initialize the plugin instead of the constructor flow, for proxy
+  /// @dev This function allows to initialize the plugin if it was created like proxy
+  function initialize(address _pool, address _factory, address _pluginFactory) external;
 }
