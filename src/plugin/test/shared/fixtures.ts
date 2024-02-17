@@ -27,9 +27,11 @@ export const TEST_POOL_DAY_BEFORE_START = 1601906400 - 24 * 60 * 60;
 export const pluginFixture: Fixture<PluginFixture> = async function (): Promise<PluginFixture> {
   const { mockFactory } = await mockFactoryFixture();
   //const { token0, token1, token2 } = await tokensFixture()
+  const mockDSOperatorFactory = await ethers.getContractFactory('MockTimeAlgebraBasePluginV1');
+  const pluginImplementation = await mockDSOperatorFactory.deploy();
 
   const mockPluginFactoryFactory = await ethers.getContractFactory('MockTimeDSFactory');
-  const mockPluginFactory = (await mockPluginFactoryFactory.deploy(mockFactory)) as any as MockTimeDSFactory;
+  const mockPluginFactory = (await mockPluginFactoryFactory.deploy(mockFactory, pluginImplementation.target)) as any as MockTimeDSFactory;
 
   const mockPoolFactory = await ethers.getContractFactory('MockPool');
   const mockPool = (await mockPoolFactory.deploy()) as any as MockPool;
@@ -37,7 +39,6 @@ export const pluginFixture: Fixture<PluginFixture> = async function (): Promise<
   await mockPluginFactory.createPlugin(mockPool, ZERO_ADDRESS, ZERO_ADDRESS);
   const pluginAddress = await mockPluginFactory.pluginByPool(mockPool);
 
-  const mockDSOperatorFactory = await ethers.getContractFactory('MockTimeAlgebraBasePluginV1');
   const plugin = mockDSOperatorFactory.attach(pluginAddress) as any as MockTimeAlgebraBasePluginV1;
 
   return {
@@ -54,9 +55,11 @@ interface PluginFactoryFixture extends MockFactoryFixture {
 
 export const pluginFactoryFixture: Fixture<PluginFactoryFixture> = async function (): Promise<PluginFactoryFixture> {
   const { mockFactory } = await mockFactoryFixture();
+  const AlgebraBasePluginV1Factory = await ethers.getContractFactory('AlgebraBasePluginV1');
+  const pluginImplementation = await AlgebraBasePluginV1Factory.deploy();
 
   const pluginFactoryFactory = await ethers.getContractFactory('BasePluginV1Factory');
-  const pluginFactory = (await pluginFactoryFactory.deploy(mockFactory)) as any as BasePluginV1Factory;
+  const pluginFactory = (await pluginFactoryFactory.deploy(mockFactory, pluginImplementation.target)) as any as BasePluginV1Factory;
 
   return {
     pluginFactory,

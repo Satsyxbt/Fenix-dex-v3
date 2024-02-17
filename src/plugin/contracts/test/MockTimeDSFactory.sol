@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.8.20;
 
+import '@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol';
 import '../base/AlgebraFeeConfiguration.sol';
 import '../libraries/AdaptiveFee.sol';
 
@@ -25,9 +26,14 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
   /// @inheritdoc IBasePluginV1Factory
   address public override farmingAddress;
 
-  constructor(address _algebraFactory) {
+  /// @inheritdoc IBeacon
+  address public override implementation;
+
+  constructor(address _algebraFactory, address _basePluginV1Implementation) {
     algebraFactory = _algebraFactory;
     defaultFeeConfiguration = AdaptiveFee.initialFeeConfiguration();
+
+    _setImplementation(_basePluginV1Implementation);
   }
 
   /// @inheritdoc IAlgebraPluginFactory
@@ -50,7 +56,8 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
   }
 
   function _createPlugin(address pool) internal returns (address) {
-    MockTimeAlgebraBasePluginV1 volatilityOracle = new MockTimeAlgebraBasePluginV1(pool, algebraFactory, address(this));
+    MockTimeAlgebraBasePluginV1 volatilityOracle = MockTimeAlgebraBasePluginV1(address(new BeaconProxy(address(this), '')));
+    volatilityOracle.constructorInitialize(pool, algebraFactory, address(this));
     volatilityOracle.changeFeeConfiguration(defaultFeeConfiguration);
     pluginByPool[pool] = address(volatilityOracle);
     return address(volatilityOracle);
@@ -68,5 +75,34 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
     require(farmingAddress != newFarmingAddress);
     farmingAddress = newFarmingAddress;
     emit FarmingAddress(newFarmingAddress);
+  }
+
+  /**
+   * @dev Upgrades the beacon to a new implementation.
+   *
+   * Emits an {Upgraded} event.
+   *
+   * Requirements:
+   *
+   * - msg.sender must be the plugin adminisrator.
+   * - `newImplementation` must be a contract.
+   */
+  function upgradeTo(address newImplementation) external {
+    _setImplementation(newImplementation);
+  }
+
+  /**
+   * @dev Sets the implementation contract address for this beacon
+   *
+   * Requirements:
+   *
+   * - `newImplementation` must be a contract.
+   */
+  function _setImplementation(address newImplementation) private {
+    if (newImplementation.code.length == 0) {
+      revert BeaconInvalidImplementation(newImplementation);
+    }
+    implementation = newImplementation;
+    emit Upgraded(newImplementation);
   }
 }

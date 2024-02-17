@@ -30,6 +30,7 @@ describe('AlgebraBasePluginV1', () => {
 
   beforeEach('deploy test AlgebraBasePluginV1', async () => {
     ({ plugin, mockPool, mockPluginFactory } = await loadFixture(pluginFixture));
+    await plugin.advanceTime(1601906400);
   });
 
   describe('#Initialize', async () => {
