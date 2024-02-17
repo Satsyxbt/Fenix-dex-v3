@@ -21,7 +21,13 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
   bytes32 public constant override POOLS_ADMINISTRATOR_ROLE = keccak256('POOLS_ADMINISTRATOR'); // it`s here for the public visibility of the value
 
   /// @inheritdoc IAlgebraFactory
+  bytes32 public constant override POOLS_CREATOR_ROLE = keccak256('POOLS_CREATOR'); // it`s here for the public visibility of the value
+
+  /// @inheritdoc IAlgebraFactory
   address public immutable override poolDeployer;
+
+  ///@inheritdoc IAlgebraFactory
+  bool public override isPublicPoolCreationMode;
 
   /// @inheritdoc IAlgebraFactory
   uint16 public override defaultCommunityFee;
@@ -57,6 +63,8 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
     defaultTickspacing = Constants.INIT_DEFAULT_TICK_SPACING;
     defaultFee = Constants.INIT_DEFAULT_FEE;
 
+    _grantRole(POOLS_CREATOR_ROLE, msg.sender);
+
     emit DefaultTickspacing(Constants.INIT_DEFAULT_TICK_SPACING);
     emit DefaultFee(Constants.INIT_DEFAULT_FEE);
   }
@@ -88,6 +96,9 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
 
   /// @inheritdoc IAlgebraFactory
   function createPool(address tokenA, address tokenB) external override returns (address pool) {
+    if (!isPublicPoolCreationMode) {
+      _checkRole(POOLS_CREATOR_ROLE);
+    }
     require(tokenA != tokenB);
     (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
     require(token0 != address(0));
@@ -107,6 +118,12 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
     if (address(vaultFactory) != address(0)) {
       vaultFactory.createVaultForPool(pool);
     }
+  }
+
+  /// @inheritdoc IAlgebraFactory
+  function setIsPublicPoolCreationMode(bool mode_) external override onlyOwner {
+    isPublicPoolCreationMode = mode_;
+    emit PublicPoolCreationMode(mode_);
   }
 
   /// @inheritdoc IAlgebraFactory

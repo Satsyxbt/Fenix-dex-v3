@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.8.20;
 
+import '@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol';
+import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
+
 import './interfaces/IBasePluginV1Factory.sol';
 import './libraries/AdaptiveFee.sol';
-import './AlgebraBasePluginV1.sol';
+import './interfaces/IAlgebraBasePluginV1.sol';
 
 /// @title Algebra Integral 1.0 default plugin factory
 /// @notice This contract creates Algebra default plugins for Algebra liquidity pools
@@ -20,6 +23,9 @@ contract BasePluginV1Factory is IBasePluginV1Factory {
   /// @inheritdoc IBasePluginV1Factory
   address public override farmingAddress;
 
+  /// @inheritdoc IBeacon
+  address public override implementation;
+
   /// @inheritdoc IBasePluginV1Factory
   mapping(address poolAddress => address pluginAddress) public override pluginByPool;
 
@@ -28,9 +34,12 @@ contract BasePluginV1Factory is IBasePluginV1Factory {
     _;
   }
 
-  constructor(address _algebraFactory) {
+  constructor(address _algebraFactory, address _basePluginV1Implementation) {
     algebraFactory = _algebraFactory;
     defaultFeeConfiguration = AdaptiveFee.initialFeeConfiguration();
+
+    _setImplementation(_basePluginV1Implementation);
+
     emit DefaultFeeConfiguration(defaultFeeConfiguration);
   }
 
@@ -53,7 +62,8 @@ contract BasePluginV1Factory is IBasePluginV1Factory {
 
   function _createPlugin(address pool) internal returns (address) {
     require(pluginByPool[pool] == address(0), 'Already created');
-    IAlgebraBasePluginV1 volatilityOracle = new AlgebraBasePluginV1(pool, algebraFactory, address(this));
+    IAlgebraBasePluginV1 volatilityOracle = IAlgebraBasePluginV1(address(new BeaconProxy(address(this), '')));
+    volatilityOracle.initialize(pool, algebraFactory, address(this));
     volatilityOracle.changeFeeConfiguration(defaultFeeConfiguration);
     pluginByPool[pool] = address(volatilityOracle);
     return address(volatilityOracle);
@@ -71,5 +81,34 @@ contract BasePluginV1Factory is IBasePluginV1Factory {
     require(farmingAddress != newFarmingAddress);
     farmingAddress = newFarmingAddress;
     emit FarmingAddress(newFarmingAddress);
+  }
+
+  /**
+   * @dev Upgrades the beacon to a new implementation.
+   *
+   * Emits an {Upgraded} event.
+   *
+   * Requirements:
+   *
+   * - msg.sender must be the plugin adminisrator.
+   * - `newImplementation` must be a contract.
+   */
+  function upgradeTo(address newImplementation) external onlyAdministrator {
+    _setImplementation(newImplementation);
+  }
+
+  /**
+   * @dev Sets the implementation contract address for this beacon
+   *
+   * Requirements:
+   *
+   * - `newImplementation` must be a contract.
+   */
+  function _setImplementation(address newImplementation) private {
+    if (newImplementation.code.length == 0) {
+      revert BeaconInvalidImplementation(newImplementation);
+    }
+    implementation = newImplementation;
+    emit Upgraded(newImplementation);
   }
 }
