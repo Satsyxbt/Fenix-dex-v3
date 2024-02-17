@@ -17,6 +17,11 @@ import {
   bytecode as PLUGIN_FACTORY_BYTECODE,
 } from '@cryptoalgebra/integral-base-plugin/artifacts/contracts/BasePluginV1Factory.sol/BasePluginV1Factory.json';
 import {
+  abi as BASE_PLUGIN__ABI,
+  bytecode as BASE_PLUGIN_BYTECODE,
+} from '@cryptoalgebra/integral-base-plugin/artifacts/contracts/AlgebraBasePluginV1.sol/AlgebraBasePluginV1.json';
+
+import {
   abi as WNATIVE_ABI,
   bytecode as WNATIVE_BYTECODE,
 } from '@cryptoalgebra/integral-periphery/artifacts/contracts/interfaces/external/IWNativeToken.sol/IWNativeToken.json';
@@ -46,11 +51,14 @@ const v3CoreFactoryFixture: () => Promise<IAlgebraFactory> = async () => {
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);
   const poolDeployer = await poolDeployerFactory.deploy(_factory);
+  const basePluginFactory = await ethers.getContractFactory(BASE_PLUGIN__ABI, BASE_PLUGIN_BYTECODE);
 
   const pluginContractFactory = await ethers.getContractFactory(PLUGIN_FACTORY_ABI, PLUGIN_FACTORY_BYTECODE);
-  const pluginFactory = await pluginContractFactory.deploy(_factory);
+  const pluginFactory = await pluginContractFactory.deploy(_factory, (await basePluginFactory.deploy()).target);
 
   await _factory.setDefaultPluginFactory(pluginFactory);
+
+  await _factory.setIsPublicPoolCreationMode(true);
 
   return _factory;
 };

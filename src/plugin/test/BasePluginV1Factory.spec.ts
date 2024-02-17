@@ -26,13 +26,16 @@ describe('BasePluginV1Factory', () => {
     });
 
     it('factory can create plugin', async () => {
+      const pluginFactory = await ethers.getContractFactory('AlgebraBasePluginV1');
+      const pluginImplementation = await pluginFactory.deploy();
+
       const pluginFactoryFactory = await ethers.getContractFactory('BasePluginV1Factory');
-      const pluginFactoryMock = (await pluginFactoryFactory.deploy(wallet.address)) as any as BasePluginV1Factory;
+      const pluginFactoryMock = (await pluginFactoryFactory.deploy(wallet.address, pluginImplementation.target)) as any as BasePluginV1Factory;
 
       const pluginAddress = await pluginFactoryMock.createPlugin.staticCall(wallet.address, ZERO_ADDRESS, ZERO_ADDRESS);
       await pluginFactoryMock.createPlugin(wallet.address, ZERO_ADDRESS, ZERO_ADDRESS);
 
-      const pluginMock = (await ethers.getContractFactory('AlgebraBasePluginV1')).attach(pluginAddress) as any as AlgebraBasePluginV1;
+      const pluginMock = pluginFactory.attach(pluginAddress) as any as AlgebraBasePluginV1;
       const feeConfig = await pluginMock.feeConfig();
       expect(feeConfig.baseFee).to.be.not.eq(0);
     });
@@ -152,6 +155,42 @@ describe('BasePluginV1Factory', () => {
     it('cannot set current address', async () => {
       await pluginFactory.setFarmingAddress(other.address);
       await expect(pluginFactory.setFarmingAddress(other.address)).to.be.reverted;
+    });
+  });
+
+  describe('#upgradeTo', () => {
+    it('fails if caller is not administator', async () => {
+      await expect(pluginFactory.connect(other).upgradeTo(wallet.address)).to.be.revertedWith('Only administrator');
+    });
+
+    it('fails if new implementation is not contract', async () => {
+      await expect(pluginFactory.upgradeTo(wallet.address))
+        .to.be.revertedWithCustomError(pluginFactory, 'BeaconInvalidImplementation')
+        .withArgs(wallet.address);
+    });
+
+    it('upgrade current plugins implementation', async () => {
+      await mockAlgebraFactory.stubPool(wallet.address, other.address, other.address);
+
+      await pluginFactory.createPluginForExistingPool(wallet.address, other.address);
+      const pluginAddress = await pluginFactory.pluginByPool(other.address);
+
+      const basePluginFactory = await ethers.getContractFactory('MockTimeAlgebraBasePluginV1');
+      const newImplementation = await basePluginFactory.deploy();
+
+      await expect(basePluginFactory.attach(pluginAddress).version()).to.be.reverted;
+
+      expect(await pluginFactory.implementation()).to.be.not.eq(newImplementation.target);
+      await pluginFactory.upgradeTo(newImplementation.target);
+      expect(await pluginFactory.implementation()).to.eq(newImplementation.target);
+
+      expect(await basePluginFactory.attach(pluginAddress).version()).to.be.equal('MockTimeAlgebraBasePluginV1');
+    });
+
+    it('emits event', async () => {
+      const basePluginFactory = await ethers.getContractFactory('AlgebraBasePluginV1');
+      const pluginImplementation = await basePluginFactory.deploy();
+      await expect(pluginFactory.upgradeTo(pluginImplementation.target)).to.emit(pluginFactory, 'Upgraded').withArgs(pluginImplementation.target);
     });
   });
 });
