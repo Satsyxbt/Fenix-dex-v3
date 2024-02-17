@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/cryptoalgebra/Algebra"
+    "url": "https://gitlab.com/Satsyxbt/fenix-dex-v3"
   },
   "files": [
     "contracts",
@@ -23,9 +23,9 @@
     "!artifacts/contracts/base/**/*"
   ],
   "dependencies": {
-    "@cryptoalgebra/integral-base-plugin": "^1.0.0",
-    "@cryptoalgebra/integral-core": "1.0.0",
-    "@cryptoalgebra/integral-periphery": "1.0.0",
+    "@cryptoalgebra/integral-base-plugin": "file:../plugin",
+    "@cryptoalgebra/integral-core": "file:../core",
+    "@cryptoalgebra/integral-periphery": "file:../periphery",
     "@openzeppelin/contracts": "4.9.3"
   },
   "devDependencies": {
