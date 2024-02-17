@@ -8,10 +8,10 @@ contract MockTimeAlgebraBasePluginV1 is AlgebraBasePluginV1 {
   using VolatilityOracle for VolatilityOracle.Timepoint[UINT16_MODULO];
 
   // Monday, October 5, 2020 9:00:00 AM GMT-05:00
-  uint256 public time = 1601906400;
+  uint256 public time;
 
-  constructor(address _pool, address _factory, address _pluginFactory) AlgebraBasePluginV1(_pool, _factory, _pluginFactory) {
-    //
+  function version() external pure returns (string memory) {
+    return 'MockTimeAlgebraBasePluginV1';
   }
 
   function advanceTime(uint256 by) external {
