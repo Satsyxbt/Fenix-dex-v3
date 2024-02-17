@@ -34,27 +34,34 @@ describe('AlgebraBasePluginV1', () => {
   });
 
   describe('#Initialize', async () => {
+    it('cannot general initialize twice', async () => {
+      await mockPool.setPlugin(plugin);
+      await expect(plugin['initialize(address,address,address)'](ethers.ZeroAddress, ethers.ZeroAddress, ethers.ZeroAddress)).to.be.revertedWith(
+        'Initializable: contract is already initialized'
+      );
+    });
+
     it('cannot initialize twice', async () => {
       await mockPool.setPlugin(plugin);
       await initializeAtZeroTick(mockPool);
 
-      await expect(plugin.initialize()).to.be.revertedWith('Already initialized');
+      await expect(plugin['initialize()']()).to.be.revertedWith('Already initialized');
     });
 
     it('cannot initialize detached plugin', async () => {
       await initializeAtZeroTick(mockPool);
-      await expect(plugin.initialize()).to.be.revertedWith('Plugin not attached');
+      await expect(plugin['initialize()']()).to.be.revertedWith('Plugin not attached');
     });
 
     it('cannot initialize if pool not initialized', async () => {
       await mockPool.setPlugin(plugin);
-      await expect(plugin.initialize()).to.be.revertedWith('Pool is not initialized');
+      await expect(plugin['initialize()']()).to.be.revertedWith('Pool is not initialized');
     });
 
     it('can initialize for existing pool', async () => {
       await initializeAtZeroTick(mockPool);
       await mockPool.setPlugin(plugin);
-      await plugin.initialize();
+      await plugin['initialize()']();
 
       const timepoint = await plugin.timepoints(0);
       expect(timepoint.initialized).to.be.true;
