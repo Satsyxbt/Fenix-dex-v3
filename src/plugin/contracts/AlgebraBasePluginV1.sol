@@ -68,7 +68,7 @@ contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializa
   }
 
   /// @inheritdoc IAlgebraBasePluginV1
-  function constructorInitialize(address _pool, address _factory, address _pluginFactory) external override initializer {
+  function initialize(address _pool, address _factory, address _pluginFactory) external override initializer {
     (factory, pool, pluginFactory) = (_factory, _pool, _pluginFactory);
   }
 
