@@ -3,12 +3,13 @@ pragma solidity >=0.5.0;
 pragma abicoder v2;
 
 import '@cryptoalgebra/integral-core/contracts/interfaces/plugin/IAlgebraPluginFactory.sol';
+import '@openzeppelin/contracts/proxy/beacon/IBeacon.sol';
 
 import '../base/AlgebraFeeConfiguration.sol';
 
 /// @title The interface for the BasePluginV1Factory
 /// @notice This contract creates Algebra default plugins for Algebra liquidity pools
-interface IBasePluginV1Factory is IAlgebraPluginFactory {
+interface IBasePluginV1Factory is IAlgebraPluginFactory, IBeacon {
   /// @notice Emitted when the default fee configuration is changed
   /// @param newConfig The structure with dynamic fee parameters
   /// @dev See the AdaptiveFee library for more details
@@ -17,6 +18,13 @@ interface IBasePluginV1Factory is IAlgebraPluginFactory {
   /// @notice Emitted when the farming address is changed
   /// @param newFarmingAddress The farming address after the address was changed
   event FarmingAddress(address newFarmingAddress);
+
+  /// @dev Emitted when the implementation returned by the beacon is changed.
+  /// @param implementation The new implementation address after changed
+  event Upgraded(address indexed implementation);
+
+  /// @dev The `implementation` of the beacon is invalid.
+  error BeaconInvalidImplementation(address implementation);
 
   /// @notice The hash of 'ALGEBRA_BASE_PLUGIN_FACTORY_ADMINISTRATOR' used as role
   /// @dev allows to change settings of BasePluginV1Factory
