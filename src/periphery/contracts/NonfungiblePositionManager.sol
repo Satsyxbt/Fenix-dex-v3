@@ -90,7 +90,7 @@ contract NonfungiblePositionManager is
         address _tokenDescriptor_,
         address _poolDeployer
     )
-        ERC721Permit('Algebra Positions NFT-V2', 'ALGB-POS', '2')
+        ERC721Permit('Fenix Positions NFT-V2', 'FNX-POS', '2')
         PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer)
     {
         _tokenDescriptor = _tokenDescriptor_;
