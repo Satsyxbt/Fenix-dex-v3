@@ -48,9 +48,17 @@ interface IAlgebraFactory {
   /// @param newVaultFactory The new vaultFactory address
   event VaultFactory(address newVaultFactory);
 
+  /// @notice Emitted when the pools creation mode is changed
+  /// @param mode_ The new pools creation mode
+  event PublicPoolCreationMode(bool mode_);
+
   /// @notice role that can change communityFee and tickspacing in pools
   /// @return The hash corresponding to this role
   function POOLS_ADMINISTRATOR_ROLE() external view returns (bytes32);
+
+  /// @notice role that can create pools when public pool creation is disabled
+  /// @return The hash corresponding to this role
+  function POOLS_CREATOR_ROLE() external view returns (bytes32);
 
   /// @notice Returns `true` if `account` has been granted `role` or `account` is owner.
   /// @param role The hash corresponding to the role
@@ -66,6 +74,10 @@ interface IAlgebraFactory {
   /// @notice Returns the current poolDeployerAddress
   /// @return The address of the poolDeployer
   function poolDeployer() external view returns (address);
+
+  /// @notice Returns the status of enable public pool creation mode
+  /// @return bool Whether the public creation mode is enable or not
+  function isPublicPoolCreationMode() external view returns (bool);
 
   /// @notice Returns the default community fee
   /// @return Fee which will be set at the creation of the pool
@@ -128,6 +140,10 @@ interface IAlgebraFactory {
   /// The call will revert if the pool already exists or the token arguments are invalid.
   /// @return pool The address of the newly created pool
   function createPool(address tokenA, address tokenB) external returns (address pool);
+
+  /// @dev updates pools creation mode
+  /// @param mode_ the new mode for pools creation proccess
+  function setIsPublicPoolCreationMode(bool mode_) external;
 
   /// @dev updates default community fee for new pools
   /// @param newDefaultCommunityFee The new community fee, _must_ be <= MAX_COMMUNITY_FEE

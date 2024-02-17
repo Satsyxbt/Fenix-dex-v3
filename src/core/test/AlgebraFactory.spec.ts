@@ -71,6 +71,14 @@ describe('AlgebraFactory', () => {
     expect(await factory.owner()).to.eq(wallet.address);
   });
 
+  it('public pool creation mode is disabled by default', async () => {
+    expect(await factory.isPublicPoolCreationMode()).to.be.false;
+  });
+
+  it('owner is POOLS_CREATOR_ROLE by default', async () => {
+    expect(await factory.hasRole(await factory.POOLS_CREATOR_ROLE(), await factory.owner())).to.be.true;
+  });
+
   it('has POOL_INIT_CODE_HASH', async () => {
     expect(await factory.POOL_INIT_CODE_HASH()).to.be.not.eq(
       '0x0000000000000000000000000000000000000000000000000000000000000000'
@@ -80,6 +88,12 @@ describe('AlgebraFactory', () => {
   it('has POOLS_ADMINISTRATOR_ROLE', async () => {
     expect(await factory.POOLS_ADMINISTRATOR_ROLE()).to.be.eq(
       '0xb73ce166ead2f8e9add217713a7989e4edfba9625f71dfd2516204bb67ad3442'
+    );
+  });
+
+  it('has POOLS_CREATOR_ROLE', async () => {
+    expect(await factory.POOLS_CREATOR_ROLE()).to.be.eq(
+      '0xa7106ea771a74f2d048c62cace8c00d3e120b24b61327e6415035f60d47ce888'
     );
   });
 
@@ -204,6 +218,14 @@ describe('AlgebraFactory', () => {
       await expect(factory.createPool(TEST_ADDRESSES[0], ZeroAddress)).to.be.reverted;
       await expect(factory.createPool(ZeroAddress, TEST_ADDRESSES[0])).to.be.reverted;
       expect(factory.createPool(ZeroAddress, ZeroAddress)).to.be.revertedWithoutReason;
+    });
+
+    it("fails if isPublicCreationMode disabled and user haven't access role ", async () => {
+      await expect(factory.connect(other).createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1])).to.be.revertedWith(
+        `AccessControl: account ${other.address.toLowerCase()} is missing role ${await factory.POOLS_CREATOR_ROLE()}`
+      );
+      await factory.setIsPublicPoolCreationMode(true);
+      await expect(factory.connect(other).createPool(TEST_ADDRESSES[0], TEST_ADDRESSES[1])).to.be.not.reverted;
     });
 
     it('gas [ @skip-on-coverage ]', async () => {
@@ -386,6 +408,25 @@ describe('AlgebraFactory', () => {
 
     it('emits event', async () => {
       await expect(factory.setDefaultTickspacing(50)).to.emit(factory, 'DefaultTickspacing').withArgs(50);
+    });
+  });
+
+  describe('#setIsPublicPoolCreationMode', () => {
+    it('fails if caller is not owner', async () => {
+      await expect(factory.connect(other).setIsPublicPoolCreationMode(false)).to.be.revertedWith(
+        'Ownable: caller is not the owner'
+      );
+      await factory.transferOwnership(other.address);
+      await factory.connect(other).acceptOwnership();
+
+      await expect(factory.connect(other).setIsPublicPoolCreationMode(false)).to.be.not.reverted;
+    });
+
+    it('emits event', async () => {
+      await expect(factory.setIsPublicPoolCreationMode(true)).to.emit(factory, 'PublicPoolCreationMode').withArgs(true);
+      await expect(factory.setIsPublicPoolCreationMode(false))
+        .to.emit(factory, 'PublicPoolCreationMode')
+        .withArgs(false);
     });
   });
 
