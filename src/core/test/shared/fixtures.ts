@@ -23,7 +23,6 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 async function factoryFixture(): Promise<FactoryFixture> {
   await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-
   const [deployer, governor] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
@@ -112,9 +111,8 @@ export const poolFixture: Fixture<PoolFixture> = async function (): Promise<Pool
     createPool: async (firstToken = token0, secondToken = token1) => {
       const [deployer, governor] = await ethers.getSigners();
 
-      const mockTimePoolDeployer = (await MockTimeAlgebraPoolDeployerFactory.deploy(
-        governor.address
-      )) as any as MockTimeAlgebraPoolDeployer;
+      const mockTimePoolDeployer =
+        (await MockTimeAlgebraPoolDeployerFactory.deploy()) as any as MockTimeAlgebraPoolDeployer;
       await mockTimePoolDeployer.deployMock(governor.address, factory, firstToken, secondToken);
 
       const firstAddress = await firstToken.getAddress();

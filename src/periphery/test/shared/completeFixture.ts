@@ -10,6 +10,8 @@ import {
   TestERC20,
   IAlgebraFactory,
 } from '../../typechain';
+import { BlastMock__factory } from '@cryptoalgebra/integral-core/typechain';
+import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 type TestERC20WithAddress = TestERC20 & { address_: string | undefined };
 
@@ -49,6 +51,7 @@ const completeFixture: () => Promise<{
   nftDescriptor: NonfungibleTokenPositionDescriptor;
   tokens: [TestERC20, TestERC20, TestERC20];
 }> = async () => {
+  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
   const { wnative, factory, router } = await v3RouterFixture();
   const tokenFactory = await ethers.getContractFactory('TestERC20');
   const factoryOwner = await factory.owner();
@@ -86,6 +89,7 @@ const completeFixture: () => Promise<{
   const nftDescriptorProxied = positionDescriptorFactory.attach(proxy) as any as NonfungibleTokenPositionDescriptor;
   const positionManagerFactory = await ethers.getContractFactory('MockTimeNonfungiblePositionManager');
   const nft = (await positionManagerFactory.deploy(
+    factoryOwner,
     factory,
     wnative,
     nftDescriptorProxied,
