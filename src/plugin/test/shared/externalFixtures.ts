@@ -22,9 +22,11 @@ import {
   MockTimeAlgebraPool,
   AlgebraFactory,
   TestERC20,
+  BlastMock__factory,
 } from '@cryptoalgebra/integral-core/typechain';
 import { getCreateAddress } from 'ethers';
 import { ZERO_ADDRESS } from './fixtures';
+import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 interface TokensFixture {
   token0: TestERC20;
@@ -51,6 +53,8 @@ interface MockPoolDeployerFixture extends TokensFixture {
   createPool(firstToken?: TestERC20, secondToken?: TestERC20): Promise<MockTimeAlgebraPool>;
 }
 export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixture> = async () => {
+  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+
   const { token0, token1 } = await tokensFixture();
 
   const [deployer, governor] = await ethers.getSigners();

@@ -7,13 +7,13 @@ import { ZERO_ADDRESS, pluginFactoryFixture } from './shared/fixtures';
 import { BasePluginV1Factory, AlgebraBasePluginV1, MockFactory } from '../typechain';
 
 describe('BasePluginV1Factory', () => {
-  let wallet: Wallet, other: Wallet;
+  let wallet: Wallet, other: Wallet, blastGovernor: Wallet;
 
   let pluginFactory: BasePluginV1Factory;
   let mockAlgebraFactory: MockFactory;
 
   before('prepare signers', async () => {
-    [wallet, other] = await (ethers as any).getSigners();
+    [wallet, blastGovernor, other] = await (ethers as any).getSigners();
   });
 
   beforeEach('deploy test volatilityOracle', async () => {
@@ -30,7 +30,11 @@ describe('BasePluginV1Factory', () => {
       const pluginImplementation = await pluginFactory.deploy();
 
       const pluginFactoryFactory = await ethers.getContractFactory('BasePluginV1Factory');
-      const pluginFactoryMock = (await pluginFactoryFactory.deploy(wallet.address, pluginImplementation.target)) as any as BasePluginV1Factory;
+      const pluginFactoryMock = (await pluginFactoryFactory.deploy(
+        blastGovernor.address,
+        wallet.address,
+        pluginImplementation.target
+      )) as any as BasePluginV1Factory;
 
       const pluginAddress = await pluginFactoryMock.createPlugin.staticCall(wallet.address, ZERO_ADDRESS, ZERO_ADDRESS);
       await pluginFactoryMock.createPlugin(wallet.address, ZERO_ADDRESS, ZERO_ADDRESS);
@@ -158,6 +162,18 @@ describe('BasePluginV1Factory', () => {
     });
   });
 
+  describe('#setDefaultBlastGovernor', async () => {
+    it('fails if caller not owner', async () => {
+      await expect(pluginFactory.connect(other).setDefaultBlastGovernor(other.address)).to.be.revertedWith('Only administrator');
+    });
+    it('success set new default blast governor address and emit event', async () => {
+      expect(await pluginFactory.defaultBlastGovernor()).to.be.eq(blastGovernor.address);
+
+      await expect(pluginFactory.setDefaultBlastGovernor(other.address)).to.be.emit(pluginFactory, 'DefaultBlastGovernor').withArgs(other.address);
+
+      expect(await pluginFactory.defaultBlastGovernor()).to.be.eq(other.address);
+    });
+  });
   describe('#upgradeTo', () => {
     it('fails if caller is not administator', async () => {
       await expect(pluginFactory.connect(other).upgradeTo(wallet.address)).to.be.revertedWith('Only administrator');
