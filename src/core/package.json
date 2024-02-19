@@ -30,8 +30,7 @@
     "compile": "hardhat compile",
     "test": "hardhat test --parallel",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js",
-    "validateNatspec": "hardhat validateOutput",
-    "moc": "mocha --recursive ./test/**.*"
+    "validateNatspec": "hardhat validateOutput"
   },
   "engines": {
     "npm": ">=8.0.0",

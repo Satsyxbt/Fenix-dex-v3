@@ -16,7 +16,7 @@ const TEST_ADDRESSES: [string, string, string] = [
 ];
 
 describe('AlgebraFactory', () => {
-  let wallet: Wallet, other: Wallet;
+  let wallet: Wallet, other: Wallet, blastGovernor: Wallet;
 
   let factory: AlgebraFactory;
   let poolDeployer: AlgebraPoolDeployer;
@@ -54,7 +54,7 @@ describe('AlgebraFactory', () => {
   };
 
   before('create fixture loader', async () => {
-    [wallet, other] = await (ethers as any).getSigners();
+    [wallet, blastGovernor, other] = await (ethers as any).getSigners();
   });
 
   before('load pool bytecode', async () => {
@@ -68,6 +68,10 @@ describe('AlgebraFactory', () => {
   it('cannot create invalid vault factory stub', async () => {
     const vaultFactoryStubFactory = await ethers.getContractFactory('AlgebraVaultFactoryStub');
     expect(vaultFactoryStubFactory.deploy(ZeroAddress)).to.be.revertedWithoutReason;
+  });
+
+  it('corect default blast governor', async () => {
+    expect(await factory.defaultBlastGovernor()).to.eq(blastGovernor.address);
   });
 
   it('owner is deployer', async () => {
@@ -388,6 +392,23 @@ describe('AlgebraFactory', () => {
 
     it('emits event', async () => {
       await expect(factory.setDefaultFee(60)).to.emit(factory, 'DefaultFee').withArgs(60);
+    });
+  });
+
+  describe('#setDefaultBlastGovernor', async () => {
+    it('fails if caller not owner', async () => {
+      await expect(factory.connect(other).setDefaultBlastGovernor(other.address)).to.be.revertedWith(
+        'Ownable: caller is not the owner'
+      );
+    });
+    it('success set new default blast governor address and emit event', async () => {
+      expect(await factory.defaultBlastGovernor()).to.be.eq(blastGovernor.address);
+
+      await expect(factory.setDefaultBlastGovernor(other.address))
+        .to.be.emit(factory, 'DefaultBlastGovernor')
+        .withArgs(other.address);
+
+      expect(await factory.defaultBlastGovernor()).to.be.eq(other.address);
     });
   });
 

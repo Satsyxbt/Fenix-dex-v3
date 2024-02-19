@@ -10,6 +10,7 @@ import {
   MockTimeAlgebraPoolDeployer,
   AlgebraPoolDeployer,
   BlastMock__factory,
+  BlastMock,
 } from '../../typechain';
 import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
@@ -22,6 +23,7 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 async function factoryFixture(): Promise<FactoryFixture> {
   await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+
   const [deployer, governor] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
