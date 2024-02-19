@@ -36,9 +36,9 @@ describe('AlgebraBasePluginV1', () => {
   describe('#Initialize', async () => {
     it('cannot general initialize twice', async () => {
       await mockPool.setPlugin(plugin);
-      await expect(plugin['initialize(address,address,address)'](ethers.ZeroAddress, ethers.ZeroAddress, ethers.ZeroAddress)).to.be.revertedWith(
-        'Initializable: contract is already initialized'
-      );
+      await expect(
+        plugin['initialize(address,address,address,address)'](ethers.ZeroAddress, ethers.ZeroAddress, ethers.ZeroAddress, ethers.ZeroAddress)
+      ).to.be.revertedWith('Initializable: contract is already initialized');
     });
 
     it('cannot initialize twice', async () => {

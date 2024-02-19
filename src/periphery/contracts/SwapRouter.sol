@@ -4,6 +4,7 @@ pragma solidity =0.8.20;
 import '@cryptoalgebra/integral-core/contracts/libraries/SafeCast.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/TickMath.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraPool.sol';
+import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
 
 import './interfaces/ISwapRouter.sol';
 import './base/PeripheryImmutableState.sol';
@@ -25,7 +26,8 @@ contract SwapRouter is
     PeripheryValidation,
     PeripheryPaymentsWithFee,
     Multicall,
-    SelfPermit
+    SelfPermit,
+    BlastGovernorSetup
 {
     using Path for bytes;
     using SafeCast for uint256;
@@ -38,10 +40,13 @@ contract SwapRouter is
     uint256 private amountInCached = DEFAULT_AMOUNT_IN_CACHED;
 
     constructor(
+        address _blastGovernor,
         address _factory,
         address _WNativeToken,
         address _poolDeployer
-    ) PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer) {}
+    ) PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer) {
+        __BlastGovernorSetup_init(_blastGovernor);
+    }
 
     /// @dev Returns the pool for the given token pair. The pool contract may or may not exist.
     function getPool(address tokenA, address tokenB) private view returns (IAlgebraPool) {
