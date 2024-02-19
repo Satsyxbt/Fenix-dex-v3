@@ -8,10 +8,11 @@ contract MockTimeSwapRouter is SwapRouter {
     uint256 time;
 
     constructor(
+        address _blastGovernor,
         address _factory,
         address _WNativeToken,
         address _poolDeployer
-    ) SwapRouter(_factory, _WNativeToken, _poolDeployer) {}
+    ) SwapRouter(_blastGovernor, _factory, _WNativeToken, _poolDeployer) {}
 
     function _blockTimestamp() internal view override returns (uint256) {
         return time;

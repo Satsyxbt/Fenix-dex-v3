@@ -17,9 +17,9 @@ describe('AlgebraOracleV1TWAP', () => {
 
     const mockDSOperatorFactory = await ethers.getContractFactory('MockTimeAlgebraBasePluginV1');
     const pluginImplementation = await mockDSOperatorFactory.deploy();
-
+    const [d, blastGovernor, other] = await ethers.getSigners();
     const mockPluginFactoryFactory = await ethers.getContractFactory('MockTimeDSFactory');
-    const _mockPluginFactory = await mockPluginFactoryFactory.deploy(ZERO_ADDRESS, pluginImplementation.target);
+    const _mockPluginFactory = await mockPluginFactoryFactory.deploy(blastGovernor.address, ZERO_ADDRESS, pluginImplementation.target);
 
     const algebraOracleV1TWAPFactory = await ethers.getContractFactory('AlgebraOracleV1TWAP');
     const _algebraOracleV1TWAP = await algebraOracleV1TWAPFactory.deploy(_mockPluginFactory);

@@ -99,7 +99,7 @@ describe('AlgebraPoolRouter', () => {
     it('multi-swap', async () => {
       const token0OfPoolOutput = await pool1.token0();
       expect(token0OfPoolOutput).to.be.oneOf([await token1.getAddress(), await token2.getAddress()]);
-      const ForExact0 = await outputToken.getAddress() === token0OfPoolOutput;
+      const ForExact0 = (await outputToken.getAddress()) === token0OfPoolOutput;
 
       const { swapForExact0Multi, swapForExact1Multi } = createMultiPoolFunctions({
         inputToken: token0,
@@ -113,8 +113,8 @@ describe('AlgebraPoolRouter', () => {
       const [pool0Address, pool1Address, inputTokenAddress] = [
         await pool0.getAddress(),
         await pool1.getAddress(),
-        await inputToken.getAddress()
-      ]
+        await inputToken.getAddress(),
+      ];
       await expect(method(100, wallet.address))
         .to.emit(outputToken, 'Transfer')
         .withArgs(pool1Address, wallet.address, 100)

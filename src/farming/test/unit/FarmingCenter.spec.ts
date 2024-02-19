@@ -396,7 +396,8 @@ describe('unit/FarmingCenter', () => {
       const nftPosMock = (await nftPosMockFactory.deploy()) as any as NftPosManagerMock;
 
       const farmingCenterFactory = await ethers.getContractFactory('FarmingCenter');
-      const farmingCenter = (await farmingCenterFactory.deploy(ZERO_ADDRESS, nftPosMock)) as any as FarmingCenter;
+      const [blast] = await ethers.getSigners();
+      const farmingCenter = (await farmingCenterFactory.deploy(blast.address, ZERO_ADDRESS, nftPosMock)) as any as FarmingCenter;
 
       await nftPosMock.setPosition(0, {
         nonce: 0,

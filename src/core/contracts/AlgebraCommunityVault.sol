@@ -7,11 +7,13 @@ import './libraries/FullMath.sol';
 import './interfaces/IAlgebraFactory.sol';
 import './interfaces/vault/IAlgebraCommunityVault.sol';
 
+import './base/BlastGovernorSetup.sol';
+
 /// @title Algebra community fee vault
 /// @notice Community fee from pools is sent here, if it is enabled
 /// @dev Role system is used to withdraw tokens
 /// @dev Version: Algebra Integral 1.0
-contract AlgebraCommunityVault is IAlgebraCommunityVault {
+contract AlgebraCommunityVault is IAlgebraCommunityVault, BlastGovernorSetup {
   /// @dev The role can be granted in AlgebraFactory
   bytes32 public constant COMMUNITY_FEE_WITHDRAWER_ROLE = keccak256('COMMUNITY_FEE_WITHDRAWER');
   /// @dev The role can be granted in AlgebraFactory
@@ -50,7 +52,9 @@ contract AlgebraCommunityVault is IAlgebraCommunityVault {
     _;
   }
 
-  constructor(address _factory, address _algebraFeeManager) {
+  constructor(address _blastGovernor, address _factory, address _algebraFeeManager) {
+    __BlastGovernorSetup_init(_blastGovernor);
+
     (factory, algebraFeeManager) = (_factory, _algebraFeeManager);
   }
 

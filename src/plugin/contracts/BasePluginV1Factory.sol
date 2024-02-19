@@ -3,6 +3,7 @@ pragma solidity =0.8.20;
 
 import '@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
+import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
 
 import './interfaces/IBasePluginV1Factory.sol';
 import './libraries/AdaptiveFee.sol';
@@ -10,7 +11,7 @@ import './interfaces/IAlgebraBasePluginV1.sol';
 
 /// @title Algebra Integral 1.0 default plugin factory
 /// @notice This contract creates Algebra default plugins for Algebra liquidity pools
-contract BasePluginV1Factory is IBasePluginV1Factory {
+contract BasePluginV1Factory is IBasePluginV1Factory, BlastGovernorSetup {
   /// @inheritdoc IBasePluginV1Factory
   bytes32 public constant override ALGEBRA_BASE_PLUGIN_FACTORY_ADMINISTRATOR = keccak256('ALGEBRA_BASE_PLUGIN_FACTORY_ADMINISTRATOR');
 
@@ -23,6 +24,9 @@ contract BasePluginV1Factory is IBasePluginV1Factory {
   /// @inheritdoc IBasePluginV1Factory
   address public override farmingAddress;
 
+  /// @inheritdoc IBasePluginV1Factory
+  address public override defaultBlastGovernor;
+
   /// @inheritdoc IBeacon
   address public override implementation;
 
@@ -34,7 +38,11 @@ contract BasePluginV1Factory is IBasePluginV1Factory {
     _;
   }
 
-  constructor(address _algebraFactory, address _basePluginV1Implementation) {
+  constructor(address _blastGovernor, address _algebraFactory, address _basePluginV1Implementation) {
+    __BlastGovernorSetup_init(_blastGovernor);
+
+    defaultBlastGovernor = _blastGovernor;
+
     algebraFactory = _algebraFactory;
     defaultFeeConfiguration = AdaptiveFee.initialFeeConfiguration();
 
@@ -63,10 +71,16 @@ contract BasePluginV1Factory is IBasePluginV1Factory {
   function _createPlugin(address pool) internal returns (address) {
     require(pluginByPool[pool] == address(0), 'Already created');
     IAlgebraBasePluginV1 volatilityOracle = IAlgebraBasePluginV1(address(new BeaconProxy(address(this), '')));
-    volatilityOracle.initialize(pool, algebraFactory, address(this));
+    volatilityOracle.initialize(defaultBlastGovernor, pool, algebraFactory, address(this));
     volatilityOracle.changeFeeConfiguration(defaultFeeConfiguration);
     pluginByPool[pool] = address(volatilityOracle);
     return address(volatilityOracle);
+  }
+
+  /// @inheritdoc IBasePluginV1Factory
+  function setDefaultBlastGovernor(address defaultBlastGovernor_) external override onlyAdministrator {
+    defaultBlastGovernor = defaultBlastGovernor_;
+    emit DefaultBlastGovernor(defaultBlastGovernor_);
   }
 
   /// @inheritdoc IBasePluginV1Factory
