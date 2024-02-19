@@ -6,6 +6,8 @@ import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/plugin/IAlgebraPlugin.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/pool/IAlgebraPoolState.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraPool.sol';
+import '@cryptoalgebra/integral-core/contracts/BlastGovernorSetup.sol';
+
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
 import './base/TimestampUpgradeable.sol';
@@ -19,7 +21,7 @@ import './types/AlgebraFeeConfigurationU144.sol';
 
 /// @title Algebra Integral 1.0 default plugin
 /// @notice This contract stores timepoints and calculates adaptive fee and statistical averages
-contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializable, TimestampUpgradeable {
+contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializable, TimestampUpgradeable, BlastGovernorSetup {
   using Plugins for uint8;
   using AlgebraFeeConfigurationU144Lib for AlgebraFeeConfiguration;
 
@@ -68,7 +70,9 @@ contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializa
   }
 
   /// @inheritdoc IAlgebraBasePluginV1
-  function initialize(address _pool, address _factory, address _pluginFactory) external override initializer {
+  function initialize(address _governor, address _pool, address _factory, address _pluginFactory) external override initializer {
+    __BlastGovernorSetup_init(_governor);
+
     (factory, pool, pluginFactory) = (_factory, _pool, _pluginFactory);
   }
 

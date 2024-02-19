@@ -52,6 +52,10 @@ interface IAlgebraFactory {
   /// @param mode_ The new pools creation mode
   event PublicPoolCreationMode(bool mode_);
 
+  /// @dev Emitted when set new default blast governor address is changed.
+  /// @param defaultBlastGovernor The new default blast governor address
+  event DefaultBlastGovernor(address indexed defaultBlastGovernor);
+
   /// @notice role that can change communityFee and tickspacing in pools
   /// @return The hash corresponding to this role
   function POOLS_ADMINISTRATOR_ROLE() external view returns (bytes32);
@@ -70,6 +74,8 @@ interface IAlgebraFactory {
   /// @dev Can be changed by the current owner via transferOwnership(address newOwner)
   /// @return The address of the factory owner
   function owner() external view returns (address);
+
+  function defaultBlastGovernor() external view returns (address);
 
   /// @notice Returns the current poolDeployerAddress
   /// @return The address of the poolDeployer
@@ -171,4 +177,8 @@ interface IAlgebraFactory {
 
   /// @notice Stops process of renounceOwnership and removes timer.
   function stopRenounceOwnership() external;
+
+  /// @dev updates default blast governor address on the factory
+  /// @param defaultBlastGovernor_ The new defautl blast governor address
+  function setDefaultBlastGovernor(address defaultBlastGovernor_) external;
 }

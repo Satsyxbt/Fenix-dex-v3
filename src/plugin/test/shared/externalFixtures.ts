@@ -53,7 +53,7 @@ interface MockPoolDeployerFixture extends TokensFixture {
 export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixture> = async () => {
   const { token0, token1 } = await tokensFixture();
 
-  const [deployer] = await ethers.getSigners();
+  const [deployer, governor] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
@@ -61,10 +61,10 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
   });
 
   const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
-  const factory = (await factoryFactory.deploy(poolDeployerAddress)) as any as AlgebraFactory;
+  const factory = (await factoryFactory.deploy(governor, poolDeployerAddress)) as any as AlgebraFactory;
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);
-  const poolDeployer = (await poolDeployerFactory.deploy()) as any as MockTimeAlgebraPoolDeployer;
+  const poolDeployer = (await poolDeployerFactory.deploy(governor)) as any as MockTimeAlgebraPoolDeployer;
 
   const calleeContractFactory = await ethers.getContractFactory(TEST_CALLEE_ABI, TEST_CALLEE_BYTECODE);
   const swapTargetCallee = (await calleeContractFactory.deploy()) as any as TestAlgebraCallee;
@@ -78,7 +78,7 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
     token1,
     factory,
     createPool: async (firstToken = token0, secondToken = token1) => {
-      await poolDeployer.deployMock(factory, firstToken, secondToken);
+      await poolDeployer.deployMock(governor.address, factory, firstToken, secondToken);
 
       const sortedTokens =
         BigInt(await firstToken.getAddress()) < BigInt(await secondToken.getAddress())

@@ -5,7 +5,7 @@ pragma abicoder v1;
 import './interfaces/IAlgebraPoolDeployer.sol';
 
 import './AlgebraPool.sol';
-import './BlastGovernorSetup.sol';
+import './base/BlastGovernorSetup.sol';
 
 /// @title Algebra pool deployer
 /// @notice Is used by AlgebraFactory to deploy pools

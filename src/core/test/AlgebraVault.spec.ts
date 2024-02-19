@@ -1,8 +1,15 @@
 import { Wallet, getCreateAddress, ZeroAddress } from 'ethers';
 import { ethers } from 'hardhat';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
-import { AlgebraFactory, AlgebraPoolDeployer, AlgebraCommunityVault, TestERC20 } from '../typechain';
+import {
+  AlgebraFactory,
+  AlgebraPoolDeployer,
+  AlgebraCommunityVault,
+  TestERC20,
+  BlastMock__factory,
+} from '../typechain';
 import { expect } from './shared/expect';
+import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 describe('AlgebraCommunityVault', () => {
   let wallet: Wallet, other: Wallet, third: Wallet;
@@ -17,6 +24,8 @@ describe('AlgebraCommunityVault', () => {
   const AMOUNT = 10n ** 18n;
 
   const fixture = async () => {
+    await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+
     const [deployer, governor] = await ethers.getSigners();
     // precompute
     const poolDeployerAddress = getCreateAddress({

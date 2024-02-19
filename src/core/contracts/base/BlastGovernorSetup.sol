@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.20;
 
-import {IBlast} from './interfaces/IBlast.sol';
+import {IBlast} from '../interfaces/IBlast.sol';
 
 /**
  * @title Blast Governor Setup

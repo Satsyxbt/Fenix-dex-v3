@@ -9,7 +9,7 @@ import './interfaces/vault/IAlgebraVaultFactory.sol';
 import './interfaces/plugin/IAlgebraPluginFactory.sol';
 
 import './AlgebraCommunityVault.sol';
-import './BlastGovernorSetup.sol';
+import './base/BlastGovernorSetup.sol';
 
 import '@openzeppelin/contracts/access/Ownable2Step.sol';
 import '@openzeppelin/contracts/access/AccessControlEnumerable.sol';
@@ -27,7 +27,8 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
   /// @inheritdoc IAlgebraFactory
   address public immutable override poolDeployer;
 
-  address public defaultBlastGovernor;
+  /// @inheritdoc IAlgebraFactory
+  address public override defaultBlastGovernor;
 
   ///@inheritdoc IAlgebraFactory
   bool public override isPublicPoolCreationMode;
@@ -125,6 +126,12 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
     if (address(vaultFactory) != address(0)) {
       vaultFactory.createVaultForPool(pool);
     }
+  }
+
+  /// @inheritdoc IAlgebraFactory
+  function setDefaultBlastGovernor(address defaultBlastGovernor_) external override onlyOwner {
+    defaultBlastGovernor = defaultBlastGovernor_;
+    emit DefaultBlastGovernor(defaultBlastGovernor_);
   }
 
   /// @inheritdoc IAlgebraFactory

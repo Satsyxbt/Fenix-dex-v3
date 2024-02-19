@@ -16,7 +16,7 @@ import '../libraries/Constants.sol';
 import '../libraries/Plugins.sol';
 
 import './common/Timestamp.sol';
-import '../BlastGovernorSetup.sol';
+import './BlastGovernorSetup.sol';
 
 /// @title Algebra pool base abstract contract
 /// @notice Contains state variables, immutables and common internal functions

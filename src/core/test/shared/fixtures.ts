@@ -36,7 +36,11 @@ async function factoryFixture(): Promise<FactoryFixture> {
   const poolDeployer = (await poolDeployerFactory.deploy(governor.address, factory)) as any as AlgebraPoolDeployer;
 
   const vaultFactory = await ethers.getContractFactory('AlgebraCommunityVault');
-  const vault = (await vaultFactory.deploy(factory, deployer.address)) as any as AlgebraCommunityVault;
+  const vault = (await vaultFactory.deploy(
+    governor.address,
+    factory,
+    deployer.address
+  )) as any as AlgebraCommunityVault;
 
   const vaultFactoryStubFactory = await ethers.getContractFactory('AlgebraVaultFactoryStub');
   const vaultFactoryStub = await vaultFactoryStubFactory.deploy(governor.address, vault);
@@ -104,9 +108,11 @@ export const poolFixture: Fixture<PoolFixture> = async function (): Promise<Pool
     swapTargetCallee,
     swapTargetRouter,
     createPool: async (firstToken = token0, secondToken = token1) => {
+      const [deployer, governor] = await ethers.getSigners();
+
       const mockTimePoolDeployer =
         (await MockTimeAlgebraPoolDeployerFactory.deploy()) as any as MockTimeAlgebraPoolDeployer;
-      await mockTimePoolDeployer.deployMock(factory, firstToken, secondToken);
+      await mockTimePoolDeployer.deployMock(governor.address, factory, firstToken, secondToken);
 
       const firstAddress = await firstToken.getAddress();
       const secondAddress = await secondToken.getAddress();
