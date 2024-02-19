@@ -44,10 +44,11 @@ describe('V3Migrator', () => {
     await wnative.deposit({ value: 10000 });
     await wnative.approve(nft, MaxUint256);
 
+    const [dep] = await ethers.getSigners();
     // deploy the migrator
     const migrator = (await (
       await ethers.getContractFactory('V3Migrator')
-    ).deploy(factory, wnative, nft, await factory.poolDeployer())) as any as V3Migrator;
+    ).deploy(dep.address, factory, wnative, nft, await factory.poolDeployer())) as any as V3Migrator;
 
     return {
       factoryV2,

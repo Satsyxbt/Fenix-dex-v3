@@ -13,13 +13,13 @@ describe('unit/Deployment', () => {
 
   it('deploys and has an address', async () => {
     const farmingFactory = await ethers.getContractFactory('AlgebraEternalFarming');
-    const farming = (await farmingFactory.deploy(context.deployer, context.nft)) as any as AlgebraEternalFarming;
+    const farming = (await farmingFactory.deploy(context.deployer, context.deployer, context.nft)) as any as AlgebraEternalFarming;
     expect(await farming.getAddress()).to.be.a.string;
   });
 
   it('sets immutable variables', async () => {
     const farmingFactory = await ethers.getContractFactory('AlgebraEternalFarming');
-    const farming = (await farmingFactory.deploy(context.deployer, context.nft)) as any as AlgebraEternalFarming;
+    const farming = (await farmingFactory.deploy(context.deployer, context.deployer, context.nft)) as any as AlgebraEternalFarming;
 
     expect(await farming.nonfungiblePositionManager()).to.equal(await context.nft.getAddress());
   });
