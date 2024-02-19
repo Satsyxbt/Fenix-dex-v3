@@ -3,7 +3,7 @@ pragma solidity =0.8.20;
 
 import '@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
-import '@cryptoalgebra/integral-core/contracts/BlastGovernorSetup.sol';
+import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
 
 import './interfaces/IBasePluginV1Factory.sol';
 import './libraries/AdaptiveFee.sol';

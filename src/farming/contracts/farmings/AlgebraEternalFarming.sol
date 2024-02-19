@@ -10,6 +10,7 @@ import '@cryptoalgebra/integral-core/contracts/libraries/FullMath.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/Constants.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/TickMath.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/LowGasSafeMath.sol';
+import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
 
 import '@cryptoalgebra/integral-periphery/contracts/libraries/TransferHelper.sol';
 
@@ -25,7 +26,7 @@ import './EternalVirtualPool.sol';
 
 /// @title Algebra Integral 1.0  eternal (v2-like) farming
 /// @notice Manages rewards and virtual pools
-contract AlgebraEternalFarming is IAlgebraEternalFarming {
+contract AlgebraEternalFarming is IAlgebraEternalFarming, BlastGovernorSetup {
   using SafeCast for int256;
   using LowGasSafeMath for uint256;
   using LowGasSafeMath for uint128;
@@ -61,9 +62,14 @@ contract AlgebraEternalFarming is IAlgebraEternalFarming {
   IAlgebraFactory private immutable factory;
 
   /// @inheritdoc IAlgebraEternalFarming
+  address public override defaultBlastGovernor;
+
+  /// @inheritdoc IAlgebraEternalFarming
   address public override farmingCenter;
+
   /// @inheritdoc IAlgebraEternalFarming
   bool public override isEmergencyWithdrawActivated;
+
   // reentrancy lock
   bool private unlocked = true;
 
@@ -99,7 +105,10 @@ contract AlgebraEternalFarming is IAlgebraEternalFarming {
 
   /// @param _deployer pool deployer contract address
   /// @param _nonfungiblePositionManager the NFT position manager contract address
-  constructor(IAlgebraPoolDeployer _deployer, INonfungiblePositionManager _nonfungiblePositionManager) {
+  constructor(address _blastGovernor, IAlgebraPoolDeployer _deployer, INonfungiblePositionManager _nonfungiblePositionManager) {
+    __BlastGovernorSetup_init(_blastGovernor);
+    defaultBlastGovernor = _blastGovernor;
+
     (deployer, nonfungiblePositionManager) = (_deployer, _nonfungiblePositionManager);
     factory = IAlgebraFactory(_nonfungiblePositionManager.factory());
   }
@@ -127,7 +136,7 @@ contract AlgebraEternalFarming is IAlgebraEternalFarming {
     if (connectedPlugin != plugin || connectedPlugin == address(0)) revert pluginNotConnected();
     if (IFarmingPlugin(connectedPlugin).incentive() != address(0)) revert anotherFarmingIsActive();
 
-    virtualPool = address(new EternalVirtualPool(address(this), connectedPlugin));
+    virtualPool = address(new EternalVirtualPool(defaultBlastGovernor, address(this), connectedPlugin));
     IFarmingCenter(farmingCenter).connectVirtualPoolToPlugin(virtualPool, IFarmingPlugin(connectedPlugin));
 
     key.nonce = numOfIncentives++;
@@ -207,6 +216,12 @@ contract AlgebraEternalFarming is IAlgebraEternalFarming {
     require(_farmingCenter != farmingCenter);
     farmingCenter = _farmingCenter;
     emit FarmingCenter(_farmingCenter);
+  }
+
+  /// @inheritdoc IAlgebraEternalFarming
+  function setDefaultBlastGovernor(address defaultBlastGovernor_) external override onlyAdministrator {
+    defaultBlastGovernor = defaultBlastGovernor_;
+    emit DefaultBlastGovernor(defaultBlastGovernor_);
   }
 
   /// @inheritdoc IAlgebraEternalFarming

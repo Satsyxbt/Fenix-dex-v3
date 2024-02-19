@@ -6,7 +6,7 @@ import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/plugin/IAlgebraPlugin.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/pool/IAlgebraPoolState.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraPool.sol';
-import '@cryptoalgebra/integral-core/contracts/BlastGovernorSetup.sol';
+import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
@@ -70,8 +70,8 @@ contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializa
   }
 
   /// @inheritdoc IAlgebraBasePluginV1
-  function initialize(address _governor, address _pool, address _factory, address _pluginFactory) external override initializer {
-    __BlastGovernorSetup_init(_governor);
+  function initialize(address _blastGovernor, address _pool, address _factory, address _pluginFactory) external override initializer {
+    __BlastGovernorSetup_init(_blastGovernor);
 
     (factory, pool, pluginFactory) = (_factory, _pool, _pluginFactory);
   }

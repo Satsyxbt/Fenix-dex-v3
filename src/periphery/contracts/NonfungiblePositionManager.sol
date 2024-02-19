@@ -5,6 +5,7 @@ import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraPool.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/Constants.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/FullMath.sol';
+import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
 
 import './interfaces/INonfungiblePositionManager.sol';
 import './interfaces/INonfungibleTokenPositionDescriptor.sol';
@@ -31,7 +32,8 @@ contract NonfungiblePositionManager is
     PoolInitializer,
     LiquidityManagement,
     PeripheryValidation,
-    SelfPermit
+    SelfPermit,
+    BlastGovernorSetup
 {
     using PoolInteraction for IAlgebraPool;
 
@@ -85,6 +87,7 @@ contract NonfungiblePositionManager is
     }
 
     constructor(
+        address _blastGovernor,
         address _factory,
         address _WNativeToken,
         address _tokenDescriptor_,
@@ -93,6 +96,7 @@ contract NonfungiblePositionManager is
         ERC721Permit('Fenix Positions NFT-V2', 'FNX-POS', '2')
         PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer)
     {
+        __BlastGovernorSetup_init(_blastGovernor);
         _tokenDescriptor = _tokenDescriptor_;
     }
 
