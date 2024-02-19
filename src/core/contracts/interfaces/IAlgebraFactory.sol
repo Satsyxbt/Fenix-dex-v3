@@ -75,6 +75,8 @@ interface IAlgebraFactory {
   /// @return The address of the factory owner
   function owner() external view returns (address);
 
+  /// @notice Returns the current default blast governor
+  /// @return The address of the default blast governor
   function defaultBlastGovernor() external view returns (address);
 
   /// @notice Returns the current poolDeployerAddress
