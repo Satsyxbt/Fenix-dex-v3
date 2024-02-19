@@ -71,7 +71,12 @@ contract PoolMockEchidna is AlgebraPool {
     return true;
   }
 
-  function _getDeployParameters() internal view override returns (address plugin, address factory, address token0, address token1) {
+  function _getDeployParameters()
+    internal
+    view
+    override
+    returns (address blastGovernor, address plugin, address factory, address token0, address token1)
+  {
     plugin = address(0);
     factory = address(this);
     token0 = address(1);

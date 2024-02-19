@@ -3,14 +3,17 @@ pragma solidity =0.8.20;
 pragma abicoder v1;
 
 import './interfaces/vault/IAlgebraVaultFactory.sol';
+import './BlastGovernorSetup.sol';
 
 /// @title Algebra vault factory stub
 /// @notice This contract is used to set AlgebraCommunityVault as communityVault in new pools
-contract AlgebraVaultFactoryStub is IAlgebraVaultFactory {
+contract AlgebraVaultFactoryStub is IAlgebraVaultFactory, BlastGovernorSetup {
   /// @notice the address of AlgebraCommunityVault
   address public immutable defaultAlgebraCommunityVault;
 
-  constructor(address _algebraCommunityVault) {
+  constructor(address _blastGovernor, address _algebraCommunityVault) {
+    __BlastGovernorSetup_init(_blastGovernor);
+
     require(_algebraCommunityVault != address(0));
     defaultAlgebraCommunityVault = _algebraCommunityVault;
   }

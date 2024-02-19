@@ -9,6 +9,7 @@ import './interfaces/vault/IAlgebraVaultFactory.sol';
 import './interfaces/plugin/IAlgebraPluginFactory.sol';
 
 import './AlgebraCommunityVault.sol';
+import './BlastGovernorSetup.sol';
 
 import '@openzeppelin/contracts/access/Ownable2Step.sol';
 import '@openzeppelin/contracts/access/AccessControlEnumerable.sol';
@@ -16,7 +17,7 @@ import '@openzeppelin/contracts/access/AccessControlEnumerable.sol';
 /// @title Algebra factory
 /// @notice Is used to deploy pools and its plugins
 /// @dev Version: Algebra Integral 1.0
-contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerable {
+contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerable, BlastGovernorSetup {
   /// @inheritdoc IAlgebraFactory
   bytes32 public constant override POOLS_ADMINISTRATOR_ROLE = keccak256('POOLS_ADMINISTRATOR'); // it`s here for the public visibility of the value
 
@@ -25,6 +26,8 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
 
   /// @inheritdoc IAlgebraFactory
   address public immutable override poolDeployer;
+
+  address public defaultBlastGovernor;
 
   ///@inheritdoc IAlgebraFactory
   bool public override isPublicPoolCreationMode;
@@ -55,10 +58,14 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
 
   /// @inheritdoc IAlgebraFactory
   /// @dev keccak256 of AlgebraPool init bytecode. Used to compute pool address deterministically
-  bytes32 public constant POOL_INIT_CODE_HASH = 0xf96d2474815c32e070cd63233f06af5413efc5dcb430aee4ff18cc29007c562d;
+  bytes32 public constant POOL_INIT_CODE_HASH = 0xef889e0bfa6cbfce7974974763cbcab8c4f811bb2e70bb4182465fb377c51f81;
 
-  constructor(address _poolDeployer) {
+  constructor(address _blastGovernor, address _poolDeployer) {
+    __BlastGovernorSetup_init(_blastGovernor);
+
     require(_poolDeployer != address(0));
+
+    defaultBlastGovernor = _blastGovernor;
     poolDeployer = _poolDeployer;
     defaultTickspacing = Constants.INIT_DEFAULT_TICK_SPACING;
     defaultFee = Constants.INIT_DEFAULT_FEE;
@@ -109,7 +116,7 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
       defaultPlugin = defaultPluginFactory.createPlugin(computePoolAddress(token0, token1), token0, token1);
     }
 
-    pool = IAlgebraPoolDeployer(poolDeployer).deploy(defaultPlugin, token0, token1);
+    pool = IAlgebraPoolDeployer(poolDeployer).deploy(defaultBlastGovernor, defaultPlugin, token0, token1);
 
     poolByPair[token0][token1] = pool; // to avoid future addresses comparison we are populating the mapping twice
     poolByPair[token1][token0] = pool;

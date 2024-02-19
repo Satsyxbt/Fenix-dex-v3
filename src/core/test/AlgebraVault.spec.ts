@@ -17,7 +17,7 @@ describe('AlgebraCommunityVault', () => {
   const AMOUNT = 10n ** 18n;
 
   const fixture = async () => {
-    const [deployer] = await ethers.getSigners();
+    const [deployer, governor] = await ethers.getSigners();
     // precompute
     const poolDeployerAddress = getCreateAddress({
       from: deployer.address,
@@ -25,16 +25,16 @@ describe('AlgebraCommunityVault', () => {
     });
 
     const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    const _factory = (await factoryFactory.deploy(poolDeployerAddress)) as any as AlgebraFactory;
+    const _factory = (await factoryFactory.deploy(governor.address, poolDeployerAddress)) as any as AlgebraFactory;
 
     const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
-    poolDeployer = (await poolDeployerFactory.deploy(_factory)) as any as AlgebraPoolDeployer;
+    poolDeployer = (await poolDeployerFactory.deploy(governor.address, _factory)) as any as AlgebraPoolDeployer;
 
     const vaultFactory = await ethers.getContractFactory('AlgebraCommunityVault');
-    vault = (await vaultFactory.deploy(_factory, deployer.address)) as any as AlgebraCommunityVault;
+    vault = (await vaultFactory.deploy(governor.address, _factory, deployer.address)) as any as AlgebraCommunityVault;
 
     const vaultFactoryStubFactory = await ethers.getContractFactory('AlgebraVaultFactoryStub');
-    const vaultFactoryStub = await vaultFactoryStubFactory.deploy(vault);
+    const vaultFactoryStub = await vaultFactoryStubFactory.deploy(governor.address, vault);
 
     await _factory.setVaultFactory(vaultFactoryStub);
 
