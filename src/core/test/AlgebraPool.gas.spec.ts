@@ -30,11 +30,11 @@ describe('AlgebraPool gas tests [ @skip-on-coverage ]', () => {
 
   describe('#setFee', () => {
     let pool: AlgebraPool;
-    beforeEach('load fixture', async() => {
+    beforeEach('load fixture', async () => {
       const fix = await poolFixture();
       pool = await fix.createPool();
       await pool.initialize(encodePriceSqrt(100001, 100000));
-    }) 
+    });
 
     it('by owner', async () => {
       await snapshotGasCost(pool.setFee(220));
@@ -42,7 +42,7 @@ describe('AlgebraPool gas tests [ @skip-on-coverage ]', () => {
 
     it('by plugin', async () => {
       await pool.setPlugin(other.address);
-      await pool.setPluginConfig(2**7);
+      await pool.setPluginConfig(2 ** 7);
       await snapshotGasCost(pool.connect(other).setFee(220));
     });
   });
@@ -120,7 +120,7 @@ describe('AlgebraPool gas tests [ @skip-on-coverage ]', () => {
           await snapshotGasCost(swapExact1For0(2000, wallet.address));
           expect((await pool.globalState()).tick).to.eq(startingTick + 1);
         });
-      })
+      });
 
       describe('#swapExact0For1', () => {
         it('first swap in block with no tick movement', async () => {
@@ -380,9 +380,9 @@ describe('AlgebraPool gas tests [ @skip-on-coverage ]', () => {
 
         it('best case', async () => {
           await mint(wallet.address, bottomTick, topTick, expandTo18Decimals(1));
-          await swapExact0For1(expandTo18Decimals(1)/ 100n, wallet.address);
+          await swapExact0For1(expandTo18Decimals(1) / 100n, wallet.address);
           await pool.burn(bottomTick, topTick, 0, '0x');
-          await swapExact0For1(expandTo18Decimals(1)/ 100n, wallet.address);
+          await swapExact0For1(expandTo18Decimals(1) / 100n, wallet.address);
           await snapshotGasCost(pool.burn(bottomTick, topTick, 0, '0x'));
         });
       });
@@ -393,15 +393,15 @@ describe('AlgebraPool gas tests [ @skip-on-coverage ]', () => {
 
         it('close to worst case', async () => {
           await mint(wallet.address, bottomTick, topTick, expandTo18Decimals(1));
-          await swapExact0For1(expandTo18Decimals(1)/ 100n, wallet.address);
+          await swapExact0For1(expandTo18Decimals(1) / 100n, wallet.address);
           await pool.burn(bottomTick, topTick, 0, '0x'); // poke to accumulate fees
           await snapshotGasCost(pool.collect(wallet.address, bottomTick, topTick, MaxUint128, MaxUint128));
         });
 
         it('close to worst case, two tokens', async () => {
           await mint(wallet.address, bottomTick, topTick, expandTo18Decimals(1));
-          await swapExact0For1(expandTo18Decimals(1)/ 100n, wallet.address);
-          await swapExact1For0(expandTo18Decimals(1)/ 100n, wallet.address);
+          await swapExact0For1(expandTo18Decimals(1) / 100n, wallet.address);
+          await swapExact1For0(expandTo18Decimals(1) / 100n, wallet.address);
           await pool.burn(bottomTick, topTick, 0, '0x'); // poke to accumulate fees
           await snapshotGasCost(pool.collect(wallet.address, bottomTick, topTick, MaxUint128, MaxUint128));
         });

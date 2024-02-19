@@ -22,9 +22,11 @@ import {
   MockTimeAlgebraPool,
   AlgebraFactory,
   TestERC20,
+  BlastMock__factory,
 } from '@cryptoalgebra/integral-core/typechain';
 import { getCreateAddress } from 'ethers';
 import { ZERO_ADDRESS } from './fixtures';
+import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 interface TokensFixture {
   token0: TestERC20;
@@ -51,9 +53,11 @@ interface MockPoolDeployerFixture extends TokensFixture {
   createPool(firstToken?: TestERC20, secondToken?: TestERC20): Promise<MockTimeAlgebraPool>;
 }
 export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixture> = async () => {
+  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+
   const { token0, token1 } = await tokensFixture();
 
-  const [deployer] = await ethers.getSigners();
+  const [deployer, governor] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
@@ -61,7 +65,7 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
   });
 
   const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
-  const factory = (await factoryFactory.deploy(poolDeployerAddress)) as any as AlgebraFactory;
+  const factory = (await factoryFactory.deploy(governor.address, poolDeployerAddress)) as any as AlgebraFactory;
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);
   const poolDeployer = (await poolDeployerFactory.deploy()) as any as MockTimeAlgebraPoolDeployer;
@@ -78,7 +82,7 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
     token1,
     factory,
     createPool: async (firstToken = token0, secondToken = token1) => {
-      await poolDeployer.deployMock(factory, firstToken, secondToken);
+      await poolDeployer.deployMock(governor.address, factory, firstToken, secondToken);
 
       const sortedTokens =
         BigInt(await firstToken.getAddress()) < BigInt(await secondToken.getAddress())

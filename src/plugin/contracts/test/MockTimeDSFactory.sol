@@ -17,6 +17,9 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
 
   address public immutable override algebraFactory;
 
+  /// @inheritdoc IBasePluginV1Factory
+  address public defaultBlastGovernor;
+
   /// @dev values of constants for sigmoids in fee calculation formula
   AlgebraFeeConfiguration public override defaultFeeConfiguration;
 
@@ -29,7 +32,9 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
   /// @inheritdoc IBeacon
   address public override implementation;
 
-  constructor(address _algebraFactory, address _basePluginV1Implementation) {
+  constructor(address _blastGovernor, address _algebraFactory, address _basePluginV1Implementation) {
+    defaultBlastGovernor = _blastGovernor;
+
     algebraFactory = _algebraFactory;
     defaultFeeConfiguration = AdaptiveFee.initialFeeConfiguration();
 
@@ -55,9 +60,15 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
     pluginByPool[pool] = plugin;
   }
 
+  /// @inheritdoc IBasePluginV1Factory
+  function setDefaultBlastGovernor(address defaultBlastGovernor_) external override {
+    defaultBlastGovernor = defaultBlastGovernor_;
+    emit DefaultBlastGovernor(defaultBlastGovernor_);
+  }
+
   function _createPlugin(address pool) internal returns (address) {
     MockTimeAlgebraBasePluginV1 volatilityOracle = MockTimeAlgebraBasePluginV1(address(new BeaconProxy(address(this), '')));
-    volatilityOracle.initialize(pool, algebraFactory, address(this));
+    volatilityOracle.initialize(defaultBlastGovernor, pool, algebraFactory, address(this));
     volatilityOracle.changeFeeConfiguration(defaultFeeConfiguration);
     pluginByPool[pool] = address(volatilityOracle);
     return address(volatilityOracle);
