@@ -96,7 +96,7 @@ Returns the pool address for a given pair of tokens, or address 0 if it does not
 
 ### POOL_INIT_CODE_HASH
 ```solidity
-bytes32 constant POOL_INIT_CODE_HASH = 0x177d5fbf994f4d130c008797563306f1a168dc689f81b2fa23b4396931014d91
+bytes32 constant POOL_INIT_CODE_HASH = 0xcc4eb5f3a0bb2dc7ae4e21f0fe700baccca6b5bdbe62261bd22ab00de12e2e86
 ```
 **Selector**: `0xdc6fd8ab`
 

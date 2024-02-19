@@ -68,7 +68,7 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
   const factory = (await factoryFactory.deploy(governor.address, poolDeployerAddress)) as any as AlgebraFactory;
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);
-  const poolDeployer = (await poolDeployerFactory.deploy(governor.address)) as any as MockTimeAlgebraPoolDeployer;
+  const poolDeployer = (await poolDeployerFactory.deploy()) as any as MockTimeAlgebraPoolDeployer;
 
   const calleeContractFactory = await ethers.getContractFactory(TEST_CALLEE_ABI, TEST_CALLEE_BYTECODE);
   const swapTargetCallee = (await calleeContractFactory.deploy()) as any as TestAlgebraCallee;
