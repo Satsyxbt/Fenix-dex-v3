@@ -11,10 +11,13 @@ export const getMinTick = (tickSpacing: number) => Math.ceil(-887272 / tickSpaci
 export const getMaxTick = (tickSpacing: number) => Math.floor(887272 / tickSpacing) * tickSpacing;
 
 export const getMaxLiquidityPerTick = (tickSpacing: number) =>
- (2n ** 128n - 1n) / (BigInt(getMaxTick(tickSpacing) - getMinTick(tickSpacing)) / BigInt(tickSpacing) + 1n);
+  (2n ** 128n - 1n) / (BigInt(getMaxTick(tickSpacing) - getMinTick(tickSpacing)) / BigInt(tickSpacing) + 1n);
 
 export const MIN_SQRT_RATIO = BigInt('4295128739');
 export const MAX_SQRT_RATIO = BigInt('1461446703485210103287273052203988822378723970342');
+export const BLAST_PREDEPLOYED_ADDRESS = '0x4300000000000000000000000000000000000002';
+export const WETH_PREDEPLOYED_ADDRESS = '0x4200000000000000000000000000000000000023';
+export const USDB_PREDEPLOYED_ADDRESS = '0x4200000000000000000000000000000000000022';
 
 export enum FeeAmount {
   LOW = 500,
@@ -29,7 +32,7 @@ export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
 };
 
 export function expandTo18Decimals(n: number): bigint {
-  return BigInt(n) * (10n ** 18n);
+  return BigInt(n) * 10n ** 18n;
 }
 
 export function getCreate2Address(
@@ -52,9 +55,9 @@ export function getCreate2Address(
 }
 
 export function encodeCallback(address: string, paid0?: bigint, paid1?: bigint): string {
-  if(paid0) return AbiCoder.defaultAbiCoder().encode(['address', 'uint256', 'uint256'], [address, paid0, paid1])
-  return AbiCoder.defaultAbiCoder().encode(['address'], [address])
-} 
+  if (paid0) return AbiCoder.defaultAbiCoder().encode(['address', 'uint256', 'uint256'], [address, paid0, paid1]);
+  return AbiCoder.defaultAbiCoder().encode(['address'], [address]);
+}
 
 bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 });
 
@@ -96,7 +99,11 @@ export type FlashFunction = (
   pay0?: BigNumberish,
   pay1?: BigNumberish
 ) => Promise<ContractTransactionResponse>;
-export type AddLimitFunction = (recipient: string, tick: number, amount: BigNumberish) => Promise<ContractTransactionResponse>;
+export type AddLimitFunction = (
+  recipient: string,
+  tick: number,
+  amount: BigNumberish
+) => Promise<ContractTransactionResponse>;
 export type MintFunction = (
   recipient: string,
   bottomTick: BigNumberish,
@@ -217,10 +224,10 @@ export function createPoolFunctions({
   const flash: FlashFunction = async (amount0, amount1, to, pay0?: BigNumberish, pay1?: BigNumberish) => {
     const fee = 100;
     if (typeof pay0 === 'undefined') {
-      pay0 = (BigInt(amount0) * BigInt(fee) + BigInt(1e6 - 1)) / BigInt(1e6) + BigInt(amount0)
+      pay0 = (BigInt(amount0) * BigInt(fee) + BigInt(1e6 - 1)) / BigInt(1e6) + BigInt(amount0);
     }
     if (typeof pay1 === 'undefined') {
-      pay1 = (BigInt(amount1) * BigInt(fee) + BigInt(1e6 - 1)) / BigInt(1e6) + BigInt(amount1)
+      pay1 = (BigInt(amount1) * BigInt(fee) + BigInt(1e6 - 1)) / BigInt(1e6) + BigInt(amount1);
     }
     return swapTarget.flash(pool, typeof to === 'string' ? to : to.address, amount0, amount1, pay0, pay1);
   };
@@ -255,14 +262,20 @@ export function createMultiPoolFunctions({
   poolInput: MockTimeAlgebraPool;
   poolOutput: MockTimeAlgebraPool;
 }): MultiPoolFunctions {
-  async function swapForExact0Multi(amountOut: BigNumberish, to: Wallet | string): Promise<ContractTransactionResponse> {
+  async function swapForExact0Multi(
+    amountOut: BigNumberish,
+    to: Wallet | string
+  ): Promise<ContractTransactionResponse> {
     const method = swapTarget.swapForExact0Multi;
     await inputToken.approve(swapTarget, MaxUint256);
     const toAddress = typeof to === 'string' ? to : to.address;
     return method(toAddress, poolInput, poolOutput, amountOut);
   }
 
-  async function swapForExact1Multi(amountOut: BigNumberish, to: Wallet | string): Promise<ContractTransactionResponse> {
+  async function swapForExact1Multi(
+    amountOut: BigNumberish,
+    to: Wallet | string
+  ): Promise<ContractTransactionResponse> {
     const method = swapTarget.swapForExact1Multi;
     await inputToken.approve(swapTarget, MaxUint256);
     const toAddress = typeof to === 'string' ? to : to.address;
