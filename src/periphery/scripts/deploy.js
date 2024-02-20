@@ -49,6 +49,7 @@ async function main() {
   );
 
   await QuoterV2.waitForDeployment();
+  deploysData.quoterV2 = QuoterV2.target;
 
   console.log('QuoterV2 deployed to:', QuoterV2.target);
 
@@ -71,6 +72,8 @@ async function main() {
   const NFTDescriptor = await NFTDescriptorFactory.deploy();
 
   await NFTDescriptor.waitForDeployment();
+  deploysData.NFTDescriptor = NFTDescriptor.target;
+
   // arg1 wnative address
   const NonfungibleTokenPositionDescriptorFactory = await hre.ethers.getContractFactory(
     'NonfungibleTokenPositionDescriptor',
@@ -87,7 +90,7 @@ async function main() {
   );
 
   await NonfungibleTokenPositionDescriptor.waitForDeployment();
-
+  deploysData.NonfungibleTokenPositionDescriptor = NonfungibleTokenPositionDescriptor.target;
   console.log('NonfungibleTokenPositionDescriptor deployed to:', NonfungibleTokenPositionDescriptor.target);
 
   //console.log('NFTDescriptor deployed to:', NFTDescriptor.target)
@@ -133,6 +136,7 @@ async function main() {
   const AlgebraInterfaceMulticall = await AlgebraInterfaceMulticallFactory.deploy(deployer.address);
 
   await AlgebraInterfaceMulticall.waitForDeployment();
+  deploysData.AlgebraInterfaceMulticall = AlgebraInterfaceMulticall.target;
 
   console.log('AlgebraInterfaceMulticall deployed to:', AlgebraInterfaceMulticall.target);
   // console.log('V3Migrator deployed to:', V3Migrator.target);
