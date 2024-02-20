@@ -2435,6 +2435,20 @@ describe('AlgebraPool', () => {
   });
 
   describe('PermissionedActions', async () => {
+    describe('#claim', async () => {
+      it('fails if caller is not factory administrator', async () => {
+        await expect(pool.connect(other).claim(other.address, other.address, 1)).to.be.revertedWithCustomError(
+          pool,
+          'notAllowed'
+        );
+      });
+    });
+
+    describe('#configure', async () => {
+      it('fails if caller is not factory administrator', async () => {
+        await expect(pool.connect(other).configure(other.address, 1)).to.be.revertedWithCustomError(pool, 'notAllowed');
+      });
+    });
     describe('#setCommunityFee', () => {
       beforeEach('initialize the pool', async () => {
         await pool.initialize(encodePriceSqrt(1, 1));

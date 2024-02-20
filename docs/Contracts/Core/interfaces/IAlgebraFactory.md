@@ -111,6 +111,44 @@ Emitted when the defaultPluginFactory address is changed
 | ---- | ---- | ----------- |
 | defaultPluginFactoryAddress | address | The new defaultPluginFactory address |
 
+### VaultFactory
+
+```solidity
+event VaultFactory(address newVaultFactory)
+```
+
+Emitted when the vaultFactory address is changed
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| newVaultFactory | address | The new vaultFactory address |
+
+### PublicPoolCreationMode
+
+```solidity
+event PublicPoolCreationMode(bool mode_)
+```
+
+Emitted when the pools creation mode is changed
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| mode_ | bool | The new pools creation mode |
+
+### DefaultBlastGovernor
+
+```solidity
+event DefaultBlastGovernor(address defaultBlastGovernor)
+```
+
+
+
+*Developer note: Emitted when set new default blast governor address is changed.*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor | address | The new default blast governor address |
+
 
 ## Functions
 ### POOLS_ADMINISTRATOR_ROLE
@@ -121,6 +159,21 @@ function POOLS_ADMINISTRATOR_ROLE() external view returns (bytes32)
 **Selector**: `0xb500a48b`
 
 role that can change communityFee and tickspacing in pools
+
+**Returns:**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | bytes32 | The hash corresponding to this role |
+
+### POOLS_CREATOR_ROLE
+
+```solidity
+function POOLS_CREATOR_ROLE() external view returns (bytes32)
+```
+**Selector**: `0x6e1433dc`
+
+role that can create pools when public pool creation is disabled
 
 **Returns:**
 
@@ -165,6 +218,21 @@ Returns the current owner of the factory
 | ---- | ---- | ----------- |
 | [0] | address | The address of the factory owner |
 
+### defaultBlastGovernor
+
+```solidity
+function defaultBlastGovernor() external view returns (address)
+```
+**Selector**: `0xfb6cd276`
+
+Returns the current default blast governor
+
+**Returns:**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | address | The address of the default blast governor |
+
 ### poolDeployer
 
 ```solidity
@@ -180,20 +248,20 @@ Returns the current poolDeployerAddress
 | ---- | ---- | ----------- |
 | [0] | address | The address of the poolDeployer |
 
-### communityVault
+### isPublicPoolCreationMode
 
 ```solidity
-function communityVault() external view returns (address)
+function isPublicPoolCreationMode() external view returns (bool)
 ```
-**Selector**: `0x53e97868`
+**Selector**: `0x63d21273`
 
-Returns the current communityVaultAddress
+Returns the status of enable public pool creation mode
 
 **Returns:**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | address | The address to which community fees are transferred |
+| [0] | bool | bool Whether the public creation mode is enable or not |
 
 ### defaultCommunityFee
 
@@ -249,20 +317,43 @@ function defaultPluginFactory() external view returns (contract IAlgebraPluginFa
 
 Return the current pluginFactory address
 
+*Developer note: This contract is used to automatically set a plugin address in new liquidity pools*
+
 **Returns:**
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | [0] | contract IAlgebraPluginFactory | Algebra plugin factory |
 
+### vaultFactory
+
+```solidity
+function vaultFactory() external view returns (contract IAlgebraVaultFactory)
+```
+**Selector**: `0xd8a06f73`
+
+Return the current vaultFactory address
+
+*Developer note: This contract is used to automatically set a vault address in new liquidity pools*
+
+**Returns:**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | contract IAlgebraVaultFactory | Algebra vault factory |
+
 ### defaultConfigurationForPool
 
 ```solidity
-function defaultConfigurationForPool() external view returns (uint16 communityFee, int24 tickSpacing, uint16 fee)
+function defaultConfigurationForPool(address pool) external view returns (uint16 communityFee, int24 tickSpacing, uint16 fee, address communityFeeVault)
 ```
-**Selector**: `0x25b355d6`
+**Selector**: `0x82b13d8d`
 
-Returns the default communityFee and tickspacing
+Returns the default communityFee, tickspacing, fee and communityFeeVault for pool
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| pool | address | the address of liquidity pool |
 
 **Returns:**
 
@@ -271,6 +362,7 @@ Returns the default communityFee and tickspacing
 | communityFee | uint16 | which will be set at the creation of the pool |
 | tickSpacing | int24 | which will be set at the creation of the pool |
 | fee | uint16 | which will be set at the creation of the pool |
+| communityFeeVault | address | the address of communityFeeVault |
 
 ### computePoolAddress
 
@@ -371,6 +463,21 @@ The call will revert if the pool already exists or the token arguments are inval
 | ---- | ---- | ----------- |
 | pool | address | The address of the newly created pool |
 
+### setIsPublicPoolCreationMode
+
+```solidity
+function setIsPublicPoolCreationMode(bool mode_) external
+```
+**Selector**: `0x5d2493ab`
+
+
+
+*Developer note: updates pools creation mode*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| mode_ | bool | the new mode for pools creation proccess |
+
 ### setDefaultCommunityFee
 
 ```solidity
@@ -431,6 +538,21 @@ function setDefaultPluginFactory(address newDefaultPluginFactory) external
 | ---- | ---- | ----------- |
 | newDefaultPluginFactory | address | address of new plugin factory |
 
+### setVaultFactory
+
+```solidity
+function setVaultFactory(address newVaultFactory) external
+```
+**Selector**: `0x3ea7fbdb`
+
+
+
+*Developer note: updates vaultFactory address*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| newVaultFactory | address | address of new vault factory |
+
 ### startRenounceOwnership
 
 ```solidity
@@ -449,4 +571,19 @@ function stopRenounceOwnership() external
 **Selector**: `0x238a1d74`
 
 Stops process of renounceOwnership and removes timer.
+
+### setDefaultBlastGovernor
+
+```solidity
+function setDefaultBlastGovernor(address defaultBlastGovernor_) external
+```
+**Selector**: `0x998709e0`
+
+
+
+*Developer note: updates default blast governor address on the factory*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor_ | address | The new defautl blast governor address |
 

@@ -3,11 +3,11 @@
 # EternalVirtualPool
 
 
-Algebra eternal virtual pool
+Algebra Integral 1.0 eternal virtual pool
 
 used to track active liquidity in farming and distribute rewards
 
-**Inherits:** Timestamp [VirtualTickStructure](../base/VirtualTickStructure.md)
+**Inherits:** Timestamp [VirtualTickStructure](../base/VirtualTickStructure.md) [BlastGovernorSetup](../../Core/base/BlastGovernorSetup.md)
 ## Modifiers
 ### onlyFromFarming
 
@@ -78,13 +78,14 @@ Returns true if virtual pool is deactivated
 ### constructor
 
 ```solidity
-constructor(address _farmingAddress, address _plugin) public
+constructor(address _blastGovernor, address _farmingAddress, address _plugin) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _farmingAddress | address |  |
 | _plugin | address |  |
 
