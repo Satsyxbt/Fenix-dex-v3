@@ -5,25 +5,26 @@ const path = require('path');
 async function main() {
   const deployDataPath = path.resolve(__dirname, '../../../deploys.json');
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
+  const [deployer] = await hre.ethers.getSigners();
 
   await hre.run('verify:verify', {
     address: deploysData.factory,
-    constructorArguments: [deploysData.poolDeployer],
+    constructorArguments: [deployer.address, deploysData.poolDeployer],
   });
 
   await hre.run('verify:verify', {
     address: deploysData.poolDeployer,
-    constructorArguments: [deploysData.factory],
+    constructorArguments: [deployer.address, deploysData.factory],
   });
 
   await hre.run('verify:verify', {
     address: deploysData.vault,
-    constructorArguments: [deploysData.factory, deploysData.poolDeployer],
+    constructorArguments: [deployer.address, deploysData.factory, deploysData.poolDeployer],
   });
 
   await hre.run('verify:verify', {
     address: deploysData.vaultFactory,
-    constructorArguments: [deploysData.vault],
+    constructorArguments: [deployer.address, deploysData.vault],
   });
 }
 

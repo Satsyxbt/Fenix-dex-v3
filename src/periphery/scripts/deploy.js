@@ -1,9 +1,10 @@
 const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
-const { ethers } = require('ethers');
 
 async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+
   const deployDataPath = path.resolve(__dirname, '../../../deploys.json');
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
@@ -25,7 +26,12 @@ async function main() {
   // arg1 factory address
   // arg2 wnative address
   const QuoterFactory = await hre.ethers.getContractFactory('Quoter');
-  const Quoter = await QuoterFactory.deploy(deploysData.factory, WNativeTokenAddress, deploysData.poolDeployer);
+  const Quoter = await QuoterFactory.deploy(
+    deployer.address,
+    deploysData.factory,
+    WNativeTokenAddress,
+    deploysData.poolDeployer
+  );
 
   await Quoter.waitForDeployment();
 
@@ -35,7 +41,12 @@ async function main() {
   // arg1 factory address
   // arg2 wnative address
   const QuoterV2Factory = await hre.ethers.getContractFactory('QuoterV2');
-  const QuoterV2 = await QuoterV2Factory.deploy(deploysData.factory, WNativeTokenAddress, deploysData.poolDeployer);
+  const QuoterV2 = await QuoterV2Factory.deploy(
+    deployer.address,
+    deploysData.factory,
+    WNativeTokenAddress,
+    deploysData.poolDeployer
+  );
 
   await QuoterV2.waitForDeployment();
 
@@ -44,7 +55,12 @@ async function main() {
   // arg1 factory address
   // arg2 wnative address
   const SwapRouterFactory = await hre.ethers.getContractFactory('SwapRouter');
-  const SwapRouter = await SwapRouterFactory.deploy(deploysData.factory, WNativeTokenAddress, deploysData.poolDeployer);
+  const SwapRouter = await SwapRouterFactory.deploy(
+    deployer.address,
+    deploysData.factory,
+    WNativeTokenAddress,
+    deploysData.poolDeployer
+  );
 
   await SwapRouter.waitForDeployment();
 
@@ -88,6 +104,7 @@ async function main() {
   // // arg3 tokenDescriptor address
   const NonfungiblePositionManagerFactory = await hre.ethers.getContractFactory('NonfungiblePositionManager');
   const NonfungiblePositionManager = await NonfungiblePositionManagerFactory.deploy(
+    deployer.address,
     deploysData.factory,
     WNativeTokenAddress,
     Proxy.target,
@@ -113,7 +130,7 @@ async function main() {
   // await V3Migrator.waitForDeployment();
 
   const AlgebraInterfaceMulticallFactory = await hre.ethers.getContractFactory('AlgebraInterfaceMulticall');
-  const AlgebraInterfaceMulticall = await AlgebraInterfaceMulticallFactory.deploy();
+  const AlgebraInterfaceMulticall = await AlgebraInterfaceMulticallFactory.deploy(deployer.address);
 
   await AlgebraInterfaceMulticall.waitForDeployment();
 
