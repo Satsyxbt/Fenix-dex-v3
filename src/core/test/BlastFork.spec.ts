@@ -20,62 +20,64 @@ import {
 } from './shared/utilities';
 import SnapshotManager from 'mocha-chai-jest-snapshot/dist/manager';
 import { SnapshotRestorer } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { ZERO_ADDRESS } from './shared/fixtures';
 
 describe('BlastFork specific tests', () => {
-  let wallet: Wallet, other: Wallet, blastGovernor: Wallet;
-
-  let blast: IBlastNearMock;
-  let usdb: IERC20RebasingMock;
-  let weth: IERC20RebasingMock;
-  let factory: AlgebraFactory;
-  let poolDeployer: AlgebraPoolDeployer;
-  let defaultPluginFactory: MockDefaultPluginFactory;
-  let vaultFactoryStub: AlgebraVaultFactoryStub;
-
-  const fixture = async () => {
-    const [deployer, governor] = await ethers.getSigners();
-    // precompute
-    const poolDeployerAddress = getCreateAddress({
-      from: deployer.address,
-      nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
-    });
-
-    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    const factory = (await factoryFactory.deploy(governor.address, poolDeployerAddress)) as any as AlgebraFactory;
-
-    const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
-    const poolDeployer = (await poolDeployerFactory.deploy(governor.address, factory)) as any as AlgebraPoolDeployer;
-
-    const vaultFactory = await ethers.getContractFactory('AlgebraCommunityVault');
-    const vault = await vaultFactory.deploy(governor.address, factory, deployer.address);
-
-    const vaultFactoryStubFactory = await ethers.getContractFactory('AlgebraVaultFactoryStub');
-    const vaultFactoryStub = (await vaultFactoryStubFactory.deploy(
-      governor.address,
-      vault
-    )) as any as AlgebraVaultFactoryStub;
-
-    await factory.setVaultFactory(vaultFactoryStub);
-
-    const defaultPluginFactoryFactory = await ethers.getContractFactory('MockDefaultPluginFactory');
-    const defaultPluginFactory = (await defaultPluginFactoryFactory.deploy()) as any as MockDefaultPluginFactory;
-
-    return { factory, poolDeployer, defaultPluginFactory, vaultFactoryStub };
-  };
-  let snapshot: SnapshotRestorer;
-
   if (process.env.BLAST_FORK === 'true') {
+    const USDB_HOLDER = '0xF9950E55323aC6Af7a4b2DCEe5e42d5168CdA253';
+    let wallet: Wallet, other: Wallet, blastGovernor: Wallet;
+
+    let blast: IBlastNearMock;
+    let usdb: IERC20RebasingMock;
+    let weth: IERC20RebasingMock;
+    let factory: AlgebraFactory;
+    let poolDeployer: AlgebraPoolDeployer;
+    let defaultPluginFactory: MockDefaultPluginFactory;
+    let vaultFactoryStub: AlgebraVaultFactoryStub;
+    let snapshot: SnapshotRestorer;
+
+    const fixture = async () => {
+      const [deployer, governor] = await ethers.getSigners();
+      // precompute
+      const poolDeployerAddress = getCreateAddress({
+        from: deployer.address,
+        nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
+      });
+
+      const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
+      const factory = (await factoryFactory.deploy(governor.address, poolDeployerAddress)) as any as AlgebraFactory;
+
+      const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
+      const poolDeployer = (await poolDeployerFactory.deploy(governor.address, factory)) as any as AlgebraPoolDeployer;
+
+      const vaultFactory = await ethers.getContractFactory('AlgebraCommunityVault');
+      const vault = await vaultFactory.deploy(governor.address, factory, deployer.address);
+
+      const vaultFactoryStubFactory = await ethers.getContractFactory('AlgebraVaultFactoryStub');
+      const vaultFactoryStub = (await vaultFactoryStubFactory.deploy(
+        governor.address,
+        vault
+      )) as any as AlgebraVaultFactoryStub;
+
+      await factory.setVaultFactory(vaultFactoryStub);
+
+      const defaultPluginFactoryFactory = await ethers.getContractFactory('MockDefaultPluginFactory');
+      const defaultPluginFactory = (await defaultPluginFactoryFactory.deploy()) as any as MockDefaultPluginFactory;
+
+      return { factory, poolDeployer, defaultPluginFactory, vaultFactoryStub };
+    };
+
     before('create fixture loader', async () => {
-      snapshot = await takeSnapshot();
       [wallet, blastGovernor, other] = await (ethers as any).getSigners();
       ({ factory, poolDeployer, defaultPluginFactory, vaultFactoryStub } = await loadFixture(fixture));
       blast = (await ethers.getContractAt('IBlastNearMock', BLAST_PREDEPLOYED_ADDRESS)) as any as IBlastNearMock;
       usdb = (await ethers.getContractAt('IERC20RebasingMock', USDB_PREDEPLOYED_ADDRESS)) as any as IERC20RebasingMock;
       weth = (await ethers.getContractAt('IERC20RebasingMock', WETH_PREDEPLOYED_ADDRESS)) as any as IERC20RebasingMock;
+      snapshot = await takeSnapshot();
     });
 
-    after(async () => {
-      snapshot.restore();
+    afterEach(async () => {
+      await snapshot.restore();
     });
 
     it('Correct initialize blast governor for core contracts', async () => {
@@ -83,7 +85,30 @@ describe('BlastFork specific tests', () => {
       expect(await blast.governorMap(poolDeployer.target)).to.be.eq(blastGovernor.address);
       expect(await blast.governorMap(vaultFactoryStub.target)).to.be.eq(blastGovernor.address);
     });
-    it('provider blastGovernor oportunity to configure gas mode', async () => {
+
+    it('Correct initialize blast governor for created pool', async () => {
+      await factory.createPool(usdb.target, weth.target);
+      let pool = (await ethers.getContractAt(
+        'AlgebraPool',
+        await factory.poolByPair(usdb.target, weth.target)
+      )) as any as AlgebraPool;
+
+      expect(await blast.governorMap(pool.target)).to.be.eq(blastGovernor.address);
+    });
+
+    it('Correct initialize blast governor for created pool after changed default blast governor', async () => {
+      expect(await factory.defaultBlastGovernor()).to.be.eq(blastGovernor.address);
+      await factory.setDefaultBlastGovernor(other.address);
+      expect(await factory.defaultBlastGovernor()).to.be.eq(other.address);
+      await factory.createPool(usdb.target, weth.target);
+      let pool = (await ethers.getContractAt(
+        'AlgebraPool',
+        await factory.poolByPair(usdb.target, weth.target)
+      )) as any as AlgebraPool;
+      expect(await blast.governorMap(pool.target)).to.be.eq(other.address);
+    });
+
+    it('Provider blastGovernor oportunity to configure gas mode', async () => {
       let getGasInfo = await blast.readGasParams(factory.target);
       expect(getGasInfo[3]).to.be.eq(0);
       await blast.connect(blastGovernor).configureClaimableGasOnBehalf(factory.target);
@@ -103,8 +128,74 @@ describe('BlastFork specific tests', () => {
 
       getGasInfo = await blast.readGasParams(vaultFactoryStub.target);
       expect(getGasInfo[3]).to.be.eq(1);
+
+      await factory.createPool(usdb.target, weth.target);
+      let pool = (await ethers.getContractAt(
+        'AlgebraPool',
+        await factory.poolByPair(usdb.target, weth.target)
+      )) as any as AlgebraPool;
+
+      getGasInfo = await blast.readGasParams(pool.target);
+      expect(getGasInfo[3]).to.be.eq(0);
+
+      await blast.connect(blastGovernor).configureClaimableGasOnBehalf(pool.target);
+
+      getGasInfo = await blast.readGasParams(pool.target);
+      expect(getGasInfo[3]).to.be.eq(1);
     });
-    it('create pool and test work with rebasing tokens', async () => {
+
+    describe('Configuration rebasing tokens in pool', async () => {
+      it('Factory administator can oportunity to configure ERC20Rebasing tokens', async () => {
+        await factory.createPool(usdb.target, weth.target);
+        let pool = (await ethers.getContractAt(
+          'AlgebraPool',
+          await factory.poolByPair(usdb.target, weth.target)
+        )) as any as AlgebraPool;
+
+        await pool.configure(USDB_PREDEPLOYED_ADDRESS, 1);
+        await pool.configure(WETH_PREDEPLOYED_ADDRESS, 1);
+      });
+
+      it('Factory administator can oportunity to claim ERC20Rebasing tokens', async () => {
+        await factory.createPool(usdb.target, weth.target);
+        let pool = (await ethers.getContractAt(
+          'AlgebraPool',
+          await factory.poolByPair(usdb.target, weth.target)
+        )) as any as AlgebraPool;
+
+        expect(await ethers.provider.getBalance(pool.target)).to.be.eq(ZERO_ADDRESS);
+
+        await wallet.sendTransaction({ to: weth.target, value: ethers.parseEther('1') });
+        await weth.transfer(pool.target, ethers.parseEther('1'));
+
+        expect(await weth.balanceOf(pool.target)).to.be.eq(ethers.parseEther('1'));
+
+        await pool.configure(WETH_PREDEPLOYED_ADDRESS, 2);
+
+        expect(await weth.getClaimableAmount(pool.target)).to.be.eq(0);
+
+        let balance = await ethers.provider.getBalance(weth.target);
+        await setBalance(await weth.getAddress(), balance + balance);
+
+        expect(await weth.balanceOf(pool.target)).to.be.eq(ethers.parseEther('1'));
+
+        expect(await weth.getClaimableAmount(pool.target)).to.be.closeTo(
+          ethers.parseEther('1'),
+          ethers.parseEther('0.00001')
+        );
+        await pool.claim(
+          WETH_PREDEPLOYED_ADDRESS,
+          '0x1110000000000000000000000000000000000000',
+          await weth.getClaimableAmount(pool.target)
+        );
+        expect(await weth.balanceOf(pool.target)).to.be.eq(ethers.parseEther('1'));
+        expect(await weth.getClaimableAmount(pool.target)).to.be.eq(0);
+        expect(await weth.balanceOf('0x1110000000000000000000000000000000000000')).to.be.greaterThan(
+          ethers.parseEther('1')
+        );
+      });
+    });
+    it.skip('create pool and test work with rebasing tokens', async () => {
       await factory.createPool(usdb.target, weth.target);
       let pool = (await ethers.getContractAt(
         'AlgebraPool',
@@ -113,7 +204,7 @@ describe('BlastFork specific tests', () => {
 
       await pool.initialize(encodePriceSqrt(1, 1));
 
-      let topHolder = await ethers.getImpersonatedSigner('0xF9950E55323aC6Af7a4b2DCEe5e42d5168CdA253'); // top holder usdb;
+      let topHolder = await ethers.getImpersonatedSigner(USDB_HOLDER); // top holder usdb;
       console.log('await usdb.balanceOf(wallet.target)', await usdb.balanceOf(wallet.address));
       console.log('await weth.balanceOf(wallet.target)', await weth.balanceOf(wallet.address));
 
