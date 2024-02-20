@@ -7,28 +7,28 @@ Algebra pool deployer
 
 Is used by AlgebraFactory to deploy pools
 
-*Developer note: Version: Algebra Integral*
+*Developer note: Version: Algebra Integral 1.0*
 
-**Inherits:** [IAlgebraPoolDeployer](interfaces/IAlgebraPoolDeployer.md)
+**Inherits:** [IAlgebraPoolDeployer](interfaces/IAlgebraPoolDeployer.md) [BlastGovernorSetup](base/BlastGovernorSetup.md)
 
 ## Functions
 ### constructor
 
 ```solidity
-constructor(address _factory, address _communityVault) public
+constructor(address _blastGovernor, address _factory) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _factory | address |  |
-| _communityVault | address |  |
 
 ### getDeployParameters
 
 ```solidity
-function getDeployParameters() external view returns (address _plugin, address _factory, address _communityVault, address _token0, address _token1)
+function getDeployParameters() external view returns (address _blastGovernor, address _plugin, address _factory, address _token0, address _token1)
 ```
 **Selector**: `0x04889e26`
 
@@ -40,18 +40,18 @@ Get the parameters to be used in constructing the pool, set transiently during p
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _plugin | address |  |
 | _factory | address |  |
-| _communityVault | address |  |
 | _token0 | address |  |
 | _token1 | address |  |
 
 ### deploy
 
 ```solidity
-function deploy(address plugin, address token0, address token1) external returns (address pool)
+function deploy(address blastGovernor, address plugin, address token0, address token1) external returns (address pool)
 ```
-**Selector**: `0xd9181cd3`
+**Selector**: `0xfd82b73a`
 
 
 
@@ -59,6 +59,7 @@ function deploy(address plugin, address token0, address token1) external returns
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| blastGovernor | address | The blast governor address for set to Blast ecosystem contract |
 | plugin | address | The pool associated plugin (if any) |
 | token0 | address | The first token of the pool by address sort order |
 | token1 | address | The second token of the pool by address sort order |

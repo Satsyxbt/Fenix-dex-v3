@@ -12,7 +12,6 @@ export default {
     },
     localHardhat: {
       url: `http://127.0.0.1:8545`,
-      accounts: ['0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'],
     },
     localGeth: {
       url: `http://127.0.0.1:8545`,
@@ -79,6 +78,11 @@ export default {
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
     blastSepolia: {
+      url: 'https://sepolia.blast.io',
+      gasPrice: 1e9,
+      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
+    },
+    blastSepoliaFork: {
       url: 'https://sepolia.blast.io',
       gasPrice: 1e9,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],

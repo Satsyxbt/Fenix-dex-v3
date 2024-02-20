@@ -7,9 +7,9 @@ Algebra factory
 
 Is used to deploy pools and its plugins
 
-*Developer note: Version: Algebra Integral*
+*Developer note: Version: Algebra Integral 1.0*
 
-**Inherits:** [IAlgebraFactory](interfaces/IAlgebraFactory.md) [Ownable2Step](https://docs.openzeppelin.com/contracts/4.x/) [AccessControlEnumerable](https://docs.openzeppelin.com/contracts/4.x/)
+**Inherits:** [IAlgebraFactory](interfaces/IAlgebraFactory.md) [Ownable2Step](https://docs.openzeppelin.com/contracts/4.x/) [AccessControlEnumerable](https://docs.openzeppelin.com/contracts/4.x/) [BlastGovernorSetup](base/BlastGovernorSetup.md)
 
 ## Public variables
 ### POOLS_ADMINISTRATOR_ROLE
@@ -21,6 +21,15 @@ bytes32 constant POOLS_ADMINISTRATOR_ROLE = 0xb73ce166ead2f8e9add217713a7989e4ed
 role that can change communityFee and tickspacing in pools
 
 
+### POOLS_CREATOR_ROLE
+```solidity
+bytes32 constant POOLS_CREATOR_ROLE = 0xa7106ea771a74f2d048c62cace8c00d3e120b24b61327e6415035f60d47ce888
+```
+**Selector**: `0x6e1433dc`
+
+role that can create pools when public pool creation is disabled
+
+
 ### poolDeployer
 ```solidity
 address immutable poolDeployer
@@ -30,13 +39,22 @@ address immutable poolDeployer
 Returns the current poolDeployerAddress
 
 
-### communityVault
+### defaultBlastGovernor
 ```solidity
-address immutable communityVault
+address defaultBlastGovernor
 ```
-**Selector**: `0x53e97868`
+**Selector**: `0xfb6cd276`
 
-Returns the current communityVaultAddress
+Returns the current default blast governor
+
+
+### isPublicPoolCreationMode
+```solidity
+bool isPublicPoolCreationMode
+```
+**Selector**: `0x63d21273`
+
+Returns the status of enable public pool creation mode
 
 
 ### defaultCommunityFee
@@ -83,6 +101,17 @@ contract IAlgebraPluginFactory defaultPluginFactory
 
 Return the current pluginFactory address
 
+*Developer note: This contract is used to automatically set a plugin address in new liquidity pools*
+
+### vaultFactory
+```solidity
+contract IAlgebraVaultFactory vaultFactory
+```
+**Selector**: `0xd8a06f73`
+
+Return the current vaultFactory address
+
+*Developer note: This contract is used to automatically set a vault address in new liquidity pools*
 
 ### poolByPair
 ```solidity
@@ -96,7 +125,7 @@ Returns the pool address for a given pair of tokens, or address 0 if it does not
 
 ### POOL_INIT_CODE_HASH
 ```solidity
-bytes32 constant POOL_INIT_CODE_HASH = 0x611227a4c0a926ac9bad4d0e5b28dbb710c71f16fc528969a4f7ff5e1749c024
+bytes32 constant POOL_INIT_CODE_HASH = 0x0a0bfc292c9afb85f925683c4bc7f47c146b36460a4d81b8e661ff2b4fca3b12
 ```
 **Selector**: `0xdc6fd8ab`
 
@@ -109,13 +138,14 @@ returns keccak256 of AlgebraPool init bytecode.
 ### constructor
 
 ```solidity
-constructor(address _poolDeployer) public
+constructor(address _blastGovernor, address _poolDeployer) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _poolDeployer | address |  |
 
 ### owner
@@ -158,11 +188,15 @@ Returns &#x60;true&#x60; if &#x60;account&#x60; has been granted &#x60;role&#x60
 ### defaultConfigurationForPool
 
 ```solidity
-function defaultConfigurationForPool() external view returns (uint16 communityFee, int24 tickSpacing, uint16 fee)
+function defaultConfigurationForPool(address pool) external view returns (uint16 communityFee, int24 tickSpacing, uint16 fee, address communityVault)
 ```
-**Selector**: `0x25b355d6`
+**Selector**: `0x82b13d8d`
 
-Returns the default communityFee and tickspacing
+Returns the default communityFee, tickspacing, fee and communityFeeVault for pool
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| pool | address | the address of liquidity pool |
 
 **Returns:**
 
@@ -171,6 +205,7 @@ Returns the default communityFee and tickspacing
 | communityFee | uint16 | which will be set at the creation of the pool |
 | tickSpacing | int24 | which will be set at the creation of the pool |
 | fee | uint16 | which will be set at the creation of the pool |
+| communityVault | address |  |
 
 ### computePoolAddress
 
@@ -216,6 +251,36 @@ The call will revert if the pool already exists or the token arguments are inval
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | pool | address | The address of the newly created pool |
+
+### setDefaultBlastGovernor
+
+```solidity
+function setDefaultBlastGovernor(address defaultBlastGovernor_) external
+```
+**Selector**: `0x998709e0`
+
+
+
+*Developer note: updates default blast governor address on the factory*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor_ | address | The new defautl blast governor address |
+
+### setIsPublicPoolCreationMode
+
+```solidity
+function setIsPublicPoolCreationMode(bool mode_) external
+```
+**Selector**: `0x5d2493ab`
+
+
+
+*Developer note: updates pools creation mode*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| mode_ | bool | the new mode for pools creation proccess |
 
 ### setDefaultCommunityFee
 
@@ -276,6 +341,21 @@ function setDefaultPluginFactory(address newDefaultPluginFactory) external
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | newDefaultPluginFactory | address | address of new plugin factory |
+
+### setVaultFactory
+
+```solidity
+function setVaultFactory(address newVaultFactory) external
+```
+**Selector**: `0x3ea7fbdb`
+
+
+
+*Developer note: updates vaultFactory address*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| newVaultFactory | address | address of new vault factory |
 
 ### startRenounceOwnership
 

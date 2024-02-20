@@ -1,10 +1,17 @@
 
-# [19.02.2024] Implementation Fenix features
+# [20.02.2024] Implementation Fenix features
 
 ## Global Changes
 ### Added
 * To support gas reciving, and yield from the `Blast` network, an inheritance from `BlastGovernorManage` was added for each significant contract, with the initialization of the control address. In the case of factories, the functionality of setting the address for future deployable contracts is also available
+* Implementation of `BlastERC20RebasingManage`, to support the ability to manage Rebasing tokens of the blast protocol in pools
+    
+## AlgebraPool Contract Update
 
+### Added
+* Added inheritance of the `BlastERC20RebasingManage` contract, which allows you to manage Rebasing tokens of the Blast network that will be in the pool 
+* `_checkAccessForManageBlastERC20Rebasing` implementation that provides for limiting Rebasing token management calls to the authorized administrator address only
+  
 ## AlgebraFactory Contract Update
 
 ### Added
