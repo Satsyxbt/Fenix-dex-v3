@@ -122,6 +122,8 @@ function exactOutputSingle(struct ISwapRouter.ExactOutputSingleParams params) ex
 
 Swaps as little as possible of one token for &#x60;amountOut&#x60; of another token
 
+*Developer note: If native token is used as input, this function should be accompanied by a &#x60;refundNativeToken&#x60; in multicall to avoid potential loss of native tokens*
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | params | struct ISwapRouter.ExactOutputSingleParams | The parameters necessary for the swap, encoded as `ExactOutputSingleParams` in calldata |
@@ -140,6 +142,8 @@ function exactOutput(struct ISwapRouter.ExactOutputParams params) external payab
 **Selector**: `0xf28c0498`
 
 Swaps as little as possible of one token for &#x60;amountOut&#x60; of another along the specified path (reversed)
+
+*Developer note: If native token is used as input, this function should be accompanied by a &#x60;refundNativeToken&#x60; in multicall to avoid potential loss of native tokens*
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |

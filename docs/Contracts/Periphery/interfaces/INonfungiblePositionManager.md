@@ -197,7 +197,8 @@ function mint(struct INonfungiblePositionManager.MintParams params) external pay
 Creates a new position wrapped in a NFT
 
 *Developer note: Call this when the pool does exist and is initialized. Note that if the pool is created but not initialized
-a method does not exist, i.e. the pool is assumed to be initialized.*
+a method does not exist, i.e. the pool is assumed to be initialized.
+If native token is used as input, this function should be accompanied by a &#x60;refundNativeToken&#x60; in multicall to avoid potential loss of native tokens*
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
@@ -220,6 +221,8 @@ function increaseLiquidity(struct INonfungiblePositionManager.IncreaseLiquidityP
 **Selector**: `0x219f5d17`
 
 Increases the amount of liquidity in a position, with tokens paid by the &#x60;msg.sender&#x60;
+
+*Developer note: If native token is used as input, this function should be accompanied by a &#x60;refundNativeToken&#x60; in multicall to avoid potential loss of native tokens*
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |

@@ -9,7 +9,7 @@ Contains state variables, immutables and common internal functions
 
 *Developer note: Decoupling into a separate abstract contract simplifies testing*
 
-**Inherits:** [IAlgebraPool](../interfaces/IAlgebraPool.md) Timestamp
+**Inherits:** [IAlgebraPool](../interfaces/IAlgebraPool.md) Timestamp [BlastGovernorSetup](BlastGovernorSetup.md)
 ## Modifiers
 ### onlyValidTicks
 
@@ -92,15 +92,6 @@ address immutable token1
 The second of the two tokens of the pool, sorted by address
 
 
-### communityVault
-```solidity
-address immutable communityVault
-```
-**Selector**: `0x53e97868`
-
-The contract to which community fees are transferred
-
-
 ### totalFeeGrowth0Token
 ```solidity
 uint256 totalFeeGrowth0Token
@@ -160,6 +151,15 @@ address plugin
 Returns the address of currently used plugin
 
 *Developer note: The plugin is subject to change*
+
+### communityVault
+```solidity
+address communityVault
+```
+**Selector**: `0x53e97868`
+
+The contract to which community fees are transferred
+
 
 ### tickTable
 ```solidity

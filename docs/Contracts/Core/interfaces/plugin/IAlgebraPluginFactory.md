@@ -14,15 +14,17 @@ An interface for a contract that is capable of deploying Algebra plugins
 ### createPlugin
 
 ```solidity
-function createPlugin(address pool) external returns (address)
+function createPlugin(address pool, address token0, address token1) external returns (address)
 ```
-**Selector**: `0x361c0f76`
+**Selector**: `0x9533ff10`
 
 Deploys new plugin contract for pool
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | pool | address | The address of the pool for which the new plugin will be created |
+| token0 | address | First token of the pool |
+| token1 | address | Second token of the pool |
 
 **Returns:**
 

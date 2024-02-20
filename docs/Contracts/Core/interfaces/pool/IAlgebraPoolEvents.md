@@ -176,3 +176,15 @@ Emitted when the fee changes inside the pool
 | ---- | ---- | ----------- |
 | fee | uint16 | The current fee in hundredths of a bip, i.e. 1e-6 |
 
+### CommunityVault
+
+```solidity
+event CommunityVault(address newCommunityVault)
+```
+
+
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| newCommunityVault | address |  |
+

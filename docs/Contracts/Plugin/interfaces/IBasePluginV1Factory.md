@@ -7,7 +7,7 @@ The interface for the BasePluginV1Factory
 
 This contract creates Algebra default plugins for Algebra liquidity pools
 
-**Inherits:** [IAlgebraPluginFactory](../../Core/interfaces/plugin/IAlgebraPluginFactory.md)
+**Inherits:** [IAlgebraPluginFactory](../../Core/interfaces/plugin/IAlgebraPluginFactory.md) [IBeacon](https://docs.openzeppelin.com/contracts/4.x/)
 
 ## Events
 ### DefaultFeeConfiguration
@@ -35,6 +35,34 @@ Emitted when the farming address is changed
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | newFarmingAddress | address | The farming address after the address was changed |
+
+### Upgraded
+
+```solidity
+event Upgraded(address implementation)
+```
+
+
+
+*Developer note: Emitted when the implementation returned by the beacon is changed.*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| implementation | address | The new implementation address after changed |
+
+### DefaultBlastGovernor
+
+```solidity
+event DefaultBlastGovernor(address defaultBlastGovernor)
+```
+
+
+
+*Developer note: Emitted when set new default blast governor address is changed.*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor | address | The new default blast governor address |
 
 
 ## Functions
@@ -109,6 +137,21 @@ Returns current farming address
 | ---- | ---- | ----------- |
 | [0] | address | The farming contract address |
 
+### defaultBlastGovernor
+
+```solidity
+function defaultBlastGovernor() external view returns (address)
+```
+**Selector**: `0xfb6cd276`
+
+Returns current default blast governor address
+
+**Returns:**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | address | The default blast governor address for futurees pools |
+
 ### pluginByPool
 
 ```solidity
@@ -178,4 +221,36 @@ function setFarmingAddress(address newFarmingAddress) external
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | newFarmingAddress | address | The new tokenomics contract address |
+
+### setDefaultBlastGovernor
+
+```solidity
+function setDefaultBlastGovernor(address defaultBlastGovernor_) external
+```
+**Selector**: `0x998709e0`
+
+
+
+*Developer note: updates default blast governor address on the factory*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor_ | address | The new defautl blast governor address |
+
+
+## Errors
+## BeaconInvalidImplementation
+
+```solidity
+error BeaconInvalidImplementation(address implementation)
+```
+**Selector**: `0x847ac564`
+
+
+
+*Developer note: The &#x60;implementation&#x60; of the beacon is invalid.*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| implementation | address |  |
 

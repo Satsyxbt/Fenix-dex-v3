@@ -3,11 +3,11 @@
 # AlgebraBasePluginV1
 
 
-Algebra default plugin
+Algebra Integral 1.0 default plugin
 
 This contract stores timepoints and calculates adaptive fee and statistical averages
 
-**Inherits:** [IAlgebraBasePluginV1](interfaces/IAlgebraBasePluginV1.md) Timestamp [IAlgebraPlugin](../Core/interfaces/plugin/IAlgebraPlugin.md)
+**Inherits:** [IAlgebraBasePluginV1](interfaces/IAlgebraBasePluginV1.md) [IAlgebraPlugin](../Core/interfaces/plugin/IAlgebraPlugin.md) [Initializable](https://docs.openzeppelin.com/contracts/4.x/) TimestampUpgradeable [BlastGovernorSetup](../Core/base/BlastGovernorSetup.md)
 ## Modifiers
 ### onlyPool
 
@@ -40,7 +40,7 @@ Returns plugin config
 
 ### pool
 ```solidity
-address immutable pool
+address pool
 ```
 **Selector**: `0x16f0115b`
 
@@ -99,13 +99,25 @@ Returns the address of active incentive
 ### constructor
 
 ```solidity
-constructor(address _pool, address _factory, address _pluginFactory) public
+constructor() public
 ```
 
 
 
+### initialize
+
+```solidity
+function initialize(address _blastGovernor, address _pool, address _factory, address _pluginFactory) external
+```
+**Selector**: `0xf8c8765e`
+
+Initialize the plugin instead of the constructor flow, for proxy
+
+*Developer note: This function allows to initialize the plugin if it was created like proxy*
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _pool | address |  |
 | _factory | address |  |
 | _pluginFactory | address |  |

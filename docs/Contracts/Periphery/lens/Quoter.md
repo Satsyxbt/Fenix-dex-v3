@@ -3,7 +3,7 @@
 # Quoter
 
 
-Provides quotes for swaps
+Algebra Integral 1.0 Quoter
 
 Allows getting the expected amount out or amount in for a given swap without executing the swap
 
@@ -12,19 +12,20 @@ the swap and check the amounts in the callback.
 Credit to Uniswap Labs under GPL-2.0-or-later license:
 https://github.com/Uniswap/v3-periphery*
 
-**Inherits:** [IQuoter](../interfaces/IQuoter.md) [IAlgebraSwapCallback](../../Core/interfaces/callback/IAlgebraSwapCallback.md) [PeripheryImmutableState](../base/PeripheryImmutableState.md)
+**Inherits:** [IQuoter](../interfaces/IQuoter.md) [IAlgebraSwapCallback](../../Core/interfaces/callback/IAlgebraSwapCallback.md) [PeripheryImmutableState](../base/PeripheryImmutableState.md) [BlastGovernorSetup](../../Core/base/BlastGovernorSetup.md)
 
 ## Functions
 ### constructor
 
 ```solidity
-constructor(address _factory, address _WNativeToken, address _poolDeployer) public
+constructor(address _blastGovernor, address _factory, address _WNativeToken, address _poolDeployer) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _factory | address |  |
 | _WNativeToken | address |  |
 | _poolDeployer | address |  |

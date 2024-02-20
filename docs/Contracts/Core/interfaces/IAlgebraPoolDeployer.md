@@ -17,7 +17,7 @@ https://github.com/Uniswap/v3-core/tree/main/contracts/interfaces*
 ### getDeployParameters
 
 ```solidity
-function getDeployParameters() external view returns (address plugin, address factory, address communityVault, address token0, address token1)
+function getDeployParameters() external view returns (address blastGovernor, address plugin, address factory, address token0, address token1)
 ```
 **Selector**: `0x04889e26`
 
@@ -29,18 +29,18 @@ Get the parameters to be used in constructing the pool, set transiently during p
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| blastGovernor | address | The blastgovernro address for set in Blast ecosystem contract |
 | plugin | address | The pool associated plugin (if any) |
 | factory | address | The Algebra Factory address |
-| communityVault | address | The community vault address |
 | token0 | address | The first token of the pool by address sort order |
 | token1 | address | The second token of the pool by address sort order |
 
 ### deploy
 
 ```solidity
-function deploy(address plugin, address token0, address token1) external returns (address pool)
+function deploy(address blastGovernor, address plugin, address token0, address token1) external returns (address pool)
 ```
-**Selector**: `0xd9181cd3`
+**Selector**: `0xfd82b73a`
 
 
 
@@ -48,6 +48,7 @@ function deploy(address plugin, address token0, address token1) external returns
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| blastGovernor | address | The blast governor address for set to Blast ecosystem contract |
 | plugin | address | The pool associated plugin (if any) |
 | token0 | address | The first token of the pool by address sort order |
 | token1 | address | The second token of the pool by address sort order |

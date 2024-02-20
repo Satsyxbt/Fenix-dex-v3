@@ -3,11 +3,11 @@
 # AlgebraEternalFarming
 
 
-Algebra eternal (v2-like) farming
+Algebra Integral 1.0  eternal (v2-like) farming
 
 Manages rewards and virtual pools
 
-**Inherits:** [IAlgebraEternalFarming](../interfaces/IAlgebraEternalFarming.md)
+**Inherits:** [IAlgebraEternalFarming](../interfaces/IAlgebraEternalFarming.md) [BlastGovernorSetup](../../Core/base/BlastGovernorSetup.md)
 ## Modifiers
 ### onlyIncentiveMaker
 
@@ -93,6 +93,15 @@ contract INonfungiblePositionManager immutable nonfungiblePositionManager
 The nonfungible position manager with which this farming contract is compatible
 
 
+### defaultBlastGovernor
+```solidity
+address defaultBlastGovernor
+```
+**Selector**: `0xfb6cd276`
+
+Returns the current default blast governor
+
+
 ### farmingCenter
 ```solidity
 address farmingCenter
@@ -155,13 +164,14 @@ Returns amounts of reward tokens owed to a given address according to the last t
 ### constructor
 
 ```solidity
-constructor(contract IAlgebraPoolDeployer _deployer, contract INonfungiblePositionManager _nonfungiblePositionManager) public
+constructor(address _blastGovernor, contract IAlgebraPoolDeployer _deployer, contract INonfungiblePositionManager _nonfungiblePositionManager) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _deployer | contract IAlgebraPoolDeployer | pool deployer contract address |
 | _nonfungiblePositionManager | contract INonfungiblePositionManager | the NFT position manager contract address |
 
@@ -189,9 +199,9 @@ Check if incentive is deactivated (manually or automatically)
 ### createEternalFarming
 
 ```solidity
-function createEternalFarming(struct IncentiveKey key, struct IAlgebraEternalFarming.IncentiveParams params) external returns (address virtualPool)
+function createEternalFarming(struct IncentiveKey key, struct IAlgebraEternalFarming.IncentiveParams params, address plugin) external returns (address virtualPool)
 ```
-**Selector**: `0x566d3c71`
+**Selector**: `0x547b6da9`
 
 Creates a new liquidity farming incentive program
 
@@ -199,6 +209,7 @@ Creates a new liquidity farming incentive program
 | ---- | ---- | ----------- |
 | key | struct IncentiveKey | Details of the incentive to create |
 | params | struct IAlgebraEternalFarming.IncentiveParams | Params of incentive |
+| plugin | address | The address of corresponding plugin |
 
 **Returns:**
 
@@ -246,6 +257,21 @@ Updates farming center address
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | _farmingCenter | address | The new farming center contract address |
+
+### setDefaultBlastGovernor
+
+```solidity
+function setDefaultBlastGovernor(address defaultBlastGovernor_) external
+```
+**Selector**: `0x998709e0`
+
+
+
+*Developer note: updates default blast governor address on the factory*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor_ | address | The new defautl blast governor address |
 
 ### setEmergencyWithdrawStatus
 
@@ -342,7 +368,7 @@ Transfers &#x60;amountRequested&#x60; of accrued &#x60;rewardToken&#x60; (if pos
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| reward | uint256 | The amount of reward tokens claimed |
+| reward | uint256 |  |
 
 ### claimRewardFrom
 
@@ -365,7 +391,7 @@ only for FarmingCenter
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| reward | uint256 | The amount of reward tokens claimed |
+| reward | uint256 |  |
 
 ### getRewardInfo
 

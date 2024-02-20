@@ -10,6 +10,7 @@ A fork of Multicall2 specifically tailored for the Algebra Interface
 *Developer note: Credit to Uniswap Labs under GPL-2.0-or-later license:
 https://github.com/Uniswap/v3-periphery*
 
+**Inherits:** [BlastGovernorSetup](../../Core/base/BlastGovernorSetup.md)
 
 ## Structs
 ### Call
@@ -38,6 +39,18 @@ struct Result {
 
 
 ## Functions
+### constructor
+
+```solidity
+constructor(address _blastGovernor) public
+```
+
+
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| _blastGovernor | address |  |
+
 ### getCurrentBlockTimestamp
 
 ```solidity
