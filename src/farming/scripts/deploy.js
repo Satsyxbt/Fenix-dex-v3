@@ -4,11 +4,17 @@ const path = require('path');
 const BasePluginV1FactoryComplied = require('../../plugin/artifacts/contracts/BasePluginV1Factory.sol/BasePluginV1Factory.json');
 
 async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+
   const deployDataPath = path.resolve(__dirname, '../../../deploys.json');
   const deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   const AlgebraEternalFarmingFactory = await hre.ethers.getContractFactory('AlgebraEternalFarming');
-  const AlgebraEternalFarming = await AlgebraEternalFarmingFactory.deploy(deploysData.poolDeployer, deploysData.nonfungiblePositionManager);
+  const AlgebraEternalFarming = await AlgebraEternalFarmingFactory.deploy(
+    deployer.address,
+    deploysData.poolDeployer,
+    deploysData.nonfungiblePositionManager
+  );
 
   deploysData.eternal = AlgebraEternalFarming.target;
 
@@ -16,7 +22,7 @@ async function main() {
   console.log('AlgebraEternalFarming deployed to:', AlgebraEternalFarming.target);
 
   const FarmingCenterFactory = await hre.ethers.getContractFactory('FarmingCenter');
-  const FarmingCenter = await FarmingCenterFactory.deploy(AlgebraEternalFarming.target, deploysData.nonfungiblePositionManager);
+  const FarmingCenter = await FarmingCenterFactory.deploy(deployer.address, AlgebraEternalFarming.target, deploysData.nonfungiblePositionManager);
 
   deploysData.fc = FarmingCenter.target;
 

@@ -29,11 +29,13 @@ contract QuoterV2 is IQuoterV2, IAlgebraSwapCallback, PeripheryImmutableState, B
     uint256 private amountOutCached;
 
     constructor(
-        address _blastGovernor_,
+        address _blastGovernor,
         address _factory,
         address _WNativeToken,
         address _poolDeployer
-    ) PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer) {}
+    ) PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer) {
+        __BlastGovernorSetup_init(_blastGovernor);
+    }
 
     function getPool(address tokenA, address tokenB) private view returns (IAlgebraPool) {
         return IAlgebraPool(PoolAddress.computeAddress(poolDeployer, PoolAddress.getPoolKey(tokenA, tokenB)));

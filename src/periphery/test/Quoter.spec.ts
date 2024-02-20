@@ -45,8 +45,14 @@ describe('Quoter', () => {
       token.address = await token.getAddress();
     }
 
+    const [deployer] = await ethers.getSigners();
     const quoterFactory = await ethers.getContractFactory('Quoter');
-    quoter = (await quoterFactory.deploy(factory, wnative, await factory.poolDeployer())) as any as Quoter;
+    quoter = (await quoterFactory.deploy(
+      deployer.address,
+      factory,
+      wnative,
+      await factory.poolDeployer()
+    )) as any as Quoter;
 
     return {
       tokens: _tokens,

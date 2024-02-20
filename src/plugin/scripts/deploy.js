@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 async function main() {
+  const [deployer] = await hre.ethers.getSigners();
+
   const deployDataPath = path.resolve(__dirname, '../../../deploys.json');
   const deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
@@ -12,7 +14,7 @@ async function main() {
   console.log('AlgebraBasePluginV1 Implementation to:', bpImplementation.target);
 
   const BasePluginV1Factory = await hre.ethers.getContractFactory('BasePluginV1Factory');
-  const dsFactory = await BasePluginV1Factory.deploy(deploysData.factory, bpImplementation.target);
+  const dsFactory = await BasePluginV1Factory.deploy(deployer.address, deploysData.factory, bpImplementation.target);
 
   await dsFactory.waitForDeployment();
 
