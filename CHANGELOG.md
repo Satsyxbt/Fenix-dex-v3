@@ -1,6 +1,10 @@
 
 # [19.02.2024] Implementation Fenix features
 
+## Global Changes
+### Added
+* To support gas reciving, and yield from the `Blast` network, an inheritance from `BlastGovernorManage` was added for each significant contract, with the initialization of the control address. In the case of factories, the functionality of setting the address for future deployable contracts is also available
+
 ## AlgebraFactory Contract Update
 
 ### Added
@@ -46,6 +50,7 @@ The changes consisted in the ability of the contract to be used in the form of i
 ## Other changes
 ### Changed
 *  Previously relying on npm packages such as `@cryptoalgebra/integral-base-plugin`, `@cryptoalgebra/integral-core`, and `@cryptoalgebra/integral-periphery`, the project has now transitioned to using local implementations.
+* The `frequency of sending` fees from the pool to the vault has been changed from `8 hours` to `1`
 * The `Algebra` headers in the descriptions and names of the pool symbols have been replaced with Fenix
 ```diff
 - 'This NFT represents a liquidity position in a Algebra '
