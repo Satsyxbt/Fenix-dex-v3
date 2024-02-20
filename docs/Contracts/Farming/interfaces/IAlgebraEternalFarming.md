@@ -168,6 +168,20 @@ Emitted when status of &#x60;isEmergencyWithdrawActivated&#x60; changes
 | ---- | ---- | ----------- |
 | newStatus | bool | New value of `isEmergencyWithdrawActivated`. Users can withdraw liquidity without any checks if active. |
 
+### DefaultBlastGovernor
+
+```solidity
+event DefaultBlastGovernor(address defaultBlastGovernor)
+```
+
+
+
+*Developer note: Emitted when set new default blast governor address is changed.*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor | address | The new default blast governor address |
+
 
 ## Structs
 ### IncentiveParams
@@ -254,6 +268,21 @@ Represents a farming incentive
 | minimalPositionWidth | uint24 |  |
 | deactivated | bool |  |
 | pluginAddress | address |  |
+
+### defaultBlastGovernor
+
+```solidity
+function defaultBlastGovernor() external view returns (address)
+```
+**Selector**: `0xfb6cd276`
+
+Returns the current default blast governor
+
+**Returns:**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | address | The address of the default blast governor |
 
 ### isIncentiveDeactivated
 
@@ -366,6 +395,21 @@ _Must_ only be used in emergency situations. Farmings may be unusable after acti
 | ---- | ---- | ----------- |
 | newStatus | bool | The new status of `isEmergencyWithdrawActivated`. |
 
+### setDefaultBlastGovernor
+
+```solidity
+function setDefaultBlastGovernor(address defaultBlastGovernor_) external
+```
+**Selector**: `0x998709e0`
+
+
+
+*Developer note: updates default blast governor address on the factory*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor_ | address | The new defautl blast governor address |
+
 ### numOfIncentives
 
 ```solidity
@@ -446,7 +490,7 @@ exitFarmings for Algebra LP token
 ### claimReward
 
 ```solidity
-function claimReward(contract IERC20Minimal rewardToken, address to, uint256 amountRequested) external returns (uint256 reward)
+function claimReward(contract IERC20Minimal rewardToken, address to, uint256 amountRequested) external returns (uint256 rewardBalanceBefore)
 ```
 **Selector**: `0x2f2d783d`
 
@@ -462,12 +506,12 @@ Transfers &#x60;amountRequested&#x60; of accrued &#x60;rewardToken&#x60; (if pos
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| reward | uint256 | The amount of reward tokens claimed |
+| rewardBalanceBefore | uint256 | The total amount of unclaimed reward *before* claim |
 
 ### claimRewardFrom
 
 ```solidity
-function claimRewardFrom(contract IERC20Minimal rewardToken, address from, address to, uint256 amountRequested) external returns (uint256 reward)
+function claimRewardFrom(contract IERC20Minimal rewardToken, address from, address to, uint256 amountRequested) external returns (uint256 rewardBalanceBefore)
 ```
 **Selector**: `0x0a530754`
 
@@ -485,7 +529,7 @@ only for FarmingCenter
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| reward | uint256 | The amount of reward tokens claimed |
+| rewardBalanceBefore | uint256 | The total amount of unclaimed reward *before* claim |
 
 ### getRewardInfo
 
@@ -535,9 +579,9 @@ Returns information about a farmed liquidity NFT
 ### createEternalFarming
 
 ```solidity
-function createEternalFarming(struct IncentiveKey key, struct IAlgebraEternalFarming.IncentiveParams params) external returns (address virtualPool)
+function createEternalFarming(struct IncentiveKey key, struct IAlgebraEternalFarming.IncentiveParams params, address plugin) external returns (address virtualPool)
 ```
-**Selector**: `0x566d3c71`
+**Selector**: `0x547b6da9`
 
 Creates a new liquidity farming incentive program
 
@@ -545,6 +589,7 @@ Creates a new liquidity farming incentive program
 | ---- | ---- | ----------- |
 | key | struct IncentiveKey | Details of the incentive to create |
 | params | struct IAlgebraEternalFarming.IncentiveParams | Params of incentive |
+| plugin | address | The address of corresponding plugin |
 
 **Returns:**
 

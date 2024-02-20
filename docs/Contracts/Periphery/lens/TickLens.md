@@ -3,7 +3,7 @@
 # TickLens
 
 
-Tick Lens contract
+Algebra Integral 1.0 Tick Lens contract
 
 
 
