@@ -3,14 +3,14 @@
 # SwapRouter
 
 
-Algebra Swap Router
+Algebra Integral 1.0 Swap Router
 
 Router for stateless execution of swaps against Algebra
 
 *Developer note: Credit to Uniswap Labs under GPL-2.0-or-later license:
 https://github.com/Uniswap/v3-periphery*
 
-**Inherits:** [ISwapRouter](interfaces/ISwapRouter.md) [PeripheryImmutableState](base/PeripheryImmutableState.md) PeripheryValidation [PeripheryPaymentsWithFee](base/PeripheryPaymentsWithFee.md) [Multicall](base/Multicall.md) [SelfPermit](base/SelfPermit.md)
+**Inherits:** [ISwapRouter](interfaces/ISwapRouter.md) [PeripheryImmutableState](base/PeripheryImmutableState.md) PeripheryValidation [PeripheryPaymentsWithFee](base/PeripheryPaymentsWithFee.md) [Multicall](base/Multicall.md) [SelfPermit](base/SelfPermit.md) [BlastGovernorSetup](../Core/base/BlastGovernorSetup.md)
 
 ## Structs
 ### SwapCallbackData
@@ -29,13 +29,14 @@ struct SwapCallbackData {
 ### constructor
 
 ```solidity
-constructor(address _factory, address _WNativeToken, address _poolDeployer) public
+constructor(address _blastGovernor, address _factory, address _WNativeToken, address _poolDeployer) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _factory | address |  |
 | _WNativeToken | address |  |
 | _poolDeployer | address |  |
@@ -127,6 +128,8 @@ function exactOutputSingle(struct ISwapRouter.ExactOutputSingleParams params) ex
 
 Swaps as little as possible of one token for &#x60;amountOut&#x60; of another token
 
+*Developer note: If native token is used as input, this function should be accompanied by a &#x60;refundNativeToken&#x60; in multicall to avoid potential loss of native tokens*
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | params | struct ISwapRouter.ExactOutputSingleParams | The parameters necessary for the swap, encoded as `ExactOutputSingleParams` in calldata |
@@ -145,6 +148,8 @@ function exactOutput(struct ISwapRouter.ExactOutputParams params) external payab
 **Selector**: `0xf28c0498`
 
 Swaps as little as possible of one token for &#x60;amountOut&#x60; of another along the specified path (reversed)
+
+*Developer note: If native token is used as input, this function should be accompanied by a &#x60;refundNativeToken&#x60; in multicall to avoid potential loss of native tokens*
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |

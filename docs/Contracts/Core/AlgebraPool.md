@@ -7,9 +7,9 @@ Algebra concentrated liquidity pool
 
 This contract is responsible for liquidity positions, swaps and flashloans
 
-*Developer note: Version: Algebra Integral*
+*Developer note: Version: Algebra Integral 1.0*
 
-**Inherits:** [AlgebraPoolBase](base/AlgebraPoolBase.md) [TickStructure](base/TickStructure.md) ReentrancyGuard [Positions](base/Positions.md) SwapCalculation [ReservesManager](base/ReservesManager.md)
+**Inherits:** [AlgebraPoolBase](base/AlgebraPoolBase.md) [TickStructure](base/TickStructure.md) ReentrancyGuard [Positions](base/Positions.md) SwapCalculation [ReservesManager](base/ReservesManager.md) [BlastERC20RebasingManage](base/BlastERC20RebasingManage.md)
 
 ## Functions
 ### initialize
@@ -234,11 +234,27 @@ function setPluginConfig(uint8 newConfig) external
 ```
 **Selector**: `0xbca57f81`
 
-Set new plugin config
+Set new plugin config. Only factory owner or POOLS_ADMINISTRATOR_ROLE role
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| newConfig | uint8 | In the new configuration of the plugin, each bit of which is responsible for a particular hook. Only factory owner or POOLS_ADMINISTRATOR_ROLE role |
+| newConfig | uint8 | In the new configuration of the plugin, each bit of which is responsible for a particular hook. |
+
+### setCommunityVault
+
+```solidity
+function setCommunityVault(address newCommunityVault) external
+```
+**Selector**: `0xd8544cf3`
+
+Set new community fee vault address. Only factory owner or POOLS_ADMINISTRATOR_ROLE role
+
+*Developer note: Community fee vault receives collected community fees.
+**accumulated but not yet sent to the vault community fees once will be sent to the &#x60;newCommunityVault&#x60; address***
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| newCommunityVault | address | The address of new community fee vault |
 
 ### setFee
 

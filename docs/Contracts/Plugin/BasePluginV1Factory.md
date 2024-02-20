@@ -3,11 +3,11 @@
 # BasePluginV1Factory
 
 
-Algebra default plugin factory
+Algebra Integral 1.0 default plugin factory
 
 This contract creates Algebra default plugins for Algebra liquidity pools
 
-**Inherits:** [IBasePluginV1Factory](interfaces/IBasePluginV1Factory.md)
+**Inherits:** [IBasePluginV1Factory](interfaces/IBasePluginV1Factory.md) [BlastGovernorSetup](../Core/base/BlastGovernorSetup.md)
 ## Modifiers
 ### onlyAdministrator
 
@@ -58,6 +58,27 @@ address farmingAddress
 Returns current farming address
 
 
+### defaultBlastGovernor
+```solidity
+address defaultBlastGovernor
+```
+**Selector**: `0xfb6cd276`
+
+Returns current default blast governor address
+
+
+### implementation
+```solidity
+address implementation
+```
+**Selector**: `0x5c60da1b`
+
+
+
+*Developer note: Must return an address that can be used as a delegate call target.
+
+{BeaconProxy} will check that this address is a contract.*
+
 ### pluginByPool
 ```solidity
 mapping(address => address) pluginByPool
@@ -72,27 +93,31 @@ Returns address of plugin created for given AlgebraPool
 ### constructor
 
 ```solidity
-constructor(address _algebraFactory) public
+constructor(address _blastGovernor, address _algebraFactory, address _basePluginV1Implementation) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| _blastGovernor | address |  |
 | _algebraFactory | address |  |
+| _basePluginV1Implementation | address |  |
 
 ### createPlugin
 
 ```solidity
-function createPlugin(address pool) external returns (address)
+function createPlugin(address pool, address, address) external returns (address)
 ```
-**Selector**: `0x361c0f76`
+**Selector**: `0x9533ff10`
 
 Deploys new plugin contract for pool
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | pool | address | The address of the pool for which the new plugin will be created |
+|  | address |  |
+|  | address |  |
 
 **Returns:**
 
@@ -119,6 +144,21 @@ Create plugin for already existing pool
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | [0] | address | The address of created plugin |
+
+### setDefaultBlastGovernor
+
+```solidity
+function setDefaultBlastGovernor(address defaultBlastGovernor_) external
+```
+**Selector**: `0x998709e0`
+
+
+
+*Developer note: updates default blast governor address on the factory*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastGovernor_ | address | The new defautl blast governor address |
 
 ### setDefaultFeeConfiguration
 
@@ -150,4 +190,26 @@ function setFarmingAddress(address newFarmingAddress) external
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | newFarmingAddress | address | The new tokenomics contract address |
+
+### upgradeTo
+
+```solidity
+function upgradeTo(address newImplementation) external
+```
+**Selector**: `0x3659cfe6`
+
+
+
+*Developer note: Upgrades the beacon to a new implementation.
+
+Emits an {Upgraded} event.
+
+Requirements:
+
+- msg.sender must be the plugin adminisrator.
+- &#x60;newImplementation&#x60; must be a contract.*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| newImplementation | address |  |
 
