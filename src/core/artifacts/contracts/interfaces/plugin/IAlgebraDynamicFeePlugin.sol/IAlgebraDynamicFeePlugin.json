@@ -1,0 +1,24 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IAlgebraDynamicFeePlugin",
+  "sourceName": "contracts/interfaces/plugin/IAlgebraDynamicFeePlugin.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getCurrentFee",
+      "outputs": [
+        {
+          "internalType": "uint16",
+          "name": "fee",
+          "type": "uint16"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -5,3 +5,9 @@ exports[`TickLens #getClosestActiveTicks gas for almost all tick space [ @skip-o
 exports[`TickLens #getNextActiveTicks gas for single populated tick [ @skip-on-coverage ] 1`] = `22186`;
 
 exports[`TickLens #getPopulatedTicksInWord gas for single populated tick [ @skip-on-coverage ] 1`] = `53734`;
+
+exports[`TickLens fully populated word getNextActiveTicks 255 ticks [ @skip-on-coverage ] 1`] = `2465710`;
+
+exports[`TickLens fully populated word getNextActiveTicks 512 ticks [ @skip-on-coverage ] 1`] = `2507102`;
+
+exports[`TickLens fully populated word getPopulatedTicksInWord [ @skip-on-coverage ] 1`] = `92645`;
