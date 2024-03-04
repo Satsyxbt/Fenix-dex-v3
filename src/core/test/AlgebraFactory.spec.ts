@@ -65,9 +65,14 @@ describe('AlgebraFactory', () => {
     ({ factory, poolDeployer, defaultPluginFactory } = await loadFixture(fixture));
   });
 
-  it('cannot create invalid vault factory stub', async () => {
+  it('fail if provide zero address like poolDeployer', async () => {
+    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
+    await expect(factoryFactory.deploy(blastGovernor.address, ZERO_ADDRESS)).to.be.reverted;
+  });
+
+  it('cannot create vault factory stub with zero algebra community vault address', async () => {
     const vaultFactoryStubFactory = await ethers.getContractFactory('AlgebraVaultFactoryStub');
-    expect(vaultFactoryStubFactory.deploy(ZeroAddress)).to.be.revertedWithoutReason;
+    expect(vaultFactoryStubFactory.deploy(blastGovernor.address, ZeroAddress)).to.be.revertedWithoutReason;
   });
 
   it('corect default blast governor', async () => {
