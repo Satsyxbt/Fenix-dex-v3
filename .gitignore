@@ -5,6 +5,7 @@ node_modules
 **/periphery/artifacts
 **/plugin/artifacts
 
+!**/core/artifacts/contracts/test/TestAlgebraCallee.sol/TestAlgebraCallee.json
 **/core/artifacts/contracts/**/*.dbg.json
 **/core/artifacts/contracts/test
 !**/core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json
