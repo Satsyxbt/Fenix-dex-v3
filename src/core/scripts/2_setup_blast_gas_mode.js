@@ -25,8 +25,9 @@ async function main() {
         console.log(`---- Set Gas Claimable`);
         await blast.configureClaimableGasOnBehalf(deploysData[key]);
       }
+    } else {
+      console.log(`---- Skip`);
     }
-    console.log(`---- Skip`);
   }
 }
 
