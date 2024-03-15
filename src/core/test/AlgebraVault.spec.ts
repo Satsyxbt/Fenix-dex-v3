@@ -9,7 +9,7 @@ import {
   BlastMock__factory,
 } from '../typechain';
 import { expect } from './shared/expect';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { mockBlastPart } from './shared/fixtures';
 
 describe('AlgebraCommunityVault', () => {
   let wallet: Wallet, other: Wallet, third: Wallet;
@@ -24,7 +24,7 @@ describe('AlgebraCommunityVault', () => {
   const AMOUNT = 10n ** 18n;
 
   const fixture = async () => {
-    await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+    await mockBlastPart();
 
     const [deployer, governor] = await ethers.getSigners();
     // precompute
