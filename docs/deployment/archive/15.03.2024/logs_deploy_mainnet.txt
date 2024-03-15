@@ -261,3 +261,6 @@ Check setuped governor address for fc - 0x0F6A612C5CE4f98675ee2E2fBC58d880472511
 
 npx hardhat run .\scripts\3_setup_community_fee_to_100.js --network blastMainnet
 Updated community fee to 100%
+
+
+Updated FeesVault in Factory to 0xC202E30A55a85FdD00270D033AaE8CF9D44612C2
