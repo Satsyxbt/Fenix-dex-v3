@@ -21,8 +21,14 @@ interface FactoryFixture {
 }
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
-async function factoryFixture(): Promise<FactoryFixture> {
+export async function mockBlastPart() {
   await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
+  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
+}
+
+async function factoryFixture(): Promise<FactoryFixture> {
+  await mockBlastPart();
   const [deployer, governor] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
@@ -85,7 +91,7 @@ export const TEST_POOL_START_TIME = 1601906400;
 export const TEST_POOL_DAY_BEFORE_START = 1601906400 - 24 * 60 * 60;
 
 export const poolFixture: Fixture<PoolFixture> = async function (): Promise<PoolFixture> {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+  await mockBlastPart();
 
   const { factory, vault } = await factoryFixture();
   const { token0, token1, token2 } = await tokensFixture();
