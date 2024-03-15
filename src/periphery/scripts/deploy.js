@@ -9,7 +9,7 @@ async function main() {
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   // WNativeTokenAddress
-  const WNativeTokenAddress = '0x4200000000000000000000000000000000000023';
+  const WNativeTokenAddress = '0x4300000000000000000000000000000000000004';
   const signers = await hre.ethers.getSigners();
   const ProxyAdmin = signers[0].address;
 
