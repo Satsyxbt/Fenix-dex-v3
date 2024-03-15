@@ -16,12 +16,12 @@ import '../libraries/Constants.sol';
 import '../libraries/Plugins.sol';
 
 import './common/Timestamp.sol';
-import './BlastGovernorSetup.sol';
+import './BlastERC20RebasingManage.sol';
 
 /// @title Algebra pool base abstract contract
 /// @notice Contains state variables, immutables and common internal functions
 /// @dev Decoupling into a separate abstract contract simplifies testing
-abstract contract AlgebraPoolBase is IAlgebraPool, Timestamp, BlastGovernorSetup {
+abstract contract AlgebraPoolBase is IAlgebraPool, Timestamp, BlastERC20RebasingManage {
   using TickManagement for mapping(int24 => TickManagement.Tick);
 
   /// @notice The struct with important state values of pool
@@ -98,8 +98,9 @@ abstract contract AlgebraPoolBase is IAlgebraPool, Timestamp, BlastGovernorSetup
   constructor() {
     address _plugin;
     address _blastGovernor;
+
     (_blastGovernor, _plugin, factory, token0, token1) = _getDeployParameters();
-    __BlastGovernorSetup_init(_blastGovernor);
+    __BlastERC20RebasingManage__init(_blastGovernor);
 
     (prevTickGlobal, nextTickGlobal) = (TickMath.MIN_TICK, TickMath.MAX_TICK);
     globalState.unlocked = true;

@@ -2,7 +2,6 @@ import {
   abi as FACTORY_ABI,
   bytecode as FACTORY_BYTECODE,
 } from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json';
-import BlastMock__factory from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastMock.sol/BlastMock.json';
 
 import {
   abi as POOL_DEPLOYER_ABI,
@@ -27,10 +26,11 @@ import {
   abi as WNATIVE_ABI,
   bytecode as WNATIVE_BYTECODE,
 } from '@cryptoalgebra/integral-periphery/artifacts/contracts/interfaces/external/IWNativeToken.sol/IWNativeToken.json';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import BlastMock__factory from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastMock.sol/BlastMock.json';
 
 //import WNativeToken from '../contracts/WNativeToken.json'
 import { getCreateAddress } from 'ethers';
+import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 export const vaultAddress = '0x1d8b6fA722230153BE08C4Fa4Aa4B4c7cd01A95a';
 
@@ -40,9 +40,13 @@ const wnativeFixture: () => Promise<{ wnative: IWNativeToken }> = async () => {
 
   return { wnative };
 };
-
-const v3CoreFactoryFixture: () => Promise<IAlgebraFactory> = async () => {
+export async function mockBlastPart() {
   await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
+  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
+}
+const v3CoreFactoryFixture: () => Promise<IAlgebraFactory> = async () => {
+  await mockBlastPart();
   const [deployer, blastGovernor] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({

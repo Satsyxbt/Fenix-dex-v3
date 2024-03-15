@@ -25,7 +25,6 @@ import {
   TestERC20,
   INonfungiblePositionManager,
   IAlgebraFactory,
-  IAccessControl,
   IAlgebraPoolDeployer,
   IAlgebraPool,
   TestIncentiveId,
@@ -50,7 +49,7 @@ export const wnativeFixture: () => Promise<WNativeTokenFixture> = async () => {
 };
 
 const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer, IBasePluginV1Factory, Signer]> = async () => {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+  await mockBlastPart();
 
   const [deployer, blastGovernor] = await ethers.getSigners();
   // precompute
@@ -253,8 +252,13 @@ export type AlgebraFixtureType = {
   bonusRewardToken: TestERC20;
   ownerSigner: Signer;
 };
-export const algebraFixture: () => Promise<AlgebraFixtureType> = async () => {
+export async function mockBlastPart() {
   await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
+  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
+}
+export const algebraFixture: () => Promise<AlgebraFixtureType> = async () => {
+  await mockBlastPart();
 
   const { tokens, nft, factory, deployer, router, pluginFactory, ownerSigner } = await algebraFactoryFixture();
   const wallets = (await ethers.getSigners()) as any as Wallet[];

@@ -1,11 +1,10 @@
 import { Wallet, getCreateAddress, ZeroAddress, keccak256 } from 'ethers';
 import { ethers } from 'hardhat';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
-import { AlgebraFactory, AlgebraPoolDeployer, BlastMock__factory, MockDefaultPluginFactory } from '../typechain';
+import { AlgebraFactory, AlgebraPoolDeployer, MockDefaultPluginFactory } from '../typechain';
 import { expect } from './shared/expect';
-import { ZERO_ADDRESS } from './shared/fixtures';
+import { ZERO_ADDRESS, mockBlastPart } from './shared/fixtures';
 import snapshotGasCost from './shared/snapshotGasCost';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 import { getCreate2Address, encodePriceSqrt } from './shared/utilities';
 
@@ -24,7 +23,7 @@ describe('AlgebraFactory', () => {
   let defaultPluginFactory: MockDefaultPluginFactory;
 
   const fixture = async () => {
-    await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+    await mockBlastPart();
 
     const [deployer, governor] = await ethers.getSigners();
     // precompute

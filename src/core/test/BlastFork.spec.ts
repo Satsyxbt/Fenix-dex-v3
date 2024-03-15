@@ -6,6 +6,7 @@ import {
   AlgebraPool,
   AlgebraPoolDeployer,
   AlgebraVaultFactoryStub,
+  BlastPointsMock,
   IBlastNearMock,
   IERC20RebasingMock,
   MockDefaultPluginFactory,
@@ -13,6 +14,7 @@ import {
 } from '../typechain';
 import { expect } from './shared/expect';
 import {
+  BLAST_POINTS_ADDRESS,
   BLAST_PREDEPLOYED_ADDRESS,
   USDB_PREDEPLOYED_ADDRESS,
   WETH_PREDEPLOYED_ADDRESS,
@@ -28,6 +30,7 @@ describe('BlastFork specific tests', () => {
     let wallet: Wallet, other: Wallet, blastGovernor: Wallet;
 
     let blast: IBlastNearMock;
+    let blastPointsMock: BlastPointsMock;
     let usdb: IERC20RebasingMock;
     let weth: IERC20RebasingMock;
     let factory: AlgebraFactory;
@@ -73,6 +76,7 @@ describe('BlastFork specific tests', () => {
       blast = (await ethers.getContractAt('IBlastNearMock', BLAST_PREDEPLOYED_ADDRESS)) as any as IBlastNearMock;
       usdb = (await ethers.getContractAt('IERC20RebasingMock', USDB_PREDEPLOYED_ADDRESS)) as any as IERC20RebasingMock;
       weth = (await ethers.getContractAt('IERC20RebasingMock', WETH_PREDEPLOYED_ADDRESS)) as any as IERC20RebasingMock;
+      blastPointsMock = (await ethers.getContractAt('BlastPointsMock', BLAST_POINTS_ADDRESS)) as any as BlastPointsMock;
       snapshot = await takeSnapshot();
     });
 
@@ -86,17 +90,20 @@ describe('BlastFork specific tests', () => {
       expect(await blast.governorMap(vaultFactoryStub.target)).to.be.eq(blastGovernor.address);
     });
 
-    it('Correct initialize blast governor for created pool', async () => {
+    it('Correct initialize blast governor and blast points operator for created pool', async () => {
       await factory.createPool(usdb.target, weth.target);
+
       let pool = (await ethers.getContractAt(
         'AlgebraPool',
         await factory.poolByPair(usdb.target, weth.target)
       )) as any as AlgebraPool;
 
       expect(await blast.governorMap(pool.target)).to.be.eq(blastGovernor.address);
+
+      expect(await blastPointsMock.operatorMap(pool.target)).to.be.eq(blastGovernor.address);
     });
 
-    it('Correct initialize blast governor for created pool after changed default blast governor', async () => {
+    it('Correct initialize blast governor and blastPoins operator for created pool after changed default blast governor', async () => {
       expect(await factory.defaultBlastGovernor()).to.be.eq(blastGovernor.address);
       await factory.setDefaultBlastGovernor(other.address);
       expect(await factory.defaultBlastGovernor()).to.be.eq(other.address);
@@ -106,8 +113,21 @@ describe('BlastFork specific tests', () => {
         await factory.poolByPair(usdb.target, weth.target)
       )) as any as AlgebraPool;
       expect(await blast.governorMap(pool.target)).to.be.eq(other.address);
+      expect(await blastPointsMock.operatorMap(pool.target)).to.be.eq(other.address);
     });
+    it('Provide points operator oportunity to configure blast points operator', async () => {
+      await factory.createPool(usdb.target, weth.target);
+      let pool = (await ethers.getContractAt(
+        'AlgebraPool',
+        await factory.poolByPair(usdb.target, weth.target)
+      )) as any as AlgebraPool;
 
+      expect(await blastPointsMock.operatorMap(pool.target)).to.be.eq(blastGovernor.address);
+
+      await blastPointsMock.configurePointsOperatorOnBehalf(pool.target, other.address);
+
+      expect(await blastPointsMock.operatorMap(pool.target)).to.be.eq(other.address);
+    });
     it('Provider blastGovernor oportunity to configure gas mode', async () => {
       let getGasInfo = await blast.readGasParams(factory.target);
       expect(getGasInfo[3]).to.be.eq(0);
@@ -151,7 +171,6 @@ describe('BlastFork specific tests', () => {
           'AlgebraPool',
           await factory.poolByPair(usdb.target, weth.target)
         )) as any as AlgebraPool;
-
         await pool.configure(USDB_PREDEPLOYED_ADDRESS, 1);
         await pool.configure(WETH_PREDEPLOYED_ADDRESS, 1);
       });

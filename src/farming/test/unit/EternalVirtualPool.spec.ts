@@ -1,9 +1,7 @@
 import { ethers } from 'hardhat';
 import { Wallet } from 'ethers';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
-import { expect, blockTimestamp, snapshotGasCost } from '../shared';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
-import BlastMock__factory from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastMock.sol/BlastMock.json';
+import { expect, blockTimestamp, snapshotGasCost, mockBlastPart } from '../shared';
 
 import { createTimeMachine } from '../shared/time';
 
@@ -28,7 +26,7 @@ describe('unit/EternalVirtualPool', () => {
   });
 
   const virtualPoolFixture: () => Promise<{ poolMock: PoolMock; virtualPool: TestVirtualPool; initTimestamp: number }> = async () => {
-    await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+    await mockBlastPart();
 
     const _blockTimestamp = await blockTimestamp();
     const _initTimestamp = _blockTimestamp + 1000000;

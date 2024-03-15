@@ -52,9 +52,13 @@ interface MockPoolDeployerFixture extends TokensFixture {
   factory: AlgebraFactory;
   createPool(firstToken?: TestERC20, secondToken?: TestERC20): Promise<MockTimeAlgebraPool>;
 }
-export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixture> = async () => {
+export async function mockBlastPart() {
   await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-
+  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
+  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
+}
+export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixture> = async () => {
+  await mockBlastPart();
   const { token0, token1 } = await tokensFixture();
 
   const [deployer, governor] = await ethers.getSigners();

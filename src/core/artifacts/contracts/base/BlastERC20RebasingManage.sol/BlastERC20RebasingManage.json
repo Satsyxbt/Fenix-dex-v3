@@ -4,6 +4,11 @@
   "sourceName": "contracts/base/BlastERC20RebasingManage.sol",
   "abi": [
     {
+      "inputs": [],
+      "name": "AddressZero",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",

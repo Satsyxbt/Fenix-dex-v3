@@ -78,13 +78,13 @@ export default {
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
     blastSepolia: {
-      url: 'https://rpc.ankr.com/blast_testnet_sepolia/8b23c0c39114674729a2260aa732f5bc09264b988b054f82c8d084e26e32cdc9',
+      url: 'https://testnet.blast.din.dev/rpc',
       gasPrice: 1e3,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
-    blastSepoliaFork: {
-      url: 'https://sepolia.blast.io',
-      gasPrice: 1e9,
+    blastMainnet: {
+      url: 'https://rpc.blast.io',
+      gasPrice: 1e3,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
   },

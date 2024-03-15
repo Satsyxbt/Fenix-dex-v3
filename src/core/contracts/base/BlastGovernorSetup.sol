@@ -18,13 +18,13 @@ abstract contract BlastGovernorSetup {
    * This internal function is meant to be called in the initialization process
    * of a derived contract that sets up governance.
    *
-   * @param gov_ The address of the governor to be configured in the Blast protocol.
+   * @param blastGovernor_ The address of the governor to be configured in the Blast protocol.
    * Must be a non-zero address.
    */
-  function __BlastGovernorSetup_init(address gov_) internal {
-    if (gov_ == address(0)) {
+  function __BlastGovernorSetup_init(address blastGovernor_) internal {
+    if (blastGovernor_ == address(0)) {
       revert AddressZero();
     }
-    IBlast(0x4300000000000000000000000000000000000002).configureGovernor(gov_);
+    IBlast(0x4300000000000000000000000000000000000002).configureGovernor(blastGovernor_);
   }
 }

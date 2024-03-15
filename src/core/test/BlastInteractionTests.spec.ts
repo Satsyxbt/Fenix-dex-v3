@@ -1,14 +1,10 @@
-import { Wallet } from 'ethers';
 import { ethers } from 'hardhat';
 import { expect } from './shared/expect';
-import { ZERO_ADDRESS } from './shared/fixtures';
-
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
-import { BlastMock__factory } from '../typechain';
+import { ZERO_ADDRESS, mockBlastPart } from './shared/fixtures';
 
 describe('BlastInteractionTest', () => {
   before(async () => {
-    await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+    await mockBlastPart();
   });
 
   it('fail if create with invalid blast governor address', async () => {
