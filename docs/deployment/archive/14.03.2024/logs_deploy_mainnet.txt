@@ -1,0 +1,53 @@
+AlgebraPoolDeployer to: 0x470d082A3e9C74EF1E2503Ae1cB5228E7f21Ba41
+AlgebraFactory deployed to: 0x07a9E006a445112F8ABd29972E86618d40CbEDE0
+AlgebraCommunityVault deployed to: 0xeC306213e3f0F391B25c757d8add860c10D5dB30
+AlgebraVaultFactoryStub deployed to: 0x178F58c82283A71172B8cE38B054bEA521B9962c
+
+
+npx hardhat run .\scripts\verify.js --network blastMainnet
+Successfully submitted source code for contract
+contracts/AlgebraFactory.sol:AlgebraFactory at 0x07a9E006a445112F8ABd29972E86618d40CbEDE0
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraFactory on the block explorer.
+https://blastexplorer.io/address/0x07a9E006a445112F8ABd29972E86618d40CbEDE0#code
+
+Successfully submitted source code for contract
+contracts/AlgebraPoolDeployer.sol:AlgebraPoolDeployer at 0x470d082A3e9C74EF1E2503Ae1cB5228E7f21Ba41
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraPoolDeployer on the block explorer.
+https://blastexplorer.io/address/0x470d082A3e9C74EF1E2503Ae1cB5228E7f21Ba41#code
+
+Successfully submitted source code for contract
+contracts/AlgebraCommunityVault.sol:AlgebraCommunityVault at 0xeC306213e3f0F391B25c757d8add860c10D5dB30
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraCommunityVault on the block explorer.
+https://blastexplorer.io/address/0xeC306213e3f0F391B25c757d8add860c10D5dB30#code
+
+DeployedBytecodeMultipleMatchesError: More than one contract was found to match the deployed bytecode.
+Please use the contract parameter with one of the following contracts:
+  * contracts/AlgebraVaultFactoryStub.sol:AlgebraVaultFactoryStub
+  * contracts/test/FaultyVaultFactoryStub.sol:FaultyVaultFactoryStub
+
+For example:
+
+hardhat verify --contract contracts/Example.sol:ExampleContract <other args>
+
+If you are running the verify subtask from within Hardhat instead:
+
+await run("verify:verify", {
+<other args>,
+contract: "contracts/Example.sol:ExampleContract"
+};
+    at extractInferredContractInformation (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\solc\artifacts.ts:148:11)
+    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\index.ts:240:31)
+    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:129:62)
+    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\index.ts:284:9)
+    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
