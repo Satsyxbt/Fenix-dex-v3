@@ -91,8 +91,17 @@ export default {
   etherscan: {
     apiKey: {
       blastSepolia: 'blastSepolia', // apiKey is not required, just set a placeholder
+      blastMainnet: 'blastMainnet',
     },
     customChains: [
+      {
+        network: 'blastMainnet',
+        chainId: 81457,
+        urls: {
+          apiURL: 'https://api.routescan.io/v2/network/mainnet/evm/81457/etherscan',
+          browserURL: 'https://blastexplorer.io',
+        },
+      },
       {
         network: 'blastSepolia',
         chainId: 168587773,
