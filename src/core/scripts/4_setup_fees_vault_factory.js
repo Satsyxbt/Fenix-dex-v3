@@ -2,7 +2,7 @@ const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
 
-const FEES_VAULT = '0x26D760D86bec3CeaC9636DcDE75E6cA6733Ae290';
+const FEES_VAULT = '0xabc03eF501C3eeF03Bb0a1338653A8DfF7f1e36E';
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
 

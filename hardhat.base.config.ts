@@ -1,6 +1,6 @@
 const path = require('path');
 const config = require('dotenv').config({ path: path.resolve(__dirname, '.env') });
-const { ETHERSCAN_API_KEY, BSCSCAN_API_KEY, POLYGONSCAN_API_KEY, MNEMONIC, DEPLOY_GAS_LIMIT_MAX, DEPLOY_GAS_PRICE, INFURA_ID_PROJECT } =
+const { ETHERSCAN_API_KEY, BSCSCAN_API_KEY, POLYGONSCAN_API_KEY, MNEMONIC, DEPLOY_GAS_LIMIT_MAX, DEPLOY_GAS_PRICE, INFURA_ID_PROJECT, API_KEY } =
   config.parsed || {};
 
 export default {
@@ -77,6 +77,11 @@ export default {
       chainId: 10243,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
+    blastScanSepolia: {
+      url: 'https://testnet.blast.din.dev/rpc',
+      gasPrice: 1e3,
+      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
+    },
     blastSepolia: {
       url: 'https://testnet.blast.din.dev/rpc',
       gasPrice: 1e3,
@@ -90,10 +95,19 @@ export default {
   },
   etherscan: {
     apiKey: {
+      blastScanSepolia: `${API_KEY}`,
       blastSepolia: 'blastSepolia', // apiKey is not required, just set a placeholder
       blastMainnet: 'blastMainnet',
     },
     customChains: [
+      {
+        network: 'blastScanSepolia',
+        chainId: 168587773,
+        urls: {
+          apiURL: 'https://api-sepolia.blastscan.io/api',
+          browserURL: 'https://sepolia.blastscan.io/',
+        },
+      },
       {
         network: 'blastMainnet',
         chainId: 81457,
