@@ -87,11 +87,18 @@ export default {
       gasPrice: 1e3,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
+    blastScanMainnet: {
+      url: 'https://rpc.blast.io',
+      gasPrice: 1e3,
+      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
+    },
   },
   etherscan: {
     apiKey: {
       blastSepolia: 'blastSepolia', // apiKey is not required, just set a placeholder
       blastMainnet: 'blastMainnet',
+      blastScanMainnet: `${process.env.API_KEY}`,
+      blastScanSepolia: `${process.env.API_KEY}`,
     },
     customChains: [
       {
@@ -100,6 +107,14 @@ export default {
         urls: {
           apiURL: 'https://api.routescan.io/v2/network/mainnet/evm/81457/etherscan',
           browserURL: 'https://blastexplorer.io',
+        },
+      },
+      {
+        network: 'blastScanMainnet',
+        chainId: 81457,
+        urls: {
+          apiURL: 'https://api.blastscan.io/api',
+          browserURL: 'https://blastscan.io/',
         },
       },
       {
