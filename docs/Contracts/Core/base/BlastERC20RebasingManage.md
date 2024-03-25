@@ -11,7 +11,7 @@ BlastERC20RebasingManage
 It provides functionalities to configure and claim tokens while ensuring that only authorized
 entities can perform these operations.*
 
-**Inherits:** [IBlastERC20RebasingManage](../interfaces/IBlastERC20RebasingManage.md)
+**Inherits:** [IBlastERC20RebasingManage](../interfaces/IBlastERC20RebasingManage.md) [BlastGovernorSetup](BlastGovernorSetup.md)
 
 ## Functions
 ### configure

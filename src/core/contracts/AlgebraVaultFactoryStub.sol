@@ -27,4 +27,7 @@ contract AlgebraVaultFactoryStub is IAlgebraVaultFactory, BlastGovernorSetup {
   function createVaultForPool(address) external view override returns (address) {
     return defaultAlgebraCommunityVault;
   }
+
+  /// @inheritdoc IAlgebraVaultFactory
+  function afterPoolInitialize(address) external override {}
 }

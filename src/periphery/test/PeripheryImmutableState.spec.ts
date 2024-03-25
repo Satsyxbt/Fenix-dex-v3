@@ -4,7 +4,6 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { PeripheryImmutableStateTest, IWNativeToken } from '../typechain';
 import { expect } from './shared/expect';
 import { v3RouterFixture } from './shared/externalFixtures';
-import { mockBlastPart } from './shared/completeFixture';
 
 describe('PeripheryImmutableState', () => {
   const nonfungiblePositionManagerFixture: () => Promise<{
@@ -12,7 +11,6 @@ describe('PeripheryImmutableState', () => {
     factory: any;
     state: PeripheryImmutableStateTest;
   }> = async () => {
-    await mockBlastPart();
     const { wnative, factory } = await v3RouterFixture();
 
     const stateFactory = await ethers.getContractFactory('PeripheryImmutableStateTest');

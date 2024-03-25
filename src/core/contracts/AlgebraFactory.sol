@@ -5,6 +5,8 @@ import './libraries/Constants.sol';
 
 import './interfaces/IAlgebraFactory.sol';
 import './interfaces/IAlgebraPoolDeployer.sol';
+import './interfaces/IBlastERC20RebasingManage.sol';
+
 import './interfaces/vault/IAlgebraVaultFactory.sol';
 import './interfaces/plugin/IAlgebraPluginFactory.sol';
 
@@ -25,10 +27,20 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
   bytes32 public constant override POOLS_CREATOR_ROLE = keccak256('POOLS_CREATOR'); // it`s here for the public visibility of the value
 
   /// @inheritdoc IAlgebraFactory
+  /// @dev keccak256 of AlgebraPool init bytecode. Used to compute pool address deterministically
+  bytes32 public constant override POOL_INIT_CODE_HASH = 0xf45e886a0794c1d80aeae5ab5befecd4f0f2b77c0cf627f7c46ec92dc1fa00e4;
+
+  /// @inheritdoc IAlgebraFactory
   address public immutable override poolDeployer;
 
   /// @inheritdoc IAlgebraFactory
   address public override defaultBlastGovernor;
+
+  /// @inheritdoc IAlgebraFactory
+  address public override defaultBlastPoints;
+
+  /// @inheritdoc IAlgebraFactory
+  address public override defaultBlastPointsOperator;
 
   ///@inheritdoc IAlgebraFactory
   bool public override isPublicPoolCreationMode;
@@ -45,28 +57,35 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
   /// @inheritdoc IAlgebraFactory
   uint256 public override renounceOwnershipStartTimestamp;
 
-  /// @dev time delay before ownership renouncement can be finished
-  uint256 private constant RENOUNCE_OWNERSHIP_DELAY = 1 days;
+  /// @inheritdoc IAlgebraFactory
+  IAlgebraPluginFactory public override defaultPluginFactory;
 
   /// @inheritdoc IAlgebraFactory
-  IAlgebraPluginFactory public defaultPluginFactory;
-
-  /// @inheritdoc IAlgebraFactory
-  IAlgebraVaultFactory public vaultFactory;
+  IAlgebraVaultFactory public override vaultFactory;
 
   /// @inheritdoc IAlgebraFactory
   mapping(address => mapping(address => address)) public override poolByPair;
 
   /// @inheritdoc IAlgebraFactory
-  /// @dev keccak256 of AlgebraPool init bytecode. Used to compute pool address deterministically
-  bytes32 public constant POOL_INIT_CODE_HASH = 0x9104a9011634d784057ab50542c9b3ff87f2dcd93bb541e297cbeefee70b3a62;
+  mapping(address => YieldMode) public override configurationForBlastRebaseTokens;
 
-  constructor(address _blastGovernor, address _poolDeployer) {
+  /// @inheritdoc IAlgebraFactory
+  mapping(address => bool) public override isRebaseToken;
+
+  /// @dev time delay before ownership renouncement can be finished
+  uint256 private constant RENOUNCE_OWNERSHIP_DELAY = 1 days;
+
+  constructor(address _blastGovernor, address _blastPoints, address _blastPointsOperaotor, address _poolDeployer) {
+    require(_poolDeployer != address(0));
+    require(_blastPoints != address(0));
+    require(_blastPointsOperaotor != address(0));
+
     __BlastGovernorSetup_init(_blastGovernor);
 
-    require(_poolDeployer != address(0));
-
     defaultBlastGovernor = _blastGovernor;
+    defaultBlastPoints = _blastPoints;
+    defaultBlastPointsOperator = _blastPointsOperaotor;
+
     poolDeployer = _poolDeployer;
     defaultTickspacing = Constants.INIT_DEFAULT_TICK_SPACING;
     defaultFee = Constants.INIT_DEFAULT_FEE;
@@ -117,7 +136,22 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
       defaultPlugin = defaultPluginFactory.createPlugin(computePoolAddress(token0, token1), token0, token1);
     }
 
-    pool = IAlgebraPoolDeployer(poolDeployer).deploy(defaultBlastGovernor, defaultPlugin, token0, token1);
+    pool = IAlgebraPoolDeployer(poolDeployer).deploy(
+      defaultBlastGovernor,
+      defaultBlastPoints,
+      defaultBlastPointsOperator,
+      defaultPlugin,
+      token0,
+      token1
+    );
+
+    if (isRebaseToken[token0]) {
+      IBlastERC20RebasingManage(pool).configure(token0, configurationForBlastRebaseTokens[token0]);
+    }
+
+    if (isRebaseToken[token1]) {
+      IBlastERC20RebasingManage(pool).configure(token1, configurationForBlastRebaseTokens[token1]);
+    }
 
     poolByPair[token0][token1] = pool; // to avoid future addresses comparison we are populating the mapping twice
     poolByPair[token1][token0] = pool;
@@ -125,13 +159,36 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
 
     if (address(vaultFactory) != address(0)) {
       vaultFactory.createVaultForPool(pool);
+      vaultFactory.afterPoolInitialize(pool);
     }
   }
 
   /// @inheritdoc IAlgebraFactory
+  function setConfigurationForRebaseToken(address token_, bool isRebase_, YieldMode mode_) external override onlyOwner {
+    isRebaseToken[token_] = isRebase_;
+    configurationForBlastRebaseTokens[token_] = mode_;
+    emit ConfigurationForRebaseToken(token_, isRebase_, mode_);
+  }
+
+  /// @inheritdoc IAlgebraFactory
   function setDefaultBlastGovernor(address defaultBlastGovernor_) external override onlyOwner {
+    require(defaultBlastGovernor_ != address(0));
     defaultBlastGovernor = defaultBlastGovernor_;
     emit DefaultBlastGovernor(defaultBlastGovernor_);
+  }
+
+  /// @inheritdoc IAlgebraFactory
+  function setDefaultBlastPoints(address defaultBlastPoints_) external override onlyOwner {
+    require(defaultBlastPoints_ != address(0));
+    defaultBlastPoints = defaultBlastPoints_;
+    emit DefaultBlastPoints(defaultBlastPoints_);
+  }
+
+  /// @inheritdoc IAlgebraFactory
+  function setDefaultBlastPointsOperator(address defaultBlastPointsOperator_) external override onlyOwner {
+    require(defaultBlastPointsOperator_ != address(0));
+    defaultBlastPointsOperator = defaultBlastPointsOperator_;
+    emit DefaultBlastPointsOperator(defaultBlastPointsOperator_);
   }
 
   /// @inheritdoc IAlgebraFactory

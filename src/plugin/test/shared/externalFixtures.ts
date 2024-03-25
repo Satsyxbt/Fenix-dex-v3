@@ -14,6 +14,10 @@ import {
   abi as POOL_ABI,
   bytecode as POOL_BYTECODE,
 } from '@cryptoalgebra/integral-core/artifacts/contracts/test/MockTimeAlgebraPool.sol/MockTimeAlgebraPool.json';
+import {
+  abi as BLAST_POINTS_MOCK_ABI,
+  bytecode as BLAST_POINTS_MOCK_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastPointsMock.sol/BlastPointsMock.json';
 
 import { ethers } from 'hardhat';
 import {
@@ -23,9 +27,9 @@ import {
   AlgebraFactory,
   TestERC20,
   BlastMock__factory,
+  BlastPointsMock,
 } from '@cryptoalgebra/integral-core/typechain';
 import { getCreateAddress } from 'ethers';
-import { ZERO_ADDRESS } from './fixtures';
 import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 interface TokensFixture {
@@ -54,14 +58,16 @@ interface MockPoolDeployerFixture extends TokensFixture {
 }
 export async function mockBlastPart() {
   await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
-  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
+  const factory = await ethers.getContractFactory(BLAST_POINTS_MOCK_ABI, BLAST_POINTS_MOCK_BYTECODE);
+  const blastPointsMock = (await factory.deploy()) as any as BlastPointsMock;
+
+  return blastPointsMock;
 }
 export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixture> = async () => {
-  await mockBlastPart();
+  let blastPoints = await mockBlastPart();
   const { token0, token1 } = await tokensFixture();
 
-  const [deployer, governor] = await ethers.getSigners();
+  const [deployer, governor, blastPointsOperator] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
@@ -69,7 +75,12 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
   });
 
   const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
-  const factory = (await factoryFactory.deploy(governor.address, poolDeployerAddress)) as any as AlgebraFactory;
+  const factory = (await factoryFactory.deploy(
+    governor.address,
+    poolDeployerAddress,
+    blastPointsOperator.address,
+    blastPoints.target
+  )) as any as AlgebraFactory;
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);
   const poolDeployer = (await poolDeployerFactory.deploy()) as any as MockTimeAlgebraPoolDeployer;
@@ -86,7 +97,7 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
     token1,
     factory,
     createPool: async (firstToken = token0, secondToken = token1) => {
-      await poolDeployer.deployMock(governor.address, factory, firstToken, secondToken);
+      await poolDeployer.deployMock(governor.address, blastPoints.target, blastPointsOperator.address, factory, firstToken, secondToken);
 
       const sortedTokens =
         BigInt(await firstToken.getAddress()) < BigInt(await secondToken.getAddress())
