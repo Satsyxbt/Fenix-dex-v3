@@ -14,4 +14,8 @@ interface IAlgebraVaultFactory {
   /// @param pool the address of Algebra Integral pool
   /// @return communityFeeVault the address of community fee vault
   function createVaultForPool(address pool) external returns (address communityFeeVault);
+
+  /// @notice Hook for calling after pool deployment
+  /// @param pool the address of Algebra Integral pool
+  function afterPoolInitialize(address pool) external;
 }

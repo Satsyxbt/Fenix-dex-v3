@@ -4,6 +4,7 @@ pragma abicoder v2;
 
 import './plugin/IAlgebraPluginFactory.sol';
 import './vault/IAlgebraVaultFactory.sol';
+import './IERC20Rebasing.sol';
 
 /// @title The interface for the Algebra Factory
 /// @dev Credit to Uniswap Labs under GPL-2.0-or-later license:
@@ -56,6 +57,20 @@ interface IAlgebraFactory {
   /// @param defaultBlastGovernor The new default blast governor address
   event DefaultBlastGovernor(address indexed defaultBlastGovernor);
 
+  /// @dev Emitted when set new default blast points address is changed.
+  /// @param defaultBlastPoints The new default blast points address
+  event DefaultBlastPoints(address indexed defaultBlastPoints);
+
+  /// @dev Emitted when set new default blast points operator address is changed.
+  /// @param defaultBlastPointsOperator The new default blast points operator address
+  event DefaultBlastPointsOperator(address indexed defaultBlastPointsOperator);
+
+  /// @notice Emitted when the rebase configuration for a token is set or updated
+  /// @param token The address of the token whose rebase configuration has been set or updated
+  /// @param isRebase Indicates whether the token is set as a rebasing token
+  /// @param mode The yield mode that has been set for the token, defining its rebasing behavior
+  event ConfigurationForRebaseToken(address token, bool isRebase, YieldMode mode);
+
   /// @notice role that can change communityFee and tickspacing in pools
   /// @return The hash corresponding to this role
   function POOLS_ADMINISTRATOR_ROLE() external view returns (bytes32);
@@ -78,6 +93,24 @@ interface IAlgebraFactory {
   /// @notice Returns the current default blast governor
   /// @return The address of the default blast governor
   function defaultBlastGovernor() external view returns (address);
+
+  /// @notice Returns the current default blast points
+  /// @return The address of the default blast points
+  function defaultBlastPoints() external view returns (address);
+
+  /// @notice Returns the current default blast points operator
+  /// @return The address of the default blast points operator
+  function defaultBlastPointsOperator() external view returns (address);
+
+  /// @notice Retrieves the yield mode configuration for a specified token
+  /// @param token The address of the token for which to retrieve the yield mode
+  /// @return The yield mode (rebasing configuration) set for the given token
+  function configurationForBlastRebaseTokens(address token) external view returns (YieldMode);
+
+  /// @notice Return if a token is marked as a rebasing token in the factory configuration
+  /// @param token The address of the token to check
+  /// @return True if the token is a rebasing token, false otherwise
+  function isRebaseToken(address token) external view returns (bool);
 
   /// @notice Returns the current poolDeployerAddress
   /// @return The address of the poolDeployer
@@ -153,6 +186,12 @@ interface IAlgebraFactory {
   /// @param mode_ the new mode for pools creation proccess
   function setIsPublicPoolCreationMode(bool mode_) external;
 
+  /// @notice Sets the rebase configuration for a specific token
+  /// @param token_ The address of the token to configure
+  /// @param isRebase_ A boolean indicating whether the token is a rebasing token or not
+  /// @param mode_ The yield mode to apply, defining how the rebasing mechanism should operate
+  function setConfigurationForRebaseToken(address token_, bool isRebase_, YieldMode mode_) external;
+
   /// @dev updates default community fee for new pools
   /// @param newDefaultCommunityFee The new community fee, _must_ be <= MAX_COMMUNITY_FEE
   function setDefaultCommunityFee(uint16 newDefaultCommunityFee) external;
@@ -183,4 +222,12 @@ interface IAlgebraFactory {
   /// @dev updates default blast governor address on the factory
   /// @param defaultBlastGovernor_ The new defautl blast governor address
   function setDefaultBlastGovernor(address defaultBlastGovernor_) external;
+
+  /// @dev updates default blast points address on the factory
+  /// @param defaultBlastPoints_ The new defautl blast points address
+  function setDefaultBlastPoints(address defaultBlastPoints_) external;
+
+  /// @dev updates default blast points operator address on the factory
+  /// @param defaultBlastPointsOperator_ The new defautl blast points operator address
+  function setDefaultBlastPointsOperator(address defaultBlastPointsOperator_) external;
 }

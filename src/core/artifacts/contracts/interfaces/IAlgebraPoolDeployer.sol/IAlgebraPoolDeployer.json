@@ -12,6 +12,16 @@
         },
         {
           "internalType": "address",
+          "name": "blastPoints",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "blastPointsOperator",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
           "name": "plugin",
           "type": "address"
         },
@@ -44,6 +54,16 @@
         {
           "internalType": "address",
           "name": "blastGovernor",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "blastPoints",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "blastPointsOperator",
           "type": "address"
         },
         {

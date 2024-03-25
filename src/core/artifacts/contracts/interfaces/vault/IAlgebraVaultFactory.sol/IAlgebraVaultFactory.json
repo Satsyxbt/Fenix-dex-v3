@@ -11,6 +11,19 @@
           "type": "address"
         }
       ],
+      "name": "afterPoolInitialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        }
+      ],
       "name": "createVaultForPool",
       "outputs": [
         {
