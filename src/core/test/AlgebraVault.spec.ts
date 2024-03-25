@@ -24,7 +24,7 @@ describe('AlgebraCommunityVault', () => {
   const AMOUNT = 10n ** 18n;
 
   const fixture = async () => {
-    await mockBlastPart();
+    let blastPointsMock = await mockBlastPart();
 
     const [deployer, governor] = await ethers.getSigners();
     // precompute
@@ -34,7 +34,12 @@ describe('AlgebraCommunityVault', () => {
     });
 
     const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    const _factory = (await factoryFactory.deploy(governor.address, poolDeployerAddress)) as any as AlgebraFactory;
+    const _factory = (await factoryFactory.deploy(
+      governor.address,
+      blastPointsMock.target,
+      governor.address,
+      poolDeployerAddress
+    )) as any as AlgebraFactory;
 
     const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
     poolDeployer = (await poolDeployerFactory.deploy(governor.address, _factory)) as any as AlgebraPoolDeployer;

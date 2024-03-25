@@ -10,8 +10,6 @@ import {
   TestERC20,
   IAlgebraFactory,
 } from '../../typechain';
-import { BlastMock__factory } from '@cryptoalgebra/integral-core/typechain';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 type TestERC20WithAddress = TestERC20 & { address_: string | undefined };
 
@@ -42,11 +40,7 @@ const DEFAULT_TOKENS_RATIONS_DATA: TokenRatioSortData[] = [
     tokenRatioSortOrder: tokenRatioSortOrder.DENOMINATOR_MOST,
   },
 ];
-export async function mockBlastPart() {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
-  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
-}
+
 const completeFixture: () => Promise<{
   wnative: IWNativeToken;
   factory: IAlgebraFactory;
@@ -55,7 +49,6 @@ const completeFixture: () => Promise<{
   nftDescriptor: NonfungibleTokenPositionDescriptor;
   tokens: [TestERC20, TestERC20, TestERC20];
 }> = async () => {
-  await mockBlastPart();
   const { wnative, factory, router } = await v3RouterFixture();
   const tokenFactory = await ethers.getContractFactory('TestERC20');
   const factoryOwner = await factory.owner();

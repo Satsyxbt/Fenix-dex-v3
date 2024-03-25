@@ -33,7 +33,12 @@ import {
 import { FeeAmount, encodePriceSqrt, MAX_GAS_LIMIT } from '../shared';
 import { ActorFixture } from './actors';
 import { IBasePluginV1Factory, IAlgebraBasePluginV1 } from '@cryptoalgebra/integral-base-plugin/typechain';
+import {
+  abi as BLAST_POINTS_MOCK_ABI,
+  bytecode as BLAST_POINTS_MOCK_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastPointsMock.sol/BlastPointsMock.json';
 import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { BlastMock__factory, BlastPointsMock } from '@cryptoalgebra/integral-core/typechain';
 
 type WNativeTokenFixture = { wnative: IWNativeToken };
 
@@ -48,10 +53,18 @@ export const wnativeFixture: () => Promise<WNativeTokenFixture> = async () => {
   return { wnative };
 };
 
-const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer, IBasePluginV1Factory, Signer]> = async () => {
-  await mockBlastPart();
+export async function mockBlastPart() {
+  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
+  const factory = await ethers.getContractFactory(BLAST_POINTS_MOCK_ABI, BLAST_POINTS_MOCK_BYTECODE);
+  const blastPointsMock = (await factory.deploy()) as any as BlastPointsMock;
 
-  const [deployer, blastGovernor] = await ethers.getSigners();
+  return blastPointsMock;
+}
+
+const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer, IBasePluginV1Factory, Signer]> = async () => {
+  let blastPoints = await mockBlastPart();
+
+  const [deployer, blastGovernor, blastPointsOperator] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
@@ -59,7 +72,12 @@ const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer
   });
 
   const v3FactoryFactory = await ethers.getContractFactory(AlgebraFactoryJson.abi, AlgebraFactoryJson.bytecode);
-  const _factory = (await v3FactoryFactory.deploy(blastGovernor.address, poolDeployerAddress)) as any as IAlgebraFactory;
+  const _factory = (await v3FactoryFactory.deploy(
+    blastGovernor.address,
+    blastPoints.target,
+    blastPointsOperator.address,
+    poolDeployerAddress
+  )) as any as IAlgebraFactory;
 
   const poolDeployerFactory = await ethers.getContractFactory(AlgebraPoolDeployerJson.abi, AlgebraPoolDeployerJson.bytecode);
   const _deployer = (await poolDeployerFactory.deploy(blastGovernor.address, _factory)) as any as IAlgebraPoolDeployer;
@@ -252,14 +270,8 @@ export type AlgebraFixtureType = {
   bonusRewardToken: TestERC20;
   ownerSigner: Signer;
 };
-export async function mockBlastPart() {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
-  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
-}
-export const algebraFixture: () => Promise<AlgebraFixtureType> = async () => {
-  await mockBlastPart();
 
+export const algebraFixture: () => Promise<AlgebraFixtureType> = async () => {
   const { tokens, nft, factory, deployer, router, pluginFactory, ownerSigner } = await algebraFactoryFixture();
   const wallets = (await ethers.getSigners()) as any as Wallet[];
   const signer = new ActorFixture(wallets, ethers.provider).farmingDeployer();

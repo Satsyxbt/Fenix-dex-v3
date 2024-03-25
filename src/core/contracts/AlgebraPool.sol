@@ -392,7 +392,9 @@ contract AlgebraPool is AlgebraPoolBase, TickStructure, ReentrancyGuard, Positio
 
   /// @inheritdoc BlastERC20RebasingManage
   function _checkAccessForManageBlastERC20Rebasing() internal virtual override {
-    _checkIfAdministrator();
+    if (msg.sender != factory) {
+      _checkIfAdministrator();
+    }
   }
 
   // permissioned actions use reentrancy lock to prevent call from callback (to keep the correct order of events, etc.)

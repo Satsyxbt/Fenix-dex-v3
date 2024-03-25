@@ -1,7 +1,13 @@
 import { Wallet, getCreateAddress, ZeroAddress, keccak256 } from 'ethers';
 import { ethers } from 'hardhat';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
-import { AlgebraFactory, AlgebraPoolDeployer, MockDefaultPluginFactory } from '../typechain';
+import {
+  AlgebraFactory,
+  AlgebraPoolDeployer,
+  BlastPointsMock,
+  ERC20RebasingMock,
+  MockDefaultPluginFactory,
+} from '../typechain';
 import { expect } from './shared/expect';
 import { ZERO_ADDRESS, mockBlastPart } from './shared/fixtures';
 import snapshotGasCost from './shared/snapshotGasCost';
@@ -15,17 +21,18 @@ const TEST_ADDRESSES: [string, string, string] = [
 ];
 
 describe('AlgebraFactory', () => {
-  let wallet: Wallet, other: Wallet, blastGovernor: Wallet;
+  let wallet: Wallet, other: Wallet, blastGovernor: Wallet, blastOperator: Wallet;
 
   let factory: AlgebraFactory;
   let poolDeployer: AlgebraPoolDeployer;
   let poolBytecode: string;
   let defaultPluginFactory: MockDefaultPluginFactory;
+  let blastPoints: BlastPointsMock;
 
   const fixture = async () => {
-    await mockBlastPart();
+    let blastPoints = await mockBlastPart();
 
-    const [deployer, governor] = await ethers.getSigners();
+    const [deployer, governor, blastOperator] = await ethers.getSigners();
     // precompute
     const poolDeployerAddress = getCreateAddress({
       from: deployer.address,
@@ -33,7 +40,12 @@ describe('AlgebraFactory', () => {
     });
 
     const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    const factory = (await factoryFactory.deploy(governor.address, poolDeployerAddress)) as any as AlgebraFactory;
+    const factory = (await factoryFactory.deploy(
+      governor.address,
+      blastPoints.target,
+      blastOperator.address,
+      poolDeployerAddress
+    )) as any as AlgebraFactory;
 
     const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
     const poolDeployer = (await poolDeployerFactory.deploy(governor.address, factory)) as any as AlgebraPoolDeployer;
@@ -49,11 +61,11 @@ describe('AlgebraFactory', () => {
     const defaultPluginFactoryFactory = await ethers.getContractFactory('MockDefaultPluginFactory');
     const defaultPluginFactory = (await defaultPluginFactoryFactory.deploy()) as any as MockDefaultPluginFactory;
 
-    return { factory, poolDeployer, defaultPluginFactory };
+    return { factory, poolDeployer, defaultPluginFactory, blastPoints };
   };
 
   before('create fixture loader', async () => {
-    [wallet, blastGovernor, other] = await (ethers as any).getSigners();
+    [wallet, blastGovernor, blastOperator, other] = await (ethers as any).getSigners();
   });
 
   before('load pool bytecode', async () => {
@@ -61,12 +73,31 @@ describe('AlgebraFactory', () => {
   });
 
   beforeEach('deploy factory', async () => {
-    ({ factory, poolDeployer, defaultPluginFactory } = await loadFixture(fixture));
+    ({ factory, poolDeployer, defaultPluginFactory, blastPoints } = await loadFixture(fixture));
   });
 
   it('fail if provide zero address like poolDeployer', async () => {
     const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    await expect(factoryFactory.deploy(blastGovernor.address, ZERO_ADDRESS)).to.be.reverted;
+    await expect(factoryFactory.deploy(blastGovernor.address, blastPoints.target, blastOperator.address, ZERO_ADDRESS))
+      .to.be.reverted;
+  });
+
+  it('fail if provide zero address like blastGovernor', async () => {
+    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
+    await expect(factoryFactory.deploy(ZERO_ADDRESS, blastPoints.target, blastOperator.address, poolDeployer.target)).to
+      .be.reverted;
+  });
+
+  it('fail if provide zero address like blastPoints', async () => {
+    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
+    await expect(factoryFactory.deploy(blastGovernor.address, ZERO_ADDRESS, blastOperator.address, poolDeployer.target))
+      .to.be.reverted;
+  });
+
+  it('fail if provide zero address like blastOperator', async () => {
+    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
+    await expect(factoryFactory.deploy(blastGovernor.address, blastPoints.target, ZERO_ADDRESS, poolDeployer.target)).to
+      .be.reverted;
   });
 
   it('cannot create vault factory stub with zero algebra community vault address', async () => {
@@ -76,6 +107,14 @@ describe('AlgebraFactory', () => {
 
   it('corect default blast governor', async () => {
     expect(await factory.defaultBlastGovernor()).to.eq(blastGovernor.address);
+  });
+
+  it('corect default blast points', async () => {
+    expect(await factory.defaultBlastPoints()).to.eq(blastPoints.target);
+  });
+
+  it('corect default blast points operator', async () => {
+    expect(await factory.defaultBlastPointsOperator()).to.eq(blastOperator.address);
   });
 
   it('owner is deployer', async () => {
@@ -131,7 +170,7 @@ describe('AlgebraFactory', () => {
     expect(((await ethers.provider.getCode(poolAddress)).length - 2) / 2).to.matchSnapshot();
   });
 
-  async function createAndCheckPool(tokens: [string, string]) {
+  async function createAndCheckPool(tokens: [string, string], skipEqTokenCheck?: boolean) {
     const create2Address = getCreate2Address(await poolDeployer.getAddress(), tokens, poolBytecode);
     const create = factory.createPool(tokens[0], tokens[1]);
 
@@ -145,8 +184,10 @@ describe('AlgebraFactory', () => {
     const poolContractFactory = await ethers.getContractFactory('AlgebraPool');
     const pool = poolContractFactory.attach(create2Address);
     expect(await pool.factory(), 'pool factory address').to.eq(await factory.getAddress());
-    expect(await pool.token0(), 'pool token0').to.eq(TEST_ADDRESSES[0]);
-    expect(await pool.token1(), 'pool token1').to.eq(TEST_ADDRESSES[1]);
+    if (!skipEqTokenCheck) {
+      expect(await pool.token0(), 'pool token0').to.eq(TEST_ADDRESSES[0]);
+      expect(await pool.token1(), 'pool token1').to.eq(TEST_ADDRESSES[1]);
+    }
   }
 
   describe('#createPool', () => {
@@ -217,9 +258,100 @@ describe('AlgebraFactory', () => {
       expect(await pool.communityVault()).to.eq(ZeroAddress);
     });
 
+    it('without isRebaseToken', async () => {
+      const f = await ethers.getContractFactory('ERC20RebasingMock');
+      const token0 = (await f.deploy()) as any as ERC20RebasingMock;
+      const token1 = (await f.deploy()) as any as ERC20RebasingMock;
+
+      expect(await factory.configurationForBlastRebaseTokens(token0.target)).to.be.eq(0);
+      expect(await factory.isRebaseToken(token0.target)).to.be.eq(false);
+
+      expect(await factory.configurationForBlastRebaseTokens(token1.target)).to.be.eq(0);
+      expect(await factory.isRebaseToken(token1.target)).to.be.eq(false);
+
+      const create2Address = getCreate2Address(
+        await poolDeployer.getAddress(),
+        [await token0.getAddress(), await token1.getAddress()],
+        poolBytecode
+      );
+
+      expect(await token0.getConfiguration(create2Address)).to.be.eq(0);
+      expect(await token1.getConfiguration(create2Address)).to.be.eq(0);
+
+      await createAndCheckPool([await token0.getAddress(), await token1.getAddress()], true);
+
+      let poolAddress = await factory.poolByPair(await token0.getAddress(), await token1.getAddress());
+      expect(await token0.getConfiguration(poolAddress)).to.be.eq(0);
+      expect(await token1.getConfiguration(poolAddress)).to.be.eq(0);
+    });
+    it('when token0 isRebaseToken', async () => {
+      const f = await ethers.getContractFactory('ERC20RebasingMock');
+      const token0 = (await f.deploy()) as any as ERC20RebasingMock;
+      const token1 = (await f.deploy()) as any as ERC20RebasingMock;
+
+      await factory.setConfigurationForRebaseToken(token0.target, true, 2);
+      expect(await factory.configurationForBlastRebaseTokens(token0.target)).to.be.eq(2);
+      expect(await factory.isRebaseToken(token0.target)).to.be.eq(true);
+
+      expect(await factory.configurationForBlastRebaseTokens(token1.target)).to.be.eq(0);
+      expect(await factory.isRebaseToken(token1.target)).to.be.eq(false);
+
+      const create2Address = getCreate2Address(
+        await poolDeployer.getAddress(),
+        [await token0.getAddress(), await token1.getAddress()],
+        poolBytecode
+      );
+
+      expect(await token0.getConfiguration(create2Address)).to.be.eq(0);
+      expect(await token1.getConfiguration(create2Address)).to.be.eq(0);
+
+      await createAndCheckPool([await token0.getAddress(), await token1.getAddress()], true);
+
+      let poolAddress = await factory.poolByPair(await token0.getAddress(), await token1.getAddress());
+      expect(await token0.getConfiguration(poolAddress)).to.be.eq(2);
+      expect(await token1.getConfiguration(poolAddress)).to.be.eq(0);
+    });
+    it('when token0 & token1 isRebaseToken', async () => {
+      const f = await ethers.getContractFactory('ERC20RebasingMock');
+      const token0 = (await f.deploy()) as any as ERC20RebasingMock;
+      const token1 = (await f.deploy()) as any as ERC20RebasingMock;
+
+      await factory.setConfigurationForRebaseToken(token0.target, true, 2);
+      await factory.setConfigurationForRebaseToken(token1.target, true, 1);
+
+      expect(await factory.configurationForBlastRebaseTokens(token0.target)).to.be.eq(2);
+      expect(await factory.isRebaseToken(token0.target)).to.be.eq(true);
+
+      expect(await factory.configurationForBlastRebaseTokens(token1.target)).to.be.eq(1);
+      expect(await factory.isRebaseToken(token1.target)).to.be.eq(true);
+
+      const create2Address = getCreate2Address(
+        await poolDeployer.getAddress(),
+        [await token0.getAddress(), await token1.getAddress()],
+        poolBytecode
+      );
+
+      expect(await token0.getConfiguration(create2Address)).to.be.eq(0);
+      expect(await token1.getConfiguration(create2Address)).to.be.eq(0);
+
+      await createAndCheckPool([await token0.getAddress(), await token1.getAddress()], true);
+
+      let poolAddress = await factory.poolByPair(await token0.getAddress(), await token1.getAddress());
+      expect(await token0.getConfiguration(poolAddress)).to.be.eq(2);
+      expect(await token1.getConfiguration(poolAddress)).to.be.eq(1);
+    });
+
     it('fails if trying to create via pool deployer directly', async () => {
-      await expect(poolDeployer.deploy(other.address, TEST_ADDRESSES[0], TEST_ADDRESSES[0], TEST_ADDRESSES[0])).to.be
-        .reverted;
+      await expect(
+        poolDeployer.deploy(
+          other.address,
+          blastPoints.target,
+          blastOperator.address,
+          TEST_ADDRESSES[0],
+          TEST_ADDRESSES[0],
+          TEST_ADDRESSES[0]
+        )
+      ).to.be.reverted;
     });
 
     it('fails if token a == token b', async () => {
@@ -400,6 +532,9 @@ describe('AlgebraFactory', () => {
   });
 
   describe('#setDefaultBlastGovernor', async () => {
+    it('fails if try set ZERO_ADDRESS', async () => {
+      await expect(factory.setDefaultBlastGovernor(ZERO_ADDRESS)).to.be.reverted;
+    });
     it('fails if caller not owner', async () => {
       await expect(factory.connect(other).setDefaultBlastGovernor(other.address)).to.be.revertedWith(
         'Ownable: caller is not the owner'
@@ -413,6 +548,64 @@ describe('AlgebraFactory', () => {
         .withArgs(other.address);
 
       expect(await factory.defaultBlastGovernor()).to.be.eq(other.address);
+    });
+  });
+
+  describe('#setDefaultBlastPoints', async () => {
+    it('fails if try set ZERO_ADDRESS', async () => {
+      await expect(factory.setDefaultBlastPoints(ZERO_ADDRESS)).to.be.reverted;
+    });
+    it('fails if caller not owner', async () => {
+      await expect(factory.connect(other).setDefaultBlastPoints(other.address)).to.be.revertedWith(
+        'Ownable: caller is not the owner'
+      );
+    });
+    it('success set new default blast points address and emit event', async () => {
+      expect(await factory.defaultBlastPoints()).to.be.eq(blastPoints.target);
+
+      await expect(factory.setDefaultBlastPoints(other.address))
+        .to.be.emit(factory, 'DefaultBlastPoints')
+        .withArgs(other.address);
+
+      expect(await factory.defaultBlastPoints()).to.be.eq(other.address);
+    });
+  });
+
+  describe('#setDefaultBlastPointsOperator', async () => {
+    it('fails if try set ZERO_ADDRESS', async () => {
+      await expect(factory.setDefaultBlastPointsOperator(ZERO_ADDRESS)).to.be.reverted;
+    });
+    it('fails if caller not owner', async () => {
+      await expect(factory.connect(other).setDefaultBlastPointsOperator(other.address)).to.be.revertedWith(
+        'Ownable: caller is not the owner'
+      );
+    });
+    it('success set new default blast points address and emit event', async () => {
+      expect(await factory.defaultBlastPointsOperator()).to.be.eq(blastOperator.address);
+
+      await expect(factory.setDefaultBlastPointsOperator(other.address))
+        .to.be.emit(factory, 'DefaultBlastPointsOperator')
+        .withArgs(other.address);
+
+      expect(await factory.defaultBlastPointsOperator()).to.be.eq(other.address);
+    });
+  });
+  describe('#setConfigurationForRebaseToken', async () => {
+    it('fails if caller not owner', async () => {
+      await expect(factory.connect(other).setConfigurationForRebaseToken(other.address, true, 1)).to.be.revertedWith(
+        'Ownable: caller is not the owner'
+      );
+    });
+    it('should corect set default rebase configuration for token ', async () => {
+      expect(await factory.isRebaseToken(TEST_ADDRESSES[0])).to.be.false;
+      expect(await factory.configurationForBlastRebaseTokens(TEST_ADDRESSES[0])).to.be.eq(0);
+
+      await expect(factory.setConfigurationForRebaseToken(TEST_ADDRESSES[0], true, 1))
+        .to.be.emit(factory, 'ConfigurationForRebaseToken')
+        .withArgs(TEST_ADDRESSES[0], true, 1);
+
+      expect(await factory.isRebaseToken(TEST_ADDRESSES[0])).to.be.true;
+      expect(await factory.configurationForBlastRebaseTokens(TEST_ADDRESSES[0])).to.be.eq(1);
     });
   });
 
