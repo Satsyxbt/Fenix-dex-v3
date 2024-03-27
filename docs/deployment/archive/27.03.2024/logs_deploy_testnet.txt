@@ -1,0 +1,349 @@
+npx hardhat run .\scripts\deploy.js --network blastSepolia
+
+AlgebraPoolDeployer to: 0xDC249b5Af938Ac700a973DEC8f08B631640C0f7E
+AlgebraFactory deployed to: 0x37f23c8371B01f044B22E2ec854895F9b44e80d0
+AlgebraCommunityVault deployed to: 0xF684f9b771eB1F2091Aa74e43bA1edF31B2844c2
+AlgebraVaultFactoryStub deployed to: 0x93e1ca27705F741033F17ee3794c5b66d4e8De93
+
+
+npx hardhat run .\scripts\verify.js --network blastSepolia
+Successfully submitted source code for contract
+contracts/AlgebraFactory.sol:AlgebraFactory at 0x37f23c8371B01f044B22E2ec854895F9b44e80d0
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraFactory on the block explorer.
+https://testnet.blastscan.io/address/0x37f23c8371B01f044B22E2ec854895F9b44e80d0#code
+
+Successfully submitted source code for contract
+contracts/AlgebraPoolDeployer.sol:AlgebraPoolDeployer at 0xDC249b5Af938Ac700a973DEC8f08B631640C0f7E
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraPoolDeployer on the block explorer.
+https://testnet.blastscan.io/address/0xDC249b5Af938Ac700a973DEC8f08B631640C0f7E#code
+
+Successfully submitted source code for contract
+contracts/AlgebraCommunityVault.sol:AlgebraCommunityVault at 0xF684f9b771eB1F2091Aa74e43bA1edF31B2844c2
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraCommunityVault on the block explorer.
+https://testnet.blastscan.io/address/0xF684f9b771eB1F2091Aa74e43bA1edF31B2844c2#code
+
+Successfully submitted source code for contract
+contracts/AlgebraVaultFactoryStub.sol:AlgebraVaultFactoryStub at 0x93e1ca27705F741033F17ee3794c5b66d4e8De93
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraVaultFactoryStub on the block explorer.
+https://testnet.blastscan.io/address/0x93e1ca27705F741033F17ee3794c5b66d4e8De93#code
+
+
+npx hardhat run .\scripts\deploy.js --network blastSepolia
+AlgebraBasePluginV1 Implementation to: 0x3DF526734576650A103A608704eee8be51CEde94
+PluginFactory to: 0xC65506ce86220685158cf87491A5994231A33E62
+Updated plugin factory address in factory
+
+npx hardhat run .\scripts\verify.js --network blastSepolia
+Successfully submitted source code for contract
+contracts/BasePluginV1Factory.sol:BasePluginV1Factory at 0xC65506ce86220685158cf87491A5994231A33E62
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract BasePluginV1Factory on the block explorer.
+https://testnet.blastscan.io/address/0xC65506ce86220685158cf87491A5994231A33E62#code
+
+The contract 0x3DF526734576650A103A608704eee8be51CEde94 has already been verified on Etherscan.
+https://testnet.blastscan.io/address/0x3DF526734576650A103A608704eee8be51CEde94#code
+
+
+
+ npx hardhat run .\scripts\deploy.js --network blastSepolia
+TickLens deployed to: 0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987
+Quoter deployed to: 0x13fc9B642b0a8C54284967c207AC61B456dFF82B
+QuoterV2 deployed to: 0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C
+SwapRouter deployed to: 0x2E344c63ba4e72A13071Ffa9D552b6F3cAF78E49
+NonfungibleTokenPositionDescriptor deployed to: 0x4478Ff742c9B90d50E49C9e71d5558c015D1813b
+Proxy deployed to: 0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5
+NonfungiblePositionManager deployed to: 0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A
+AlgebraInterfaceMulticall deployed to: 0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217
+
+
+npx hardhat run .\scripts\verify.js --network blastSepolia
+Successfully submitted source code for contract
+contracts/BasePluginV1Factory.sol:BasePluginV1Factory at 0xC65506ce86220685158cf87491A5994231A33E62
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract BasePluginV1Factory on the block explorer.
+https://testnet.blastscan.io/address/0xC65506ce86220685158cf87491A5994231A33E62#code
+
+The contract 0x3DF526734576650A103A608704eee8be51CEde94 has already been verified on Etherscan.
+https://testnet.blastscan.io/address/0x3DF526734576650A103A608704eee8be51CEde94#code
+PS E:\aegas\fenix-dex-v3\src\plugin> cd ..
+PS E:\aegas\fenix-dex-v3\src> cd .\periphery\
+PS E:\aegas\fenix-dex-v3\src\periphery> npx hardhat run .\scripts\deploy.js --network blastSepolia
+TickLens deployed to: 0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987
+Quoter deployed to: 0x13fc9B642b0a8C54284967c207AC61B456dFF82B
+QuoterV2 deployed to: 0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C
+SwapRouter deployed to: 0x2E344c63ba4e72A13071Ffa9D552b6F3cAF78E49
+NonfungibleTokenPositionDescriptor deployed to: 0x4478Ff742c9B90d50E49C9e71d5558c015D1813b
+Proxy deployed to: 0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5
+NonfungiblePositionManager deployed to: 0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A
+AlgebraInterfaceMulticall deployed to: 0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217
+PS E:\aegas\fenix-dex-v3\src\periphery> npx hardhat run .\scripts\verify.js --network blastSepolia
+The contract 0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987 has already been verified on Etherscan.
+https://testnet.blastscan.io/address/0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987#code
+Successfully submitted source code for contract
+contracts/lens/Quoter.sol:Quoter at 0x13fc9B642b0a8C54284967c207AC61B456dFF82B
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract Quoter on the block explorer.
+https://testnet.blastscan.io/address/0x13fc9B642b0a8C54284967c207AC61B456dFF82B#code
+
+Successfully submitted source code for contract
+contracts/lens/QuoterV2.sol:QuoterV2 at 0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract QuoterV2 on the block explorer.
+https://testnet.blastscan.io/address/0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C#code
+
+Successfully submitted source code for contract
+contracts/SwapRouter.sol:SwapRouter at 0x2E344c63ba4e72A13071Ffa9D552b6F3cAF78E49
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract SwapRouter on the block explorer.
+https://testnet.blastscan.io/address/0x2E344c63ba4e72A13071Ffa9D552b6F3cAF78E49#code
+
+The contract 0x85FCb5B170BE3cf2a279EA1eB4d0556233c8a14E has already been verified on Etherscan.
+https://testnet.blastscan.io/address/0x85FCb5B170BE3cf2a279EA1eB4d0556233c8a14E#code
+Successfully submitted source code for contract
+contracts/NonfungiblePositionManager.sol:NonfungiblePositionManager at 0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract NonfungiblePositionManager on the block explorer.
+https://testnet.blastscan.io/address/0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A#code
+
+Successfully submitted source code for contract
+@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol:TransparentUpgradeableProxy at 0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract TransparentUpgradeableProxy on the block explorer.
+https://testnet.blastscan.io/address/0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5#code
+
+The contract 0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217 has already been verified on Etherscan.
+https://testnet.blastscan.io/address/0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217#code
+Successfully submitted source code for contract
+contracts/NonfungibleTokenPositionDescriptor.sol:NonfungibleTokenPositionDescriptor at 0x4478Ff742c9B90d50E49C9e71d5558c015D1813b
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract NonfungibleTokenPositionDescriptor on the block explorer.
+https://testnet.blastscan.io/address/0x4478Ff742c9B90d50E49C9e71d5558c015D1813b#code
+
+
+
+npx hardhat run .\scripts\deploy.js --network blastSepolia
+AlgebraEternalFarming deployed to: 0x313E865510080B723338953a9dcAb7bf22444eD3
+FarmingCenter deployed to: 0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2
+Updated farming center address in eternal(incentive) farming
+Updated farming center address in plugin factory
+
+
+npx hardhat run .\scripts\verify.js --network blastSepolia
+Successfully submitted source code for contract
+contracts/farmings/AlgebraEternalFarming.sol:AlgebraEternalFarming at 0x313E865510080B723338953a9dcAb7bf22444eD3
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraEternalFarming on the block explorer.
+https://testnet.blastscan.io/address/0x313E865510080B723338953a9dcAb7bf22444eD3#code
+
+Successfully submitted source code for contract
+contracts/FarmingCenter.sol:FarmingCenter at 0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract FarmingCenter on the block explorer.
+https://testnet.blastscan.io/address/0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2#code
+
+
+
+ npx hardhat run .\scripts\2_setup_blast_gas_mode.js --network blastSepolia
+Check setuped governor address for poolDeployer - 0xDC249b5Af938Ac700a973DEC8f08B631640C0f7E
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for factory - 0x37f23c8371B01f044B22E2ec854895F9b44e80d0
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for vault - 0xF684f9b771eB1F2091Aa74e43bA1edF31B2844c2
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for vaultFactory - 0x93e1ca27705F741033F17ee3794c5b66d4e8De93
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for AlgebraBasePluginV1 - 0x3DF526734576650A103A608704eee8be51CEde94
+-- Governor - 0x0000000000000000000000000000000000000000
+---- Skip
+Check setuped governor address for BasePluginV1Factory - 0xC65506ce86220685158cf87491A5994231A33E62
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for wrapped - 0x4200000000000000000000000000000000000023
+-- Governor - 0x0000000000000000000000000000000000000000
+---- Skip
+Check setuped governor address for tickLens - 0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987
+-- Governor - 0x0000000000000000000000000000000000000000
+---- Skip
+Check setuped governor address for quoter - 0x13fc9B642b0a8C54284967c207AC61B456dFF82B
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for quoterV2 - 0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for swapRouter - 0x2E344c63ba4e72A13071Ffa9D552b6F3cAF78E49
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for NFTDescriptor - 0x85FCb5B170BE3cf2a279EA1eB4d0556233c8a14E
+-- Governor - 0x0000000000000000000000000000000000000000
+---- Skip
+Check setuped governor address for NonfungibleTokenPositionDescriptor - 0x4478Ff742c9B90d50E49C9e71d5558c015D1813b
+-- Governor - 0x0000000000000000000000000000000000000000
+---- Skip
+Check setuped governor address for proxy - 0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5
+-- Governor - 0x0000000000000000000000000000000000000000
+---- Skip
+Check setuped governor address for nonfungiblePositionManager - 0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for AlgebraInterfaceMulticall - 0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for eternal - 0x313E865510080B723338953a9dcAb7bf22444eD3
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+Check setuped governor address for fc - 0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2
+-- Governor - 0x9140D359f2855E6540609dd4A93773ED1f45f509
+---- is Deployer set claimable gas
+---- Set Gas Claimable
+
+
+node .\scripts\verifyAll.js blastScanSepolia
+Successfully submitted source code for contract
+contracts/AlgebraFactory.sol:AlgebraFactory at 0x37f23c8371B01f044B22E2ec854895F9b44e80d0
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraFactory on the block explorer.
+https://sepolia.blastscan.io/address/0x37f23c8371B01f044B22E2ec854895F9b44e80d0#code
+
+Successfully submitted source code for contract
+contracts/AlgebraPoolDeployer.sol:AlgebraPoolDeployer at 0xDC249b5Af938Ac700a973DEC8f08B631640C0f7E
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraPoolDeployer on the block explorer.
+https://sepolia.blastscan.io/address/0xDC249b5Af938Ac700a973DEC8f08B631640C0f7E#code
+
+The contract 0xF684f9b771eB1F2091Aa74e43bA1edF31B2844c2 has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0xF684f9b771eB1F2091Aa74e43bA1edF31B2844c2#code
+Successfully submitted source code for contract
+contracts/AlgebraVaultFactoryStub.sol:AlgebraVaultFactoryStub at 0x93e1ca27705F741033F17ee3794c5b66d4e8De93
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraVaultFactoryStub on the block explorer.
+https://sepolia.blastscan.io/address/0x93e1ca27705F741033F17ee3794c5b66d4e8De93#code
+
+The contract 0xC65506ce86220685158cf87491A5994231A33E62 has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0xC65506ce86220685158cf87491A5994231A33E62#code
+The contract 0x3DF526734576650A103A608704eee8be51CEde94 has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0x3DF526734576650A103A608704eee8be51CEde94#code
+The contract 0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987 has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987#code
+Successfully submitted source code for contract
+contracts/lens/Quoter.sol:Quoter at 0x13fc9B642b0a8C54284967c207AC61B456dFF82B
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract Quoter on the block explorer.
+https://sepolia.blastscan.io/address/0x13fc9B642b0a8C54284967c207AC61B456dFF82B#code
+
+Successfully submitted source code for contract
+contracts/lens/QuoterV2.sol:QuoterV2 at 0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract QuoterV2 on the block explorer.
+https://sepolia.blastscan.io/address/0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C#code
+
+Successfully submitted source code for contract
+contracts/SwapRouter.sol:SwapRouter at 0x2E344c63ba4e72A13071Ffa9D552b6F3cAF78E49
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract SwapRouter on the block explorer.
+https://sepolia.blastscan.io/address/0x2E344c63ba4e72A13071Ffa9D552b6F3cAF78E49#code
+
+The contract 0x85FCb5B170BE3cf2a279EA1eB4d0556233c8a14E has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0x85FCb5B170BE3cf2a279EA1eB4d0556233c8a14E#code
+Successfully submitted source code for contract
+contracts/NonfungiblePositionManager.sol:NonfungiblePositionManager at 0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract NonfungiblePositionManager on the block explorer.
+https://sepolia.blastscan.io/address/0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A#code
+
+The contract 0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5 has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5#code
+The contract 0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217 has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217#code
+Successfully submitted source code for contract
+contracts/NonfungibleTokenPositionDescriptor.sol:NonfungibleTokenPositionDescriptor at 0x4478Ff742c9B90d50E49C9e71d5558c015D1813b
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract NonfungibleTokenPositionDescriptor on the block explorer.
+https://sepolia.blastscan.io/address/0x4478Ff742c9B90d50E49C9e71d5558c015D1813b#code
+
+Successfully submitted source code for contract
+contracts/farmings/AlgebraEternalFarming.sol:AlgebraEternalFarming at 0x313E865510080B723338953a9dcAb7bf22444eD3
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract AlgebraEternalFarming on the block explorer.
+https://sepolia.blastscan.io/address/0x313E865510080B723338953a9dcAb7bf22444eD3#code
+
+Successfully submitted source code for contract
+contracts/FarmingCenter.sol:FarmingCenter at 0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2
+for verification on the block explorer. Waiting for verification result...
+
+
+
+
+The contract 0x313E865510080B723338953a9dcAb7bf22444eD3 has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0x313E865510080B723338953a9dcAb7bf22444eD3#code
+Successfully submitted source code for contract
+contracts/FarmingCenter.sol:FarmingCenter at 0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2
+for verification on the block explorer. Waiting for verification result...
+
+UnexpectedError: An unexpected error occurred during the verification process.
+Please report this issue to the Hardhat team.
+Error Details: An unexpected error occurred during the verification process.
+Please report this issue to the Hardhat team.
+Error Details: The Etherscan API responded with a failure status.
+The verification may still succeed but should be checked manually.
+Reason: Fail - Unable to verify. Please check if the correct constructor argument was entered.
+    at Etherscan.getVerificationStatus (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\etherscan.ts:260:13)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:313:9)
+    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:155:7)
+    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\index.ts:284:9)
+    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+PS E:\aegas\fenix-dex-v3\src\farming> npx hardhat run .\scripts\verify.js --network blastScanSepolia
+The contract 0x313E865510080B723338953a9dcAb7bf22444eD3 has already been verified on Etherscan.
+https://sepolia.blastscan.io/address/0x313E865510080B723338953a9dcAb7bf22444eD3#code
+Successfully submitted source code for contract
+contracts/FarmingCenter.sol:FarmingCenter at 0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2
+for verification on the block explorer. Waiting for verification result...
+
+Successfully verified contract FarmingCenter on the block explorer.
+https://sepolia.blastscan.io/address/0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2#code

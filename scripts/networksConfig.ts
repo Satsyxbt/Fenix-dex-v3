@@ -1,0 +1,37 @@
+interface NetworkConfig {
+  FILE: string;
+  BLAST: string;
+  BLAST_POINTS: string;
+  WETH: string;
+  USDB: string;
+  BLAST_GOVERNOR: string;
+  BLAST_POINTS_OPERATOR: string;
+}
+const NetworksConfig: Record<number, NetworkConfig> = {
+  168587773: {
+    FILE: 'blast_sepolia_deploy.json',
+    BLAST: '0x4300000000000000000000000000000000000002',
+    BLAST_POINTS: '0x2fc95838c71e76ec69ff817983BFf17c710F34E0',
+    WETH: '0x4200000000000000000000000000000000000023',
+    USDB: '0x4200000000000000000000000000000000000022',
+    BLAST_GOVERNOR: '0x9140D359f2855E6540609dd4A93773ED1f45f509',
+    BLAST_POINTS_OPERATOR: '0x5888eEe48C0173681109Be60396D75bA2c02f632',
+  },
+  81457: {
+    FILE: 'blast_mainnet_deploy.json',
+    BLAST: '0x4300000000000000000000000000000000000002',
+    BLAST_POINTS: '0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800',
+    WETH: '0x4300000000000000000000000000000000000004',
+    USDB: '0x4300000000000000000000000000000000000003',
+    BLAST_GOVERNOR: '0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30',
+    BLAST_POINTS_OPERATOR: '0xf0cfC13bDE01734F056Df35EF17C91e219eCefc4',
+  },
+};
+
+export function getConfig(chainId: number): NetworkConfig {
+  const config = NetworksConfig[chainId];
+  if (!config) {
+    throw Error('not supported chain, miss config: ' + chainId);
+  }
+  return config;
+}

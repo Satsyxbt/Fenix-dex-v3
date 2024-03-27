@@ -1,30 +1,33 @@
 const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
+const { getConfig } = require('../../../scripts/networksConfig');
 
 async function main() {
-  const deployDataPath = path.resolve(__dirname, '../../../deploys.json');
+  const { chainId } = await hre.ethers.provider.getNetwork();
+  let Config = getConfig(chainId);
+
+  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
-  const [deployer] = await hre.ethers.getSigners();
 
   await hre.run('verify:verify', {
     address: deploysData.factory,
-    constructorArguments: [deployer.address, deploysData.poolDeployer],
+    constructorArguments: [Config.BLAST_GOVERNOR, Config.BLAST_POINTS, Config.BLAST_POINTS_OPERATOR, deploysData.poolDeployer],
   });
 
   await hre.run('verify:verify', {
     address: deploysData.poolDeployer,
-    constructorArguments: [deployer.address, deploysData.factory],
+    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.factory],
   });
 
   await hre.run('verify:verify', {
     address: deploysData.vault,
-    constructorArguments: [deployer.address, deploysData.factory, deploysData.poolDeployer],
+    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.factory, deploysData.poolDeployer],
   });
 
   await hre.run('verify:verify', {
     address: deploysData.vaultFactory,
-    constructorArguments: [deployer.address, deploysData.vault],
+    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.vault],
   });
 }
 

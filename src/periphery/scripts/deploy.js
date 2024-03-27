@@ -2,14 +2,20 @@ const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
 
+const { getConfig } = require('../../../scripts/networksConfig');
+
 async function main() {
+  const { chainId } = await hre.ethers.provider.getNetwork();
+
+  let Config = getConfig(chainId);
+
   const [deployer] = await hre.ethers.getSigners();
 
-  const deployDataPath = path.resolve(__dirname, '../../../deploys.json');
+  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   // WNativeTokenAddress
-  const WNativeTokenAddress = '0x4300000000000000000000000000000000000004';
+  const WNativeTokenAddress = Config.WETH;
   const signers = await hre.ethers.getSigners();
   const ProxyAdmin = signers[0].address;
 
@@ -27,7 +33,7 @@ async function main() {
   // arg2 wnative address
   const QuoterFactory = await hre.ethers.getContractFactory('Quoter');
   const Quoter = await QuoterFactory.deploy(
-    deployer.address,
+    Config.BLAST_GOVERNOR,
     deploysData.factory,
     WNativeTokenAddress,
     deploysData.poolDeployer
@@ -42,7 +48,7 @@ async function main() {
   // arg2 wnative address
   const QuoterV2Factory = await hre.ethers.getContractFactory('QuoterV2');
   const QuoterV2 = await QuoterV2Factory.deploy(
-    deployer.address,
+    Config.BLAST_GOVERNOR,
     deploysData.factory,
     WNativeTokenAddress,
     deploysData.poolDeployer
@@ -57,7 +63,7 @@ async function main() {
   // arg2 wnative address
   const SwapRouterFactory = await hre.ethers.getContractFactory('SwapRouter');
   const SwapRouter = await SwapRouterFactory.deploy(
-    deployer.address,
+    Config.BLAST_GOVERNOR,
     deploysData.factory,
     WNativeTokenAddress,
     deploysData.poolDeployer
@@ -107,7 +113,7 @@ async function main() {
   // // arg3 tokenDescriptor address
   const NonfungiblePositionManagerFactory = await hre.ethers.getContractFactory('NonfungiblePositionManager');
   const NonfungiblePositionManager = await NonfungiblePositionManagerFactory.deploy(
-    deployer.address,
+    Config.BLAST_GOVERNOR,
     deploysData.factory,
     WNativeTokenAddress,
     Proxy.target,
@@ -133,7 +139,7 @@ async function main() {
   // await V3Migrator.waitForDeployment();
 
   const AlgebraInterfaceMulticallFactory = await hre.ethers.getContractFactory('AlgebraInterfaceMulticall');
-  const AlgebraInterfaceMulticall = await AlgebraInterfaceMulticallFactory.deploy(deployer.address);
+  const AlgebraInterfaceMulticall = await AlgebraInterfaceMulticallFactory.deploy(Config.BLAST_GOVERNOR);
 
   await AlgebraInterfaceMulticall.waitForDeployment();
   deploysData.AlgebraInterfaceMulticall = AlgebraInterfaceMulticall.target;

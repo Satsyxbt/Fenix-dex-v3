@@ -2,8 +2,14 @@ const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
 
+const { getConfig } = require('../../../scripts/networksConfig');
+
 async function main() {
-  const deployDataPath = path.resolve(__dirname, '../../../deploys.json');
+  const { chainId } = await hre.ethers.provider.getNetwork();
+
+  let Config = getConfig(chainId);
+
+  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
   const [deployer] = await hre.ethers.getSigners();
 
@@ -11,7 +17,7 @@ async function main() {
 
   await hre.run('verify:verify', {
     address: BasePluginV1Factory,
-    constructorArguments: [deployer.address, deploysData.factory, deploysData.AlgebraBasePluginV1],
+    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.factory, deploysData.AlgebraBasePluginV1],
   });
   await hre.run('verify:verify', {
     address: deploysData.AlgebraBasePluginV1,

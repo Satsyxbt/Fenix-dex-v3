@@ -78,33 +78,32 @@ export default {
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
     blastScanSepolia: {
-      url: 'https://testnet.blast.din.dev/rpc',
+      url: `https://blast-sepolia.infura.io/v3/${INFURA_ID_PROJECT}`,
       gasPrice: 1e3,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
     blastSepolia: {
-      url: 'https://testnet.blast.din.dev/rpc',
+      url: `https://blast-sepolia.infura.io/v3/${INFURA_ID_PROJECT}`,
       gasPrice: 1e3,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
     blastMainnet: {
-      url: 'https://rpc.blast.io',
+      url: `https://blast-mainnet.infura.io/v3/${INFURA_ID_PROJECT}`,
       gasPrice: 1e3,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
     blastScanMainnet: {
-      url: 'https://rpc.blast.io',
+      url: `https://blast-mainnet.infura.io/v3/${INFURA_ID_PROJECT}`,
       gasPrice: 1e3,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
   },
   etherscan: {
     apiKey: {
-      blastScanSepolia: `${API_KEY}`,
       blastSepolia: 'blastSepolia', // apiKey is not required, just set a placeholder
       blastMainnet: 'blastMainnet',
-      blastScanMainnet: `${process.env.API_KEY}`,
-      blastScanSepolia: `${process.env.API_KEY}`,
+      blastScanMainnet: `${API_KEY}`,
+      blastScanSepolia: `${API_KEY}`,
     },
     customChains: [
       {
