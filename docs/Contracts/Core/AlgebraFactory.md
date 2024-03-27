@@ -30,6 +30,16 @@ bytes32 constant POOLS_CREATOR_ROLE = 0xa7106ea771a74f2d048c62cace8c00d3e120b24b
 role that can create pools when public pool creation is disabled
 
 
+### POOL_INIT_CODE_HASH
+```solidity
+bytes32 constant POOL_INIT_CODE_HASH = 0xf45e886a0794c1d80aeae5ab5befecd4f0f2b77c0cf627f7c46ec92dc1fa00e4
+```
+**Selector**: `0xdc6fd8ab`
+
+returns keccak256 of AlgebraPool init bytecode.
+
+*Developer note: keccak256 of AlgebraPool init bytecode. Used to compute pool address deterministically*
+
 ### poolDeployer
 ```solidity
 address immutable poolDeployer
@@ -46,6 +56,24 @@ address defaultBlastGovernor
 **Selector**: `0xfb6cd276`
 
 Returns the current default blast governor
+
+
+### defaultBlastPoints
+```solidity
+address defaultBlastPoints
+```
+**Selector**: `0xa6df1ec9`
+
+Returns the current default blast points
+
+
+### defaultBlastPointsOperator
+```solidity
+address defaultBlastPointsOperator
+```
+**Selector**: `0x32cf1b01`
+
+Returns the current default blast points operator
 
 
 ### isPublicPoolCreationMode
@@ -123,22 +151,30 @@ Returns the pool address for a given pair of tokens, or address 0 if it does not
 
 *Developer note: tokenA and tokenB may be passed in either token0/token1 or token1/token0 order*
 
-### POOL_INIT_CODE_HASH
+### configurationForBlastRebaseTokens
 ```solidity
-bytes32 constant POOL_INIT_CODE_HASH = 0xe352d584de0445dd842b428182bd689672a6208bcf593501295b7fb8e0c09451
+mapping(address => enum YieldMode) configurationForBlastRebaseTokens
 ```
-**Selector**: `0xdc6fd8ab`
+**Selector**: `0xd1dc415e`
 
-returns keccak256 of AlgebraPool init bytecode.
+Retrieves the yield mode configuration for a specified token
 
-*Developer note: keccak256 of AlgebraPool init bytecode. Used to compute pool address deterministically*
+
+### isRebaseToken
+```solidity
+mapping(address => bool) isRebaseToken
+```
+**Selector**: `0xc073b7a5`
+
+Return if a token is marked as a rebasing token in the factory configuration
+
 
 
 ## Functions
 ### constructor
 
 ```solidity
-constructor(address _blastGovernor, address _poolDeployer) public
+constructor(address _blastGovernor, address _blastPoints, address _blastPointsOperaotor, address _poolDeployer) public
 ```
 
 
@@ -146,6 +182,8 @@ constructor(address _blastGovernor, address _poolDeployer) public
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | _blastGovernor | address |  |
+| _blastPoints | address |  |
+| _blastPointsOperaotor | address |  |
 | _poolDeployer | address |  |
 
 ### owner
@@ -252,6 +290,21 @@ The call will revert if the pool already exists or the token arguments are inval
 | ---- | ---- | ----------- |
 | pool | address | The address of the newly created pool |
 
+### setConfigurationForRebaseToken
+
+```solidity
+function setConfigurationForRebaseToken(address token_, bool isRebase_, enum YieldMode mode_) external
+```
+**Selector**: `0x3821a08a`
+
+Sets the rebase configuration for a specific token
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| token_ | address | The address of the token to configure |
+| isRebase_ | bool | A boolean indicating whether the token is a rebasing token or not |
+| mode_ | enum YieldMode | The yield mode to apply, defining how the rebasing mechanism should operate |
+
 ### setDefaultBlastGovernor
 
 ```solidity
@@ -266,6 +319,36 @@ function setDefaultBlastGovernor(address defaultBlastGovernor_) external
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | defaultBlastGovernor_ | address | The new defautl blast governor address |
+
+### setDefaultBlastPoints
+
+```solidity
+function setDefaultBlastPoints(address defaultBlastPoints_) external
+```
+**Selector**: `0x5f67e7bc`
+
+
+
+*Developer note: updates default blast points address on the factory*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastPoints_ | address | The new defautl blast points address |
+
+### setDefaultBlastPointsOperator
+
+```solidity
+function setDefaultBlastPointsOperator(address defaultBlastPointsOperator_) external
+```
+**Selector**: `0xe72b63de`
+
+
+
+*Developer note: updates default blast points operator address on the factory*
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| defaultBlastPointsOperator_ | address | The new defautl blast points operator address |
 
 ### setIsPublicPoolCreationMode
 

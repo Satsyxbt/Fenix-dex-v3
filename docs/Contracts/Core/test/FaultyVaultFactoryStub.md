@@ -9,6 +9,21 @@ This contract is used to set AlgebraCommunityVault as communityVault in new pool
 
 **Inherits:** [IAlgebraVaultFactory](../interfaces/vault/IAlgebraVaultFactory.md)
 
+## Events
+### AfterPoolInitialize__Test
+
+```solidity
+event AfterPoolInitialize__Test(address caller, address pool)
+```
+
+
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| caller | address |  |
+| pool | address |  |
+
+
 ## Public variables
 ### defaultAlgebraCommunityVault
 ```solidity
@@ -70,4 +85,17 @@ creates the community fee vault for the pool if needed
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | [0] | address |  |
+
+### afterPoolInitialize
+
+```solidity
+function afterPoolInitialize(address pool) external
+```
+**Selector**: `0x12e3b4d1`
+
+Hook for calling after pool deployment
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| pool | address | the address of Algebra Integral pool |
 

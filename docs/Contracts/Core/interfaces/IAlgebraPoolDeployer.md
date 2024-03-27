@@ -17,7 +17,7 @@ https://github.com/Uniswap/v3-core/tree/main/contracts/interfaces*
 ### getDeployParameters
 
 ```solidity
-function getDeployParameters() external view returns (address blastGovernor, address plugin, address factory, address token0, address token1)
+function getDeployParameters() external view returns (address blastGovernor, address blastPoints, address blastPointsOperator, address plugin, address factory, address token0, address token1)
 ```
 **Selector**: `0x04889e26`
 
@@ -30,6 +30,8 @@ Get the parameters to be used in constructing the pool, set transiently during p
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | blastGovernor | address | The blastgovernro address for set in Blast ecosystem contract |
+| blastPoints | address | The address of the Blast Points contract, used for managing points within the ecosystem. |
+| blastPointsOperator | address | The address of the operator authorized to manage points in the Blast Points contract. |
 | plugin | address | The pool associated plugin (if any) |
 | factory | address | The Algebra Factory address |
 | token0 | address | The first token of the pool by address sort order |
@@ -38,9 +40,9 @@ Get the parameters to be used in constructing the pool, set transiently during p
 ### deploy
 
 ```solidity
-function deploy(address blastGovernor, address plugin, address token0, address token1) external returns (address pool)
+function deploy(address blastGovernor, address blastPoints, address blastPointsOperator, address plugin, address token0, address token1) external returns (address pool)
 ```
-**Selector**: `0xfd82b73a`
+**Selector**: `0x0bcf6b4c`
 
 
 
@@ -49,6 +51,8 @@ function deploy(address blastGovernor, address plugin, address token0, address t
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | blastGovernor | address | The blast governor address for set to Blast ecosystem contract |
+| blastPoints | address | The address of the Blast Points contract, used for managing points within the ecosystem. |
+| blastPointsOperator | address | The address of the operator authorized to manage points in the Blast Points contract. |
 | plugin | address | The pool associated plugin (if any) |
 | token0 | address | The first token of the pool by address sort order |
 | token1 | address | The second token of the pool by address sort order |
