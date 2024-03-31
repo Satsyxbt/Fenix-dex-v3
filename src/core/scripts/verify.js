@@ -11,8 +11,18 @@ async function main() {
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   await hre.run('verify:verify', {
+    address: deploysData.algebraFactoryImplementation,
+    constructorArguments: [],
+  });
+
+  await hre.run('verify:verify', {
+    address: deploysData.proxyAdmin,
+    constructorArguments: [],
+  });
+
+  await hre.run('verify:verify', {
     address: deploysData.factory,
-    constructorArguments: [Config.BLAST_GOVERNOR, Config.BLAST_POINTS, Config.BLAST_POINTS_OPERATOR, deploysData.poolDeployer],
+    constructorArguments: [deploysData.algebraFactoryImplementation, deploysData.proxyAdmin, '0x'],
   });
 
   await hre.run('verify:verify', {

@@ -11,7 +11,7 @@ async function main() {
   const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
   const deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
-  const AlgebraFactory = await hre.ethers.getContractAt('AlgebraFactory', deploysData.factory);
+  const AlgebraFactory = await hre.ethers.getContractAt('AlgebraFactoryUpgradeable', deploysData.factory);
 
   console.log('setup Claimable mode for WETH for all new pools');
   await AlgebraFactory.setConfigurationForRebaseToken(Config.WETH, true, 2);

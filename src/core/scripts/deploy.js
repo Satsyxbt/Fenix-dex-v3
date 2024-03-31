@@ -9,24 +9,38 @@ async function main() {
   let Config = getConfig(chainId);
 
   const [deployer] = await hre.ethers.getSigners();
+
+  const ProxyAdminFactory = await hre.ethers.getContractFactory('ProxyAdmin');
+  const proxyAdmin = await ProxyAdminFactory.deploy();
+  await proxyAdmin.waitForDeployment();
+
+  const AlgebraFactory = await hre.ethers.getContractFactory('AlgebraFactoryUpgradeable');
+  const algebraFactoryImplementation = await AlgebraFactory.deploy();
+  await algebraFactoryImplementation.waitForDeployment();
+
   // precompute
   const poolDeployerAddress = hre.ethers.getCreateAddress({
     from: deployer.address,
-    nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
+    nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 2,
   });
 
-  const AlgebraFactory = await hre.ethers.getContractFactory('AlgebraFactory');
-  const factory = await AlgebraFactory.deploy(Config.BLAST_GOVERNOR, Config.BLAST_POINTS, Config.BLAST_POINTS_OPERATOR, poolDeployerAddress);
+  const proxyFactory = await ethers.getContractFactory('TransparentUpgradeableProxy');
+  const proxy = await proxyFactory.deploy(algebraFactoryImplementation.target, proxyAdmin.target, '0x'); // +1
+  await proxy.waitForDeployment();
 
-  await factory.waitForDeployment();
+  const factory = AlgebraFactory.attach(proxy.target);
+  await factory.initialize(Config.BLAST_GOVERNOR, Config.BLAST_POINTS, Config.BLAST_POINTS_OPERATOR, poolDeployerAddress); // +2
 
   const PoolDeployerFactory = await hre.ethers.getContractFactory('AlgebraPoolDeployer');
   const poolDeployer = await PoolDeployerFactory.deploy(Config.BLAST_GOVERNOR, factory.target);
 
   await poolDeployer.waitForDeployment();
 
+  console.log('Expected poolDeployer:', poolDeployerAddress, ', actual:', poolDeployer.target);
   console.log('AlgebraPoolDeployer to:', poolDeployer.target);
   console.log('AlgebraFactory deployed to:', factory.target);
+  console.log('AlgebraFactoryImplementation deployed to:', algebraFactoryImplementation.target);
+  console.log('ProxyAdmin deployed to:', proxyAdmin.target);
 
   const vaultFactory = await hre.ethers.getContractFactory('AlgebraCommunityVault');
   const vault = await vaultFactory.deploy(Config.BLAST_GOVERNOR, factory, deployer.address);
@@ -48,6 +62,8 @@ async function main() {
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
   deploysData.poolDeployer = poolDeployer.target;
   deploysData.factory = factory.target;
+  deploysData.algebraFactoryImplementation = algebraFactoryImplementation.target;
+  deploysData.proxyAdmin = proxyAdmin.target;
   deploysData.vault = vault.target;
   deploysData.vaultFactory = vaultFactoryStub.target;
   fs.writeFileSync(deployDataPath, JSON.stringify(deploysData), 'utf-8');

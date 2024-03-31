@@ -12,7 +12,7 @@ async function main() {
   const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
   const deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
-  const AlgebraFactory = await hre.ethers.getContractAt('AlgebraFactory', deploysData.factory);
+  const AlgebraFactory = await hre.ethers.getContractAt('AlgebraFactoryUpgradeable', deploysData.factory);
   await AlgebraFactory.setVaultFactory(FEES_VAULT);
   console.log('Updated FeesVault in Factory to', FEES_VAULT);
 }

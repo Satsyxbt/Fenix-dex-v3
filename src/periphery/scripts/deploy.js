@@ -17,7 +17,7 @@ async function main() {
   // WNativeTokenAddress
   const WNativeTokenAddress = Config.WETH;
   const signers = await hre.ethers.getSigners();
-  const ProxyAdmin = signers[0].address;
+  const ProxyAdmin = deploysData.proxyAdmin;
 
   deploysData.wrapped = WNativeTokenAddress;
 
