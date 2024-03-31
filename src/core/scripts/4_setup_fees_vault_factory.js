@@ -2,11 +2,14 @@ const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
 
-const FEES_VAULT = '0xC202E30A55a85FdD00270D033AaE8CF9D44612C2';
-async function main() {
-  const [deployer] = await hre.ethers.getSigners();
+const FEES_VAULT = '0xa3103248290399cc2655b68f0038ce590ce8639E';
 
-  const deployDataPath = path.resolve(__dirname, '../../../deploys.json');
+const { getConfig } = require('../../../scripts/networksConfig');
+async function main() {
+  const { chainId } = await hre.ethers.provider.getNetwork();
+  let Config = getConfig(chainId);
+
+  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
   const deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   const AlgebraFactory = await hre.ethers.getContractAt('AlgebraFactory', deploysData.factory);

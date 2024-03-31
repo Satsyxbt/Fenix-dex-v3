@@ -347,3 +347,14 @@ for verification on the block explorer. Waiting for verification result...
 
 Successfully verified contract FarmingCenter on the block explorer.
 https://sepolia.blastscan.io/address/0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2#code
+
+
+npx hardhat run .\scripts\3_setup_settings_preset.js --network blastSepolia
+setup Claimable mode for WETH for all new pools
+setup Claimable mode for USDB for all new pools
+setup Public Creation Pool mode
+setup 90% fee to LP by default, 10% to FeesVault 
+
+
+
+Updated FeesVault in Factory to 0xa3103248290399cc2655b68f0038ce590ce8639E

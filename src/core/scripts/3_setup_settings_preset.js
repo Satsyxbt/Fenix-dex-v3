@@ -14,13 +14,13 @@ async function main() {
   const AlgebraFactory = await hre.ethers.getContractAt('AlgebraFactory', deploysData.factory);
 
   console.log('setup Claimable mode for WETH for all new pools');
-  await factory.setConfigurationForRebaseToken(Config.WETH, true, 2);
+  await AlgebraFactory.setConfigurationForRebaseToken(Config.WETH, true, 2);
 
   console.log('setup Claimable mode for USDB for all new pools');
-  await factory.setConfigurationForRebaseToken(Config.USDB, true, 2);
+  await AlgebraFactory.setConfigurationForRebaseToken(Config.USDB, true, 2);
 
   console.log('setup Public Creation Pool mode');
-  await factory.setIsPublicPoolCreationMode(true);
+  await AlgebraFactory.setIsPublicPoolCreationMode(true);
 
   console.log('setup 90% fee to LP by default, 10% to FeesVault ');
   await AlgebraFactory.setDefaultCommunityFee(10);
