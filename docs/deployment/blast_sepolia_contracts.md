@@ -1,6 +1,6 @@
 # Deployed Addresses List
 
-Last updated date: **27.03.2024**
+Last updated date: **31.03.2024**
 
 ## Addresses
 - `0x9140D359f2855E6540609dd4A93773ED1f45f509` - Deployer
@@ -15,24 +15,26 @@ External:
 ## Deployed Contract Addresses
 ```js
 {
-    "poolDeployer": "0xDC249b5Af938Ac700a973DEC8f08B631640C0f7E",
-    "factory": "0x37f23c8371B01f044B22E2ec854895F9b44e80d0",
-    "vault": "0xF684f9b771eB1F2091Aa74e43bA1edF31B2844c2",
-    "vaultFactory": "0x93e1ca27705F741033F17ee3794c5b66d4e8De93",
-    "AlgebraBasePluginV1": "0x3DF526734576650A103A608704eee8be51CEde94",
-    "BasePluginV1Factory": "0xC65506ce86220685158cf87491A5994231A33E62",
+    "poolDeployer": "0x383F8153913c2Da0769aCe87F20ED18A45f2E3C7",
+    "factory": "0x242A0C57EAf78A061db42D913DE7FA4eA648a1Ef",
+    "algebraFactoryImplementation": "0x12403d620C5930dA572Fe0ad2093886a9fa1d8c8",
+    "proxyAdmin": "0x44b43b13052Ea0ff260d67F177d9932570Bd5C33",
+    "vault": "0x3B82e2e3E94ff846E3396c98E4CC58841476bfaC",
+    "vaultFactory": "0xD270BfCC3b8d3cfafd928205Ce0E785BbBcaAC3f",
+    "AlgebraBasePluginV1": "0xad1cEDBCB23bfcf3333C36868D7c84d715FDf4A2",
+    "BasePluginV1Factory": "0xc6366a42c28b81B45f9b7e41eC020D99fCA091E4",
     "wrapped": "0x4200000000000000000000000000000000000023",
-    "tickLens": "0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987",
-    "quoter": "0x13fc9B642b0a8C54284967c207AC61B456dFF82B",
-    "quoterV2": "0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C",
-    "swapRouter": "0x2E344c63ba4e72A13071Ffa9D552b6F3cAF78E49",
-    "NFTDescriptor": "0x85FCb5B170BE3cf2a279EA1eB4d0556233c8a14E",
-    "NonfungibleTokenPositionDescriptor": "0x4478Ff742c9B90d50E49C9e71d5558c015D1813b",
-    "proxy": "0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5",
-    "nonfungiblePositionManager": "0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A",
-    "AlgebraInterfaceMulticall": "0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217",
-    "eternal": "0x313E865510080B723338953a9dcAb7bf22444eD3",
-    "fc": "0x6CE0e05DE600bE29B9ba68aE20C8Ab483D1a5Fa2"
+    "tickLens": "0x810d612BD3929BA0D32D10629ef936E9cb88e0DB",
+    "quoter": "0x17E7C69DAB4BDB0C09E0AD50F5D485a5C6703DF3",
+    "quoterV2": "0xB8268aCcf3e3964f61917D5e0E8Eaa654551F99A",
+    "swapRouter": "0xD952ACb88D36029A388555c19AA7031182f98932",
+    "NFTDescriptor": "0x2E9BeF53912635833b54f563D815080ec57E55c1",
+    "NonfungibleTokenPositionDescriptor": "0xa75367FE949BFc07Cf780AFf31ecAE50f5BB08Ef",
+    "proxy": "0x1Ca6fC2f8C653cD2dbF3119930C0656f783363fB",
+    "nonfungiblePositionManager": "0x36F9FE7b35bDB44e84DAE4eF9197d6441Aac048a",
+    "AlgebraInterfaceMulticall": "0xAcC8A48151061f60bA4AA6FA955305360158E840",
+    "eternal": "0x23d794a2E7A0505B2cE7fe3cDd0D486b615aea89",
+    "fc": "0x6bDE4274aa698a13AD93D8732F9D9D05a94054DA"
 }
 ```
 
@@ -57,10 +59,10 @@ External:
 ### Other settings
 #### General
 1. `Creating pools v3` - permissionessly
-2. `Setted FeesVault Factory` - `0xabc03eF501C3eeF03Bb0a1338653A8DfF7f1e36E`
+2. `Setted FeesVault Factory` - `0xa3103248290399cc2655b68f0038ce590ce8639E`
 3. Default BlastGovernor for v3 pairs - Deployer address
 4. Default BlastPoints operator for v3 pairs - `0x5888eEe48C0173681109Be60396D75bA2c02f632`
-5. Claimable mode for USDB and WETH tokens in pairs
+5. Claimable mode for USDB and WETH tokens in v3 pools
 
 #### Dex v3
 - `INIT_DEFAULT_FEE: 0.05%`

@@ -284,3 +284,6 @@ setup Claimable mode for WETH for all new pools
 setup Claimable mode for USDB for all new pools
 setup Public Creation Pool mode
 setup 90% fee to LP by default, 10% to FeesVault
+
+
+Updated FeesVault in Factory to 0xa3103248290399cc2655b68f0038ce590ce8639E
