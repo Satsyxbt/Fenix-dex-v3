@@ -37,6 +37,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "4.9.3"
+    "@openzeppelin/contracts": "4.9.3",
+    "@openzeppelin/contracts-upgradeable": "^4.9.3"
   }
 }

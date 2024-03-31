@@ -13,13 +13,13 @@ import './interfaces/plugin/IAlgebraPluginFactory.sol';
 import './AlgebraCommunityVault.sol';
 import './base/BlastGovernorSetup.sol';
 
-import '@openzeppelin/contracts/access/Ownable2Step.sol';
-import '@openzeppelin/contracts/access/AccessControlEnumerable.sol';
+import '@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol';
 
 /// @title Algebra factory
 /// @notice Is used to deploy pools and its plugins
 /// @dev Version: Algebra Integral 1.0
-contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerable, BlastGovernorSetup {
+contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, AccessControlEnumerableUpgradeable, BlastGovernorSetup {
   /// @inheritdoc IAlgebraFactory
   bytes32 public constant override POOLS_ADMINISTRATOR_ROLE = keccak256('POOLS_ADMINISTRATOR'); // it`s here for the public visibility of the value
 
@@ -31,7 +31,7 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
   bytes32 public constant override POOL_INIT_CODE_HASH = 0xf45e886a0794c1d80aeae5ab5befecd4f0f2b77c0cf627f7c46ec92dc1fa00e4;
 
   /// @inheritdoc IAlgebraFactory
-  address public immutable override poolDeployer;
+  address public override poolDeployer;
 
   /// @inheritdoc IAlgebraFactory
   address public override defaultBlastGovernor;
@@ -75,11 +75,20 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
   /// @dev time delay before ownership renouncement can be finished
   uint256 private constant RENOUNCE_OWNERSHIP_DELAY = 1 days;
 
-  constructor(address _blastGovernor, address _blastPoints, address _blastPointsOperaotor, address _poolDeployer) {
+  /**
+   * @dev Initializes the contract by disabling the initializer of the inherited upgradeable contract.
+   */
+  constructor() {
+    _disableInitializers();
+  }
+
+  function initialize(address _blastGovernor, address _blastPoints, address _blastPointsOperaotor, address _poolDeployer) external initializer {
     require(_poolDeployer != address(0));
     require(_blastPoints != address(0));
     require(_blastPointsOperaotor != address(0));
 
+    __AccessControlEnumerable_init();
+    __Ownable2Step_init();
     __BlastGovernorSetup_init(_blastGovernor);
 
     defaultBlastGovernor = _blastGovernor;
@@ -97,7 +106,7 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
   }
 
   /// @inheritdoc IAlgebraFactory
-  function owner() public view override(IAlgebraFactory, Ownable) returns (address) {
+  function owner() public view override(IAlgebraFactory, OwnableUpgradeable) returns (address) {
     return super.owner();
   }
 
@@ -273,4 +282,11 @@ contract AlgebraFactory is IAlgebraFactory, Ownable2Step, AccessControlEnumerabl
       _grantRole(DEFAULT_ADMIN_ROLE, owner());
     }
   }
+
+  /**
+   * @dev This empty reserved space is put in place to allow future versions to add new
+   * variables without shifting down storage in the inheritance chain.
+   * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+   */
+  uint256[50] private __gap;
 }
