@@ -3,7 +3,6 @@ import { getCreateAddress } from 'ethers';
 import {
   MockTimeAlgebraPool,
   TestERC20,
-  AlgebraFactory,
   AlgebraCommunityVault,
   TestAlgebraCallee,
   TestAlgebraRouter,
@@ -12,12 +11,13 @@ import {
   BlastMock__factory,
   BlastMock,
   BlastPointsMock,
+  AlgebraFactoryUpgradeable,
 } from '../../typechain';
 import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 type Fixture<T> = () => Promise<T>;
 interface FactoryFixture {
-  factory: AlgebraFactory;
+  factory: AlgebraFactoryUpgradeable;
   vault: AlgebraCommunityVault;
   blastPoints: BlastPointsMock;
 }
@@ -31,6 +31,18 @@ export async function mockBlastPart(): Promise<BlastPointsMock> {
   return blastPointsMock;
 }
 
+export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
+  const factoryFactory = await ethers.getContractFactory('AlgebraFactoryUpgradeable');
+  const factoryImplementation = await factoryFactory.deploy();
+
+  const proxyAdmin = await ethers.deployContract('ProxyAdmin');
+
+  const proxyFactory = await ethers.getContractFactory('TransparentUpgradeableProxy');
+  const proxy = await proxyFactory.deploy(factoryImplementation.target, proxyAdmin.target, '0x');
+
+  return factoryFactory.attach(proxy.target) as any as AlgebraFactoryUpgradeable;
+}
+
 async function factoryFixture(): Promise<FactoryFixture> {
   let blastPointsMock = await mockBlastPart();
 
@@ -38,16 +50,11 @@ async function factoryFixture(): Promise<FactoryFixture> {
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
-    nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
+    nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 4,
   });
 
-  const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-  const factory = (await factoryFactory.deploy(
-    governor.address,
-    blastPointsMock.target,
-    blastOperator.address,
-    poolDeployerAddress
-  )) as any as AlgebraFactory;
+  const factory = await createEmptyFactoryProxy();
+  await factory.initialize(governor.address, blastPointsMock.target, blastOperator.address, poolDeployerAddress);
 
   const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
   const poolDeployer = (await poolDeployerFactory.deploy(governor.address, factory)) as any as AlgebraPoolDeployer;

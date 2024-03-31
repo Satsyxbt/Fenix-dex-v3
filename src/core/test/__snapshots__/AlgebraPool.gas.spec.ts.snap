@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AlgebraPool gas tests [ @skip-on-coverage ] #setFee by owner 1`] = `35448`;
+exports[`AlgebraPool gas tests [ @skip-on-coverage ] #setFee by owner 1`] = `42651`;
 
 exports[`AlgebraPool gas tests [ @skip-on-coverage ] #setFee by plugin 1`] = `29954`;
 

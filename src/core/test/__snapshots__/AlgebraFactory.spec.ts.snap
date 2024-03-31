@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AlgebraFactory #createPool gas [ @skip-on-coverage ] 1`] = `4600525`;
+exports[`AlgebraFactoryUpgradeable #createPool gas [ @skip-on-coverage ] 1`] = `4610081`;
 
-exports[`AlgebraFactory #createPool gas for second pool [ @skip-on-coverage ] 1`] = `4600525`;
+exports[`AlgebraFactoryUpgradeable #createPool gas for second pool [ @skip-on-coverage ] 1`] = `4610081`;
 
-exports[`AlgebraFactory factory bytecode size  [ @skip-on-coverage ] 1`] = `11252`;
+exports[`AlgebraFactoryUpgradeable factory bytecode size  [ @skip-on-coverage ] 1`] = `2210`;
 
-exports[`AlgebraFactory pool bytecode size  [ @skip-on-coverage ] 1`] = `21607`;
+exports[`AlgebraFactoryUpgradeable pool bytecode size  [ @skip-on-coverage ] 1`] = `21607`;

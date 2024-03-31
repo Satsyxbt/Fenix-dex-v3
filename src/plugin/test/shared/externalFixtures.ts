@@ -1,7 +1,16 @@
 import {
   abi as FACTORY_ABI,
   bytecode as FACTORY_BYTECODE,
-} from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json';
+} from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactoryUpgradeable.sol/AlgebraFactoryUpgradeable.json';
+import {
+  abi as PROXY_ADMIN_ABI,
+  bytecode as PROXY_ADMIN_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol/ProxyAdmin.json';
+import {
+  abi as TransparentUpgradeableProxy_ABI,
+  bytecode as TransparentUpgradeableProxy_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol/TransparentUpgradeableProxy.json';
+
 import {
   abi as TEST_CALLEE_ABI,
   bytecode as TEST_CALLEE_BYTECODE,
@@ -24,7 +33,7 @@ import {
   MockTimeAlgebraPoolDeployer,
   TestAlgebraCallee,
   MockTimeAlgebraPool,
-  AlgebraFactory,
+  AlgebraFactoryUpgradeable,
   TestERC20,
   BlastMock__factory,
   BlastPointsMock,
@@ -50,10 +59,24 @@ export async function tokensFixture(): Promise<TokensFixture> {
   return { token0, token1 };
 }
 
+export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
+  const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
+
+  const factoryImplementation = await factoryFactory.deploy();
+  const proxyAdminFactory = await ethers.getContractFactory(PROXY_ADMIN_ABI, PROXY_ADMIN_BYTECODE);
+
+  const proxyAdmin = await proxyAdminFactory.deploy();
+
+  const proxyFactory = await ethers.getContractFactory(TransparentUpgradeableProxy_ABI, TransparentUpgradeableProxy_BYTECODE);
+  const proxy = await proxyFactory.deploy(factoryImplementation.target, proxyAdmin.target, '0x');
+
+  return factoryFactory.attach(proxy.target) as any as AlgebraFactoryUpgradeable;
+}
+
 interface MockPoolDeployerFixture extends TokensFixture {
   poolDeployer: MockTimeAlgebraPoolDeployer;
   swapTargetCallee: TestAlgebraCallee;
-  factory: AlgebraFactory;
+  factory: AlgebraFactoryUpgradeable;
   createPool(firstToken?: TestERC20, secondToken?: TestERC20): Promise<MockTimeAlgebraPool>;
 }
 export async function mockBlastPart() {
@@ -74,13 +97,8 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
     nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
   });
 
-  const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
-  const factory = (await factoryFactory.deploy(
-    governor.address,
-    poolDeployerAddress,
-    blastPointsOperator.address,
-    blastPoints.target
-  )) as any as AlgebraFactory;
+  const factory = await createEmptyFactoryProxy();
+  await factory.initialize(governor.address, poolDeployerAddress, blastPointsOperator.address, blastPoints.target);
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);
   const poolDeployer = (await poolDeployerFactory.deploy()) as any as MockTimeAlgebraPoolDeployer;

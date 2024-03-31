@@ -1,7 +1,15 @@
 import {
   abi as FACTORY_ABI,
   bytecode as FACTORY_BYTECODE,
-} from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json';
+} from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactoryUpgradeable.sol/AlgebraFactoryUpgradeable.json';
+import {
+  abi as PROXY_ADMIN_ABI,
+  bytecode as PROXY_ADMIN_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol/ProxyAdmin.json';
+import {
+  abi as TransparentUpgradeableProxy_ABI,
+  bytecode as TransparentUpgradeableProxy_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol/TransparentUpgradeableProxy.json';
 
 import {
   abi as POOL_DEPLOYER_ABI,
@@ -51,7 +59,7 @@ const v3CoreFactoryFixture: () => Promise<IAlgebraFactory> = async () => {
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
-    nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
+    nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 4,
   });
 
   const v3FactoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);

@@ -2,14 +2,14 @@ import { Wallet, getCreateAddress, ZeroAddress, keccak256 } from 'ethers';
 import { ethers } from 'hardhat';
 import { loadFixture, time } from '@nomicfoundation/hardhat-network-helpers';
 import {
-  AlgebraFactory,
+  AlgebraFactoryUpgradeable,
   AlgebraPoolDeployer,
   BlastPointsMock,
   ERC20RebasingMock,
   MockDefaultPluginFactory,
 } from '../typechain';
 import { expect } from './shared/expect';
-import { ZERO_ADDRESS, mockBlastPart } from './shared/fixtures';
+import { ZERO_ADDRESS, mockBlastPart, createEmptyFactoryProxy } from './shared/fixtures';
 import snapshotGasCost from './shared/snapshotGasCost';
 
 import { getCreate2Address, encodePriceSqrt } from './shared/utilities';
@@ -20,10 +20,10 @@ const TEST_ADDRESSES: [string, string, string] = [
   '0x3000000000000000000000000000000000000000',
 ];
 
-describe('AlgebraFactory', () => {
+describe('AlgebraFactoryUpgradeable', () => {
   let wallet: Wallet, other: Wallet, blastGovernor: Wallet, blastOperator: Wallet;
 
-  let factory: AlgebraFactory;
+  let factory: AlgebraFactoryUpgradeable;
   let poolDeployer: AlgebraPoolDeployer;
   let poolBytecode: string;
   let defaultPluginFactory: MockDefaultPluginFactory;
@@ -36,16 +36,11 @@ describe('AlgebraFactory', () => {
     // precompute
     const poolDeployerAddress = getCreateAddress({
       from: deployer.address,
-      nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
+      nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 4,
     });
 
-    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    const factory = (await factoryFactory.deploy(
-      governor.address,
-      blastPoints.target,
-      blastOperator.address,
-      poolDeployerAddress
-    )) as any as AlgebraFactory;
+    let factory = await createEmptyFactoryProxy();
+    await factory.initialize(governor.address, blastPoints.target, blastOperator.address, poolDeployerAddress);
 
     const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
     const poolDeployer = (await poolDeployerFactory.deploy(governor.address, factory)) as any as AlgebraPoolDeployer;
@@ -76,28 +71,47 @@ describe('AlgebraFactory', () => {
     ({ factory, poolDeployer, defaultPluginFactory, blastPoints } = await loadFixture(fixture));
   });
 
+  it('fail if try initialize on implementation', async () => {
+    const factoryFactory = await ethers.getContractFactory('AlgebraFactoryUpgradeable');
+    const factoryImplementation = await factoryFactory.deploy();
+    await expect(
+      factoryImplementation.initialize(
+        blastGovernor.address,
+        blastPoints.target,
+        blastOperator.address,
+        poolDeployer.target
+      )
+    ).to.be.revertedWith('Initializable: contract is already initialized');
+  });
+
+  it('fail if try second initialize on proxy', async () => {
+    await expect(
+      factory.initialize(blastGovernor.address, blastPoints.target, blastOperator.address, poolDeployer.target)
+    ).to.be.revertedWith('Initializable: contract is already initialized');
+  });
+
   it('fail if provide zero address like poolDeployer', async () => {
-    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    await expect(factoryFactory.deploy(blastGovernor.address, blastPoints.target, blastOperator.address, ZERO_ADDRESS))
-      .to.be.reverted;
+    const factory = await createEmptyFactoryProxy();
+    await expect(factory.initialize(blastGovernor.address, blastPoints.target, blastOperator.address, ZERO_ADDRESS)).to
+      .be.reverted;
   });
 
   it('fail if provide zero address like blastGovernor', async () => {
-    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    await expect(factoryFactory.deploy(ZERO_ADDRESS, blastPoints.target, blastOperator.address, poolDeployer.target)).to
-      .be.reverted;
+    const factory = await createEmptyFactoryProxy();
+    await expect(factory.initialize(ZERO_ADDRESS, blastPoints.target, blastOperator.address, poolDeployer.target)).to.be
+      .reverted;
   });
 
   it('fail if provide zero address like blastPoints', async () => {
-    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    await expect(factoryFactory.deploy(blastGovernor.address, ZERO_ADDRESS, blastOperator.address, poolDeployer.target))
-      .to.be.reverted;
+    const factory = await createEmptyFactoryProxy();
+    await expect(factory.initialize(blastGovernor.address, ZERO_ADDRESS, blastOperator.address, poolDeployer.target)).to
+      .be.reverted;
   });
 
   it('fail if provide zero address like blastOperator', async () => {
-    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    await expect(factoryFactory.deploy(blastGovernor.address, blastPoints.target, ZERO_ADDRESS, poolDeployer.target)).to
-      .be.reverted;
+    const factory = await createEmptyFactoryProxy();
+    await expect(factory.initialize(blastGovernor.address, blastPoints.target, ZERO_ADDRESS, poolDeployer.target)).to.be
+      .reverted;
   });
 
   it('cannot create vault factory stub with zero algebra community vault address', async () => {
@@ -152,8 +166,11 @@ describe('AlgebraFactory', () => {
   });
 
   it('cannot deploy factory with incorrect poolDeployer', async () => {
-    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    expect(factoryFactory.deploy(ZeroAddress)).to.be.revertedWithoutReason;
+    const factory = await createEmptyFactoryProxy();
+    await expect(factory.initialize(blastGovernor.address, blastPoints.target, ZERO_ADDRESS, poolDeployer.target)).to.be
+      .reverted;
+    expect(factory.initialize(blastGovernor.address, blastPoints.target, blastOperator.address, ZERO_ADDRESS)).to.be
+      .revertedWithoutReason;
   });
 
   it('factory bytecode size  [ @skip-on-coverage ]', async () => {

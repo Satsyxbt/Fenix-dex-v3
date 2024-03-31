@@ -2,19 +2,19 @@ import { Wallet, getCreateAddress, ZeroAddress } from 'ethers';
 import { ethers } from 'hardhat';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import {
-  AlgebraFactory,
   AlgebraPoolDeployer,
   AlgebraCommunityVault,
   TestERC20,
   BlastMock__factory,
+  AlgebraFactoryUpgradeable,
 } from '../typechain';
 import { expect } from './shared/expect';
-import { mockBlastPart } from './shared/fixtures';
+import { createEmptyFactoryProxy, mockBlastPart } from './shared/fixtures';
 
 describe('AlgebraCommunityVault', () => {
   let wallet: Wallet, other: Wallet, third: Wallet;
 
-  let factory: AlgebraFactory;
+  let factory: AlgebraFactoryUpgradeable;
   let poolDeployer: AlgebraPoolDeployer;
   let vault: AlgebraCommunityVault;
 
@@ -33,13 +33,8 @@ describe('AlgebraCommunityVault', () => {
       nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
     });
 
-    const factoryFactory = await ethers.getContractFactory('AlgebraFactory');
-    const _factory = (await factoryFactory.deploy(
-      governor.address,
-      blastPointsMock.target,
-      governor.address,
-      poolDeployerAddress
-    )) as any as AlgebraFactory;
+    const _factory = await createEmptyFactoryProxy();
+    await _factory.initialize(governor.address, blastPointsMock.target, governor.address, poolDeployerAddress);
 
     const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
     poolDeployer = (await poolDeployerFactory.deploy(governor.address, _factory)) as any as AlgebraPoolDeployer;

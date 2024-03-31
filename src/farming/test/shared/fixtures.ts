@@ -1,8 +1,18 @@
 import { Signer, Wallet, getCreateAddress, MaxUint256 } from 'ethers';
 import { ethers } from 'hardhat';
-import BlastMock__factory from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastMock.sol/BlastMock.json';
 import AlgebraPool from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPool.sol/AlgebraPool.json';
-import AlgebraFactoryJson from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactory.sol/AlgebraFactory.json';
+import {
+  abi as FACTORY_ABI,
+  bytecode as FACTORY_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraFactoryUpgradeable.sol/AlgebraFactoryUpgradeable.json';
+import {
+  abi as PROXY_ADMIN_ABI,
+  bytecode as PROXY_ADMIN_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol/ProxyAdmin.json';
+import {
+  abi as TransparentUpgradeableProxy_ABI,
+  bytecode as TransparentUpgradeableProxy_BYTECODE,
+} from '@cryptoalgebra/integral-core/artifacts/@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol/TransparentUpgradeableProxy.json';
 import AlgebraPoolDeployerJson from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json';
 import NFTDescriptorJson from '@cryptoalgebra/integral-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/NFTDescriptor.json';
 import NonfungiblePositionManagerJson from '@cryptoalgebra/integral-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json';
@@ -38,7 +48,7 @@ import {
   bytecode as BLAST_POINTS_MOCK_BYTECODE,
 } from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastPointsMock.sol/BlastPointsMock.json';
 import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
-import { BlastMock__factory, BlastPointsMock } from '@cryptoalgebra/integral-core/typechain';
+import { AlgebraFactoryUpgradeable, BlastMock__factory, BlastPointsMock } from '@cryptoalgebra/integral-core/typechain';
 
 type WNativeTokenFixture = { wnative: IWNativeToken };
 
@@ -61,6 +71,19 @@ export async function mockBlastPart() {
   return blastPointsMock;
 }
 
+export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
+  const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
+
+  const factoryImplementation = await factoryFactory.deploy();
+  const proxyAdminFactory = await ethers.getContractFactory(PROXY_ADMIN_ABI, PROXY_ADMIN_BYTECODE);
+
+  const proxyAdmin = await proxyAdminFactory.deploy();
+
+  const proxyFactory = await ethers.getContractFactory(TransparentUpgradeableProxy_ABI, TransparentUpgradeableProxy_BYTECODE);
+  const proxy = await proxyFactory.deploy(factoryImplementation.target, proxyAdmin.target, '0x');
+
+  return factoryFactory.attach(proxy.target) as any as AlgebraFactoryUpgradeable;
+}
 const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer, IBasePluginV1Factory, Signer]> = async () => {
   let blastPoints = await mockBlastPart();
 
@@ -68,16 +91,11 @@ const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
-    nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
+    nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 4,
   });
 
-  const v3FactoryFactory = await ethers.getContractFactory(AlgebraFactoryJson.abi, AlgebraFactoryJson.bytecode);
-  const _factory = (await v3FactoryFactory.deploy(
-    blastGovernor.address,
-    blastPoints.target,
-    blastPointsOperator.address,
-    poolDeployerAddress
-  )) as any as IAlgebraFactory;
+  const _factory = await createEmptyFactoryProxy();
+  await _factory.initialize(blastGovernor.address, blastPoints.target, blastPointsOperator.address, poolDeployerAddress);
 
   const poolDeployerFactory = await ethers.getContractFactory(AlgebraPoolDeployerJson.abi, AlgebraPoolDeployerJson.bytecode);
   const _deployer = (await poolDeployerFactory.deploy(blastGovernor.address, _factory)) as any as IAlgebraPoolDeployer;
@@ -95,7 +113,7 @@ const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer
   await _factory.setDefaultPluginFactory(pluginFactory);
   await _factory.setIsPublicPoolCreationMode(true);
 
-  return [_factory, _deployer, pluginFactory, deployer];
+  return [_factory as any as IAlgebraFactory, _deployer, pluginFactory, deployer];
 };
 
 export const v3RouterFixture: () => Promise<{
