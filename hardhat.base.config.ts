@@ -10,6 +10,9 @@ export default {
       loggingEnabled: false,
       evm: 'paris',
     },
+    localhost: {
+      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
+    },
     localHardhat: {
       url: `http://127.0.0.1:8545`,
     },
