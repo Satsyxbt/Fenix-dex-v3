@@ -2,7 +2,7 @@ const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
 
-const FEES_VAULT = '0xa3103248290399cc2655b68f0038ce590ce8639E';
+const FEES_VAULT = '0x25D84140b5a611Fc8b13B0a73b7ac86d30C81edB';
 
 const { getConfig } = require('../../../scripts/networksConfig');
 async function main() {

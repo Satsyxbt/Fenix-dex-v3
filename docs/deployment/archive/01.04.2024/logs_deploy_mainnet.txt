@@ -386,3 +386,6 @@ setup 0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4 like default blast governor add
 setup 0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4 like default blast points operator
 setup 0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4 like default blast governor in ETHERNAL
 setup 0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4 like default blast governor in BasePluginV1Factory
+
+
+Updated FeesVault in Factory to 0x25D84140b5a611Fc8b13B0a73b7ac86d30C81edB
