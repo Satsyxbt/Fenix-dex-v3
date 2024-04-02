@@ -46,32 +46,32 @@ These contracts are not used as their role is played by `FeesVault`, `FeesVaultF
 ### Blast governor
 | Contract Name                       | Current Gas Mode | Current ETH Yield Mode | Blast governor Address                 |
 |-------------------------------------|------------------|------------------|----------------------------------------------|
-| Pool Deployer                       | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Factory                             | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Vault                               | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Vault Factory                       | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Base Plugin V1 Factory              | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Quoter                              | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Quoter V2                           | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Swap Router                         | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Non-fungible Position Manager       | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| Algebra Interface Multicall         | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| AlgebraEternalFarming               | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| FarmingCenter                       | Claimable        | Claimable        | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
+| Pool Deployer                       | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Factory                             | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Vault                               | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Vault Factory                       | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Base Plugin V1 Factory              | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Quoter                              | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Quoter V2                           | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Swap Router                         | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Non-fungible Position Manager       | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| Algebra Interface Multicall         | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| AlgebraEternalFarming               | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| FarmingCenter                       | Claimable        | Claimable        | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
 
 ### Default blast governor
 Seted the address that will be set when deploys contracts (pools, plug-ins, etc.) from the specified contracts
 | Contract Name                       | Blast governor Address              |
 |-------------------------------------|----------------------------------------------|
-| AlgebraFactory                      | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| AlgebraEternalFarming               | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
-| BasePluginV1Factory                 | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
+| AlgebraFactory                      | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| AlgebraEternalFarming               | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
+| BasePluginV1Factory                 | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
 
 ### Default blast points operator
 Seted the address that will be set when deploying new pools as an operator for blast points of this pool
 | Contract Name                       | Blast governor Address              |
 |-------------------------------------|----------------------------------------------|
-| AlgebraFactory                      | `0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30` |
+| AlgebraFactory                      | `0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4` |
 
 ## Initial/Default settings
 #### General
