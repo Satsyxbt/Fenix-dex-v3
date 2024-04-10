@@ -1,0 +1,43 @@
+ npx hardhat run .\scripts\5_transfer_ownership_mainnet..ts --network blastMainnet
+Target owner: 0xED8276141873621c18258D1c963C9F5d4014b5E5
+Deployer: 0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30
+Transfer Factory Ownership:
+  -- Current state
+         owner() - 0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30
+         pendingOwner() - 0x0000000000000000000000000000000000000000
+  -- Check roles
+         old owner DEFAULT_ADMIN_ROLE - true
+         old owner POOLS_ADMINISTRATOR_ROLE - false
+         old owner POOLS_CREATOR_ROLE - true
+         count POOLS_CREATOR_ROLE - 1
+         count POOLS_CREATOR_ROLE - 0
+         count POOLS_CREATOR_ROLE - 1
+
+         new owner DEFAULT_ADMIN_ROLE - false
+         new owner POOLS_ADMINISTRATOR_ROLE - false
+         new owner POOLS_CREATOR_ROLE - false
+
+-- Transfered
+
+  -- After state
+         owner() - 0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30
+         pendingOwner() - 0xED8276141873621c18258D1c963C9F5d4014b5E5
+  -- Check roles
+         old owner DEFAULT_ADMIN_ROLE - true
+         old owner POOLS_ADMINISTRATOR_ROLE - false
+         old owner POOLS_CREATOR_ROLE - false
+         count POOLS_CREATOR_ROLE - 1
+         count POOLS_CREATOR_ROLE - 0
+         count POOLS_CREATOR_ROLE - 1
+
+         new owner DEFAULT_ADMIN_ROLE - false
+         new owner POOLS_ADMINISTRATOR_ROLE - false
+         new owner POOLS_CREATOR_ROLE - true
+
+Transfer ProxyAdmin Ownership:
+  -- Current state
+         owner() - 0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30
+
+-- Transfered
+  -- After state
+         owner() - 0xED8276141873621c18258D1c963C9F5d4014b5E5
