@@ -23,10 +23,6 @@ interface IBasePluginV1Factory is IAlgebraPluginFactory, IBeacon {
   /// @param implementation The new implementation address after changed
   event Upgraded(address indexed implementation);
 
-  /// @dev Emitted when set new default blast governor address is changed.
-  /// @param defaultBlastGovernor The new default blast governor address
-  event DefaultBlastGovernor(address indexed defaultBlastGovernor);
-
   /// @dev The `implementation` of the beacon is invalid.
   error BeaconInvalidImplementation(address implementation);
 
@@ -50,10 +46,6 @@ interface IBasePluginV1Factory is IAlgebraPluginFactory, IBeacon {
   /// @return The farming contract address
   function farmingAddress() external view returns (address);
 
-  /// @notice Returns current default blast governor address
-  /// @return The default blast governor address for futurees pools
-  function defaultBlastGovernor() external view returns (address);
-
   /// @notice Returns address of plugin created for given AlgebraPool
   /// @param pool The address of AlgebraPool
   /// @return The address of corresponding plugin
@@ -74,8 +66,4 @@ interface IBasePluginV1Factory is IAlgebraPluginFactory, IBeacon {
   /// @dev updates farmings manager address on the factory
   /// @param newFarmingAddress The new tokenomics contract address
   function setFarmingAddress(address newFarmingAddress) external;
-
-  /// @dev updates default blast governor address on the factory
-  /// @param defaultBlastGovernor_ The new defautl blast governor address
-  function setDefaultBlastGovernor(address defaultBlastGovernor_) external;
 }

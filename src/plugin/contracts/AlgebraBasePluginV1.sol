@@ -6,7 +6,7 @@ import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/plugin/IAlgebraPlugin.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/pool/IAlgebraPoolState.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraPool.sol';
-import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
+import '@cryptoalgebra/integral-core/contracts/base/ModeSfsSetup.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
@@ -21,7 +21,7 @@ import './types/AlgebraFeeConfigurationU144.sol';
 
 /// @title Algebra Integral 1.0 default plugin
 /// @notice This contract stores timepoints and calculates adaptive fee and statistical averages
-contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializable, TimestampUpgradeable, BlastGovernorSetup {
+contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializable, TimestampUpgradeable, ModeSfsSetup {
   using Plugins for uint8;
   using AlgebraFeeConfigurationU144Lib for AlgebraFeeConfiguration;
 
@@ -70,8 +70,14 @@ contract AlgebraBasePluginV1 is IAlgebraBasePluginV1, IAlgebraPlugin, Initializa
   }
 
   /// @inheritdoc IAlgebraBasePluginV1
-  function initialize(address _blastGovernor, address _pool, address _factory, address _pluginFactory) external override initializer {
-    __BlastGovernorSetup_init(_blastGovernor);
+  function initialize(
+    address _modeSfs,
+    uint256 _sfsAssignTokenId,
+    address _pool,
+    address _factory,
+    address _pluginFactory
+  ) external override initializer {
+    __ModeSfsSetup__init(_modeSfs, _sfsAssignTokenId);
 
     (factory, pool, pluginFactory) = (_factory, _pool, _pluginFactory);
   }

@@ -10,15 +10,13 @@ import './MockTimeAlgebraBasePluginV1.sol';
 import '../interfaces/IBasePluginV1Factory.sol';
 
 import '@cryptoalgebra/integral-core/contracts/interfaces/plugin/IAlgebraPluginFactory.sol';
+import '@cryptoalgebra/integral-core/contracts/base/ModeSfsSetupFactoryManager.sol';
 
-contract MockTimeDSFactory is IBasePluginV1Factory {
+contract MockTimeDSFactory is IBasePluginV1Factory, ModeSfsSetupFactoryManager {
   /// @inheritdoc IBasePluginV1Factory
   bytes32 public constant override ALGEBRA_BASE_PLUGIN_FACTORY_ADMINISTRATOR = keccak256('ALGEBRA_BASE_PLUGIN_FACTORY_ADMINISTRATOR');
 
   address public immutable override algebraFactory;
-
-  /// @inheritdoc IBasePluginV1Factory
-  address public defaultBlastGovernor;
 
   /// @dev values of constants for sigmoids in fee calculation formula
   AlgebraFeeConfiguration public override defaultFeeConfiguration;
@@ -32,9 +30,8 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
   /// @inheritdoc IBeacon
   address public override implementation;
 
-  constructor(address _blastGovernor, address _algebraFactory, address _basePluginV1Implementation) {
-    defaultBlastGovernor = _blastGovernor;
-
+  constructor(address _modeSfs, uint256 _sfsAssignTokenId, address _algebraFactory, address _basePluginV1Implementation) {
+    __ModeSfsSetupFactoryManager_init(_modeSfs, _sfsAssignTokenId);
     algebraFactory = _algebraFactory;
     defaultFeeConfiguration = AdaptiveFee.initialFeeConfiguration();
 
@@ -60,15 +57,9 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
     pluginByPool[pool] = plugin;
   }
 
-  /// @inheritdoc IBasePluginV1Factory
-  function setDefaultBlastGovernor(address defaultBlastGovernor_) external override {
-    defaultBlastGovernor = defaultBlastGovernor_;
-    emit DefaultBlastGovernor(defaultBlastGovernor_);
-  }
-
   function _createPlugin(address pool) internal returns (address) {
     MockTimeAlgebraBasePluginV1 volatilityOracle = MockTimeAlgebraBasePluginV1(address(new BeaconProxy(address(this), '')));
-    volatilityOracle.initialize(defaultBlastGovernor, pool, algebraFactory, address(this));
+    volatilityOracle.initialize(defaultModeSfs, defaultSfsAssignTokenId, pool, algebraFactory, address(this));
     volatilityOracle.changeFeeConfiguration(defaultFeeConfiguration);
     pluginByPool[pool] = address(volatilityOracle);
     return address(volatilityOracle);
@@ -116,4 +107,6 @@ contract MockTimeDSFactory is IBasePluginV1Factory {
     implementation = newImplementation;
     emit Upgraded(newImplementation);
   }
+
+  function _checkAccessForModeSfsSetupFactoryManager() internal view virtual override {}
 }
