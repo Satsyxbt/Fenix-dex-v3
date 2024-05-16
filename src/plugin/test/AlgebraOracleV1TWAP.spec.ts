@@ -5,6 +5,8 @@ import { ContractFactory } from 'ethers';
 import { AlgebraOracleV1TWAP, MockPool, MockTimeDSFactory, TestERC20 } from '../typechain';
 import { tokensFixture } from './shared/externalFixtures';
 import { ZERO_ADDRESS } from './shared/fixtures';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
+import { ModeSfsMock } from '@cryptoalgebra/integral-core/typechain';
 
 describe('AlgebraOracleV1TWAP', () => {
   let tokens: TestERC20[];
@@ -14,12 +16,15 @@ describe('AlgebraOracleV1TWAP', () => {
   const algebraOracleV1TWAPFixture = async () => {
     const tokensFixtureRes = await tokensFixture();
     tokens = [tokensFixtureRes.token0, tokensFixtureRes.token1];
+    const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+    const modeSfs = (await factoryModeSfs.deploy()) as any as ModeSfsMock;
+    const sfsAssignTokenId = 1;
 
     const mockDSOperatorFactory = await ethers.getContractFactory('MockTimeAlgebraBasePluginV1');
     const pluginImplementation = await mockDSOperatorFactory.deploy();
-    const [d, blastGovernor, other] = await ethers.getSigners();
+    const [d, other] = await ethers.getSigners();
     const mockPluginFactoryFactory = await ethers.getContractFactory('MockTimeDSFactory');
-    const _mockPluginFactory = await mockPluginFactoryFactory.deploy(blastGovernor.address, ZERO_ADDRESS, pluginImplementation.target);
+    const _mockPluginFactory = await mockPluginFactoryFactory.deploy(modeSfs.target, sfsAssignTokenId, ZERO_ADDRESS, pluginImplementation.target);
 
     const algebraOracleV1TWAPFactory = await ethers.getContractFactory('AlgebraOracleV1TWAP');
     const _algebraOracleV1TWAP = await algebraOracleV1TWAPFactory.deploy(_mockPluginFactory);

@@ -43,12 +43,8 @@ import {
 import { FeeAmount, encodePriceSqrt, MAX_GAS_LIMIT } from '../shared';
 import { ActorFixture } from './actors';
 import { IBasePluginV1Factory, IAlgebraBasePluginV1 } from '@cryptoalgebra/integral-base-plugin/typechain';
-import {
-  abi as BLAST_POINTS_MOCK_ABI,
-  bytecode as BLAST_POINTS_MOCK_BYTECODE,
-} from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastPointsMock.sol/BlastPointsMock.json';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
-import { AlgebraFactoryUpgradeable, BlastMock__factory, BlastPointsMock } from '@cryptoalgebra/integral-core/typechain';
+import { AlgebraFactoryUpgradeable } from '@cryptoalgebra/integral-core/typechain';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 type WNativeTokenFixture = { wnative: IWNativeToken };
 
@@ -62,14 +58,6 @@ export const wnativeFixture: () => Promise<WNativeTokenFixture> = async () => {
 
   return { wnative };
 };
-
-export async function mockBlastPart() {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-  const factory = await ethers.getContractFactory(BLAST_POINTS_MOCK_ABI, BLAST_POINTS_MOCK_BYTECODE);
-  const blastPointsMock = (await factory.deploy()) as any as BlastPointsMock;
-
-  return blastPointsMock;
-}
 
 export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
   const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
@@ -85,9 +73,11 @@ export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeab
   return factoryFactory.attach(proxy.target) as any as AlgebraFactoryUpgradeable;
 }
 const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer, IBasePluginV1Factory, Signer]> = async () => {
-  let blastPoints = await mockBlastPart();
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = await factoryModeSfs.deploy();
+  const sfsAssignTokenId = 1;
 
-  const [deployer, blastGovernor, blastPointsOperator] = await ethers.getSigners();
+  const [deployer] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
@@ -95,15 +85,16 @@ const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer
   });
 
   const _factory = await createEmptyFactoryProxy();
-  await _factory.initialize(blastGovernor.address, blastPoints.target, blastPointsOperator.address, poolDeployerAddress);
+  await _factory.initialize(modeSfs.target, sfsAssignTokenId, poolDeployerAddress);
 
   const poolDeployerFactory = await ethers.getContractFactory(AlgebraPoolDeployerJson.abi, AlgebraPoolDeployerJson.bytecode);
-  const _deployer = (await poolDeployerFactory.deploy(blastGovernor.address, _factory)) as any as IAlgebraPoolDeployer;
+  const _deployer = (await poolDeployerFactory.deploy(modeSfs.target, sfsAssignTokenId, _factory)) as any as IAlgebraPoolDeployer;
   const basePluginFactory = await ethers.getContractFactory(PLUGIN_ABI, PLUGIN_BYTECODE);
 
   const pluginContractFactory = await ethers.getContractFactory(PLUGIN_FACTORY_ABI, PLUGIN_FACTORY_BYTECODE);
   const pluginFactory = (await pluginContractFactory.deploy(
-    blastGovernor.address,
+    modeSfs.target,
+    sfsAssignTokenId,
     _factory,
     (
       await basePluginFactory.deploy()
@@ -124,11 +115,13 @@ export const v3RouterFixture: () => Promise<{
   pluginFactory: IBasePluginV1Factory;
   ownerSigner: Signer;
 }> = async () => {
-  const [depl] = await ethers.getSigners();
   const { wnative } = await wnativeFixture();
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = await factoryModeSfs.deploy();
+  const sfsAssignTokenId = 1;
   const [factory, deployer, pluginFactory, ownerSigner] = await v3CoreFactoryFixture();
   const routerFactory = await ethers.getContractFactory(SwapRouter.abi, SwapRouter.bytecode);
-  const router = (await routerFactory.deploy(depl.address, factory, wnative, deployer)) as any as ISwapRouter;
+  const router = (await routerFactory.deploy(modeSfs.target, sfsAssignTokenId, factory, wnative, deployer)) as any as ISwapRouter;
 
   return { factory, wnative, deployer, router, pluginFactory, ownerSigner };
 };
@@ -185,9 +178,18 @@ export const algebraFactoryFixture: () => Promise<AlgebraFactoryFixture> = async
   const positionDescriptor = await NFTDescriptorFactory.deploy(tokens[0], 'ETH', []);
 
   const nftFactory = await ethers.getContractFactory(NonfungiblePositionManagerJson.abi, NonfungiblePositionManagerJson.bytecode);
-  const [deploy] = await ethers.getSigners();
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = await factoryModeSfs.deploy();
+  const sfsAssignTokenId = 1;
 
-  const nft = (await nftFactory.deploy(deploy.address, factory, wnative, positionDescriptor, deployer)) as any as INonfungiblePositionManager;
+  const nft = (await nftFactory.deploy(
+    modeSfs.target,
+    sfsAssignTokenId,
+    factory,
+    wnative,
+    positionDescriptor,
+    deployer
+  )) as any as INonfungiblePositionManager;
   for (const token of tokens) {
     token.address = await token.getAddress();
   }
@@ -290,6 +292,10 @@ export type AlgebraFixtureType = {
 };
 
 export const algebraFixture: () => Promise<AlgebraFixtureType> = async () => {
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = await factoryModeSfs.deploy();
+  const sfsAssignTokenId = 1;
+
   const { tokens, nft, factory, deployer, router, pluginFactory, ownerSigner } = await algebraFactoryFixture();
   const wallets = (await ethers.getSigners()) as any as Wallet[];
   const signer = new ActorFixture(wallets, ethers.provider).farmingDeployer();
@@ -297,11 +303,11 @@ export const algebraFixture: () => Promise<AlgebraFixtureType> = async () => {
   const incentiveCreator = new ActorFixture(wallets, ethers.provider).incentiveCreator();
 
   const eternalFarmingFactory = await ethers.getContractFactory('AlgebraEternalFarming', signer);
-  const eternalFarming = (await eternalFarmingFactory.deploy(wallets[0].address, deployer, nft)) as any as AlgebraEternalFarming;
+  const eternalFarming = (await eternalFarmingFactory.deploy(modeSfs.target, sfsAssignTokenId, deployer, nft)) as any as AlgebraEternalFarming;
 
   const farmingCenterFactory = await ethers.getContractFactory('FarmingCenter', signer);
 
-  const farmingCenter = (await farmingCenterFactory.deploy(wallets[1].address, eternalFarming, nft)) as any as FarmingCenter;
+  const farmingCenter = (await farmingCenterFactory.deploy(modeSfs.target, sfsAssignTokenId, eternalFarming, nft)) as any as FarmingCenter;
 
   await nft.setFarmingCenter(farmingCenter);
 

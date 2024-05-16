@@ -34,11 +34,10 @@ import {
   abi as WNATIVE_ABI,
   bytecode as WNATIVE_BYTECODE,
 } from '@cryptoalgebra/integral-periphery/artifacts/contracts/interfaces/external/IWNativeToken.sol/IWNativeToken.json';
-import BlastMock__factory from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastMock.sol/BlastMock.json';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 //import WNativeToken from '../contracts/WNativeToken.json'
 import { getCreateAddress } from 'ethers';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 export const vaultAddress = '0x1d8b6fA722230153BE08C4Fa4Aa4B4c7cd01A95a';
 
@@ -48,14 +47,13 @@ const wnativeFixture: () => Promise<{ wnative: IWNativeToken }> = async () => {
 
   return { wnative };
 };
-export async function mockBlastPart() {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
-  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
-}
+
 const v3CoreFactoryFixture: () => Promise<IAlgebraFactory> = async () => {
-  await mockBlastPart();
-  const [deployer, blastGovernor] = await ethers.getSigners();
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = await factoryModeSfs.deploy();
+  const sfsAssignTokenId = 1;
+
+  const [deployer] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
@@ -63,14 +61,14 @@ const v3CoreFactoryFixture: () => Promise<IAlgebraFactory> = async () => {
   });
 
   const v3FactoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
-  const _factory = (await v3FactoryFactory.deploy(blastGovernor.address, poolDeployerAddress)) as any as IAlgebraFactory;
+  const _factory = (await v3FactoryFactory.deploy(modeSfs.target, sfsAssignTokenId, poolDeployerAddress)) as any as IAlgebraFactory;
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);
-  const poolDeployer = await poolDeployerFactory.deploy(blastGovernor.address, _factory);
+  const poolDeployer = await poolDeployerFactory.deploy(modeSfs.target, sfsAssignTokenId, _factory);
   const basePluginFactory = await ethers.getContractFactory(BASE_PLUGIN__ABI, BASE_PLUGIN_BYTECODE);
 
   const pluginContractFactory = await ethers.getContractFactory(PLUGIN_FACTORY_ABI, PLUGIN_FACTORY_BYTECODE);
-  const pluginFactory = await pluginContractFactory.deploy(blastGovernor.address, _factory, (await basePluginFactory.deploy()).target);
+  const pluginFactory = await pluginContractFactory.deploy(modeSfs.target, sfsAssignTokenId, _factory, (await basePluginFactory.deploy()).target);
 
   await _factory.setDefaultPluginFactory(pluginFactory);
 

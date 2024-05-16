@@ -10,6 +10,7 @@ import { expect } from './shared/expect';
 import { encodePath } from './shared/path';
 import { createPool, createPoolWithMultiplePositions, createPoolWithZeroTickInitialized } from './shared/quoter';
 import snapshotGasCost from './shared/snapshotGasCost';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 type TestERC20WithAddress = TestERC20 & { address: string };
 
@@ -24,6 +25,9 @@ describe('QuoterV2', function () {
     quoter: QuoterV2;
     factory: IAlgebraFactory;
   }> = async () => {
+    const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+    const modeSfs = await factoryModeSfs.deploy();
+    const sfsAssignTokenId = 1;
     const { wnative, factory, router, tokens, nft } = await loadFixture(completeFixture);
     let _tokens = tokens as [TestERC20WithAddress, TestERC20WithAddress, TestERC20WithAddress];
     // approve & fund wallets
@@ -35,11 +39,11 @@ describe('QuoterV2', function () {
       token.address = await token.getAddress();
     }
 
-    const [dep] = await ethers.getSigners();
     const quoterFactory = await ethers.getContractFactory('QuoterV2');
     quoter = (await quoterFactory.deploy(
-      dep.address,
-      factory,
+      modeSfs.target,
+      sfsAssignTokenId,
+      factory.target,
       wnative,
       await factory.poolDeployer()
     )) as any as QuoterV2;

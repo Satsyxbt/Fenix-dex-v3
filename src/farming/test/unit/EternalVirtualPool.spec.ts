@@ -1,7 +1,8 @@
 import { ethers } from 'hardhat';
 import { Wallet } from 'ethers';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
-import { expect, blockTimestamp, snapshotGasCost, mockBlastPart } from '../shared';
+import { expect, blockTimestamp, snapshotGasCost } from '../shared';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 import { createTimeMachine } from '../shared/time';
 
@@ -26,7 +27,9 @@ describe('unit/EternalVirtualPool', () => {
   });
 
   const virtualPoolFixture: () => Promise<{ poolMock: PoolMock; virtualPool: TestVirtualPool; initTimestamp: number }> = async () => {
-    await mockBlastPart();
+    const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+    const modeSfs = await factoryModeSfs.deploy();
+    const sfsAssignTokenId = 1;
 
     const _blockTimestamp = await blockTimestamp();
     const _initTimestamp = _blockTimestamp + 1000000;
@@ -38,7 +41,12 @@ describe('unit/EternalVirtualPool', () => {
 
     let signer = await ethers.getSigners();
     const virtualPoolFactory = await ethers.getContractFactory('TestVirtualPool');
-    const _virtualPool = (await virtualPoolFactory.deploy(signer[0].address, pseudoFarming.address, _poolMock)) as any as TestVirtualPool;
+    const _virtualPool = (await virtualPoolFactory.deploy(
+      modeSfs.target,
+      sfsAssignTokenId,
+      pseudoFarming.address,
+      _poolMock
+    )) as any as TestVirtualPool;
 
     return {
       poolMock: _poolMock,

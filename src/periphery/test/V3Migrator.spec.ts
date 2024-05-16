@@ -18,6 +18,7 @@ import { encodePriceSqrt } from './shared/encodePriceSqrt';
 import snapshotGasCost from './shared/snapshotGasCost';
 import { sortedTokens } from './shared/tokenSort';
 import { getMaxTick, getMinTick } from './shared/ticks';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 type TestERC20WithAddress = TestERC20 & { address: string | undefined };
 
@@ -32,6 +33,9 @@ describe('V3Migrator', () => {
     nft: MockTimeNonfungiblePositionManager;
     migrator: V3Migrator;
   }> = async () => {
+    const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+    const modeSfs = await factoryModeSfs.deploy();
+    const sfsAssignTokenId = 1;
     const { factory, tokens, nft, wnative } = await completeFixture();
     let _tokens = tokens as [TestERC20WithAddress, TestERC20WithAddress, TestERC20WithAddress];
 
@@ -44,11 +48,17 @@ describe('V3Migrator', () => {
     await wnative.deposit({ value: 10000 });
     await wnative.approve(nft, MaxUint256);
 
-    const [dep] = await ethers.getSigners();
     // deploy the migrator
     const migrator = (await (
       await ethers.getContractFactory('V3Migrator')
-    ).deploy(dep.address, factory, wnative, nft, await factory.poolDeployer())) as any as V3Migrator;
+    ).deploy(
+      modeSfs.target,
+      sfsAssignTokenId,
+      factory,
+      wnative,
+      nft,
+      await factory.poolDeployer()
+    )) as any as V3Migrator;
 
     return {
       factoryV2,

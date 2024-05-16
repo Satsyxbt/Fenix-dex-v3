@@ -14,12 +14,8 @@ import {
   abi as POOL_DEPLOYER_ABI,
   bytecode as POOL_DEPLOYER_BYTECODE,
 } from '@cryptoalgebra/integral-core/artifacts/contracts/AlgebraPoolDeployer.sol/AlgebraPoolDeployer.json';
-import {
-  abi as BLAST_POINTS_MOCK_ABI,
-  bytecode as BLAST_POINTS_MOCK_BYTECODE,
-} from '@cryptoalgebra/integral-core/artifacts/contracts/test/BlastPointsMock.sol/BlastPointsMock.json';
-import { AlgebraFactoryUpgradeable, BlastMock__factory, BlastPointsMock } from '@cryptoalgebra/integral-core/typechain';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
+import { AlgebraFactoryUpgradeable } from '@cryptoalgebra/integral-core/typechain';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 import { abi as FACTORY_V2_ABI, bytecode as FACTORY_V2_BYTECODE } from '@uniswap/v2-core/build/UniswapV2Factory.json';
 import { ethers } from 'hardhat';
@@ -44,14 +40,6 @@ export const v2FactoryFixture: () => Promise<{ factory: any }> = async () => {
   return { factory };
 };
 
-export async function mockBlastPart() {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-  const factory = await ethers.getContractFactory(BLAST_POINTS_MOCK_ABI, BLAST_POINTS_MOCK_BYTECODE);
-  const blastPointsMock = (await factory.deploy()) as any as BlastPointsMock;
-
-  return blastPointsMock;
-}
-
 export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
   const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
 
@@ -69,9 +57,10 @@ export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeab
   return factoryFactory.attach(proxy.target) as any as AlgebraFactoryUpgradeable;
 }
 const v3CoreFactoryFixture: () => Promise<IAlgebraFactory> = async () => {
-  let blastPoints = await mockBlastPart();
-
-  const [deployer, blastOperator] = await ethers.getSigners();
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = await factoryModeSfs.deploy();
+  const sfsAssignTokenId = 1;
+  const [deployer] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
@@ -79,10 +68,10 @@ const v3CoreFactoryFixture: () => Promise<IAlgebraFactory> = async () => {
   });
 
   const _factory = await createEmptyFactoryProxy();
-  await _factory.initialize(deployer.address, blastPoints.target, blastOperator.address, poolDeployerAddress);
+  await _factory.initialize(modeSfs.target, sfsAssignTokenId, poolDeployerAddress);
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);
-  const poolDeployer = await poolDeployerFactory.deploy(deployer.address, _factory);
+  const poolDeployer = await poolDeployerFactory.deploy(modeSfs.target, sfsAssignTokenId, _factory);
 
   await _factory.setIsPublicPoolCreationMode(true);
 
@@ -94,13 +83,21 @@ export const v3RouterFixture: () => Promise<{
   factory: IAlgebraFactory;
   router: MockTimeSwapRouter;
 }> = async () => {
-  const [deployer] = await ethers.getSigners();
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = await factoryModeSfs.deploy();
+  const sfsAssignTokenId = 1;
 
   const { wnative } = await wnativeFixture();
   const factory = await v3CoreFactoryFixture();
   const router = (await (
     await ethers.getContractFactory('MockTimeSwapRouter')
-  ).deploy(deployer.address, factory, wnative, await factory.poolDeployer())) as any as MockTimeSwapRouter;
+  ).deploy(
+    modeSfs.target,
+    sfsAssignTokenId,
+    factory,
+    wnative,
+    await factory.poolDeployer()
+  )) as any as MockTimeSwapRouter;
 
   return { factory, wnative, router };
 };

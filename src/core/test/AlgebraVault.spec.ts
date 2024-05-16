@@ -1,15 +1,9 @@
 import { Wallet, getCreateAddress, ZeroAddress } from 'ethers';
 import { ethers } from 'hardhat';
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
-import {
-  AlgebraPoolDeployer,
-  AlgebraCommunityVault,
-  TestERC20,
-  BlastMock__factory,
-  AlgebraFactoryUpgradeable,
-} from '../typechain';
+import { AlgebraPoolDeployer, AlgebraCommunityVault, TestERC20, AlgebraFactoryUpgradeable } from '../typechain';
 import { expect } from './shared/expect';
-import { createEmptyFactoryProxy, mockBlastPart } from './shared/fixtures';
+import { createEmptyFactoryProxy } from './shared/fixtures';
 
 describe('AlgebraCommunityVault', () => {
   let wallet: Wallet, other: Wallet, third: Wallet;
@@ -24,7 +18,8 @@ describe('AlgebraCommunityVault', () => {
   const AMOUNT = 10n ** 18n;
 
   const fixture = async () => {
-    let blastPointsMock = await mockBlastPart();
+    let modeSfs = await ethers.deployContract('ModeSfsMock');
+    let sfsAssignTokenId = 1;
 
     const [deployer, governor] = await ethers.getSigners();
     // precompute
@@ -34,16 +29,25 @@ describe('AlgebraCommunityVault', () => {
     });
 
     const _factory = await createEmptyFactoryProxy();
-    await _factory.initialize(governor.address, blastPointsMock.target, governor.address, poolDeployerAddress);
+    await _factory.initialize(modeSfs, sfsAssignTokenId, poolDeployerAddress);
 
     const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
-    poolDeployer = (await poolDeployerFactory.deploy(governor.address, _factory)) as any as AlgebraPoolDeployer;
+    poolDeployer = (await poolDeployerFactory.deploy(
+      modeSfs,
+      sfsAssignTokenId,
+      _factory
+    )) as any as AlgebraPoolDeployer;
 
     const vaultFactory = await ethers.getContractFactory('AlgebraCommunityVault');
-    vault = (await vaultFactory.deploy(governor.address, _factory, deployer.address)) as any as AlgebraCommunityVault;
+    vault = (await vaultFactory.deploy(
+      modeSfs,
+      sfsAssignTokenId,
+      _factory,
+      deployer.address
+    )) as any as AlgebraCommunityVault;
 
     const vaultFactoryStubFactory = await ethers.getContractFactory('AlgebraVaultFactoryStub');
-    const vaultFactoryStub = await vaultFactoryStubFactory.deploy(governor.address, vault);
+    const vaultFactoryStub = await vaultFactoryStubFactory.deploy(modeSfs, sfsAssignTokenId, vault);
 
     await _factory.setVaultFactory(vaultFactoryStub);
 

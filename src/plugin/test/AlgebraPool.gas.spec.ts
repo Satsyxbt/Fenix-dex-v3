@@ -4,6 +4,7 @@ import { loadFixture, reset as resetNetwork } from '@nomicfoundation/hardhat-net
 import { MockTimeAlgebraPool } from '../../core/typechain';
 import { MockTimeAlgebraBasePluginV1, MockTimeDSFactory, MockTimeVirtualPool } from '../typechain';
 import { expect } from './shared/expect';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 import { algebraPoolDeployerMockFixture } from './shared/externalFixtures';
 
@@ -39,16 +40,19 @@ describe('AlgebraPool gas tests [ @skip-on-coverage ]', () => {
   const maxTick = getMaxTick(tickSpacing);
 
   async function gasTestFixture() {
+    const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+    const modeSfs = await factoryModeSfs.deploy();
+    const sfsAssignTokenId = 1;
     const fix = await algebraPoolDeployerMockFixture();
     const pool = await fix.createPool();
 
     const mockDSOperatorFactory = await ethers.getContractFactory('MockTimeAlgebraBasePluginV1');
     const pluginImplementation = await mockDSOperatorFactory.deploy();
 
-    const [deployer, blastGovernor] = await ethers.getSigners();
     const mockPluginFactoryFactory = await ethers.getContractFactory('MockTimeDSFactory');
     const mockPluginFactory = (await mockPluginFactoryFactory.deploy(
-      blastGovernor.address,
+      modeSfs.target,
+      sfsAssignTokenId,
       fix.factory,
       pluginImplementation.target
     )) as any as MockTimeDSFactory;

@@ -10,6 +10,7 @@ import {
   TestERC20,
   IAlgebraFactory,
 } from '../../typechain';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 type TestERC20WithAddress = TestERC20 & { address_: string | undefined };
 
@@ -49,6 +50,10 @@ const completeFixture: () => Promise<{
   nftDescriptor: NonfungibleTokenPositionDescriptor;
   tokens: [TestERC20, TestERC20, TestERC20];
 }> = async () => {
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = await factoryModeSfs.deploy();
+  const sfsAssignTokenId = 1;
+
   const { wnative, factory, router } = await v3RouterFixture();
   const tokenFactory = await ethers.getContractFactory('TestERC20');
   const factoryOwner = await factory.owner();
@@ -86,7 +91,8 @@ const completeFixture: () => Promise<{
   const nftDescriptorProxied = positionDescriptorFactory.attach(proxy) as any as NonfungibleTokenPositionDescriptor;
   const positionManagerFactory = await ethers.getContractFactory('MockTimeNonfungiblePositionManager');
   const nft = (await positionManagerFactory.deploy(
-    factoryOwner,
+    modeSfs.target,
+    sfsAssignTokenId,
     factory,
     wnative,
     nftDescriptorProxied,

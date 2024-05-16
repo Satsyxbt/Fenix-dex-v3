@@ -2,6 +2,6 @@
 
 exports[`unit/EternalFarms #claimReward when requesting the full amount has gas cost [ @skip-on-coverage ] 1`] = `60858`;
 
-exports[`unit/EternalFarms #enterFarming works and has gas cost [ @skip-on-coverage ] 1`] = `495158`;
+exports[`unit/EternalFarms #enterFarming works and has gas cost [ @skip-on-coverage ] 1`] = `495157`;
 
-exports[`unit/EternalFarms #exitFarming after end time works and has gas cost [ @skip-on-coverage ] 1`] = `169977`;
+exports[`unit/EternalFarms #exitFarming after end time works and has gas cost [ @skip-on-coverage ] 1`] = `169955`;

@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat';
 import { MockFactory, MockPool, MockTimeAlgebraBasePluginV1, MockTimeDSFactory, BasePluginV1Factory } from '../../typechain';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
-import { BlastMock__factory } from '@cryptoalgebra/integral-core/typechain';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
+import { ModeSfsMock } from '@cryptoalgebra/integral-core/typechain';
 
 type Fixture<T> = () => Promise<T>;
 interface MockFactoryFixture {
@@ -20,22 +20,20 @@ interface PluginFixture extends MockFactoryFixture {
   plugin: MockTimeAlgebraBasePluginV1;
   mockPluginFactory: MockTimeDSFactory;
   mockPool: MockPool;
+  modeSfs: ModeSfsMock;
+  sfsAssignTokenId: number;
 }
 
 // Monday, October 5, 2020 9:00:00 AM GMT-05:00
 export const TEST_POOL_START_TIME = 1601906400;
 export const TEST_POOL_DAY_BEFORE_START = 1601906400 - 24 * 60 * 60;
 
-export async function mockBlastPart() {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-  await setCode('0x2fc95838c71e76ec69ff817983BFf17c710F34E0', BlastMock__factory.bytecode);
-  await setCode('0x2536FE9ab3F511540F2f9e2eC2A805005C3Dd800', BlastMock__factory.bytecode);
-}
-
 export const pluginFixture: Fixture<PluginFixture> = async function (): Promise<PluginFixture> {
-  await mockBlastPart();
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = (await factoryModeSfs.deploy()) as any as ModeSfsMock;
+  const sfsAssignTokenId = 1;
 
-  const [deployer, governor] = await ethers.getSigners();
+  const [deployer] = await ethers.getSigners();
 
   const { mockFactory } = await mockFactoryFixture();
   //const { token0, token1, token2 } = await tokensFixture()
@@ -44,7 +42,8 @@ export const pluginFixture: Fixture<PluginFixture> = async function (): Promise<
 
   const mockPluginFactoryFactory = await ethers.getContractFactory('MockTimeDSFactory');
   const mockPluginFactory = (await mockPluginFactoryFactory.deploy(
-    governor.address,
+    modeSfs.target,
+    sfsAssignTokenId,
     mockFactory,
     pluginImplementation.target
   )) as any as MockTimeDSFactory;
@@ -62,25 +61,39 @@ export const pluginFixture: Fixture<PluginFixture> = async function (): Promise<
     mockPluginFactory,
     mockPool,
     mockFactory,
+    modeSfs,
+    sfsAssignTokenId,
   };
 };
 
 interface PluginFactoryFixture extends MockFactoryFixture {
   pluginFactory: BasePluginV1Factory;
+  modeSfs: ModeSfsMock;
+  sfsAssignTokenId: number;
 }
 
 export const pluginFactoryFixture: Fixture<PluginFactoryFixture> = async function (): Promise<PluginFactoryFixture> {
-  await mockBlastPart();
+  const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+  const modeSfs = (await factoryModeSfs.deploy()) as any as ModeSfsMock;
+  const sfsAssignTokenId = 1;
+
   const { mockFactory } = await mockFactoryFixture();
   const AlgebraBasePluginV1Factory = await ethers.getContractFactory('AlgebraBasePluginV1');
   const pluginImplementation = await AlgebraBasePluginV1Factory.deploy();
 
   const pluginFactoryFactory = await ethers.getContractFactory('BasePluginV1Factory');
   const [deployer, governor] = await ethers.getSigners();
-  const pluginFactory = (await pluginFactoryFactory.deploy(governor.address, mockFactory, pluginImplementation.target)) as any as BasePluginV1Factory;
+  const pluginFactory = (await pluginFactoryFactory.deploy(
+    modeSfs.target,
+    sfsAssignTokenId,
+    mockFactory,
+    pluginImplementation.target
+  )) as any as BasePluginV1Factory;
 
   return {
     pluginFactory,
     mockFactory,
+    modeSfs,
+    sfsAssignTokenId,
   };
 };

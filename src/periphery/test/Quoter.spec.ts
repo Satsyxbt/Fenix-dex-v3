@@ -17,6 +17,7 @@ import { expandTo18Decimals } from './shared/expandTo18Decimals';
 import { expect } from './shared/expect';
 import { encodePath } from './shared/path';
 import { createPool } from './shared/quoter';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 type TestERC20WithAddress = TestERC20 & { address: string };
 
@@ -32,6 +33,10 @@ describe('Quoter', () => {
     wnative: IWNativeToken;
     factory: IAlgebraFactory;
   }> = async () => {
+    const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+    const modeSfs = await factoryModeSfs.deploy();
+    const sfsAssignTokenId = 1;
+
     let _tokens;
     const { wnative, factory, router, tokens, nft } = await loadFixture(completeFixture);
     _tokens = tokens as [TestERC20WithAddress, TestERC20WithAddress, TestERC20WithAddress];
@@ -48,7 +53,8 @@ describe('Quoter', () => {
     const [deployer] = await ethers.getSigners();
     const quoterFactory = await ethers.getContractFactory('Quoter');
     quoter = (await quoterFactory.deploy(
-      deployer.address,
+      modeSfs.target,
+      sfsAssignTokenId,
       factory,
       wnative,
       await factory.poolDeployer()

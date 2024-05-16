@@ -5,19 +5,25 @@ import { expect } from './shared/expect';
 import { ZERO_ADDRESS, pluginFactoryFixture } from './shared/fixtures';
 
 import { BasePluginV1Factory, AlgebraBasePluginV1, MockFactory } from '../typechain';
+import { ModeSfsMock } from '@cryptoalgebra/integral-core/typechain';
 
 describe('BasePluginV1Factory', () => {
-  let wallet: Wallet, other: Wallet, blastGovernor: Wallet;
+  let wallet: Wallet, other: Wallet, modeSfs: ModeSfsMock, sfsAssignTokenId: number;
 
   let pluginFactory: BasePluginV1Factory;
   let mockAlgebraFactory: MockFactory;
 
   before('prepare signers', async () => {
-    [wallet, blastGovernor, other] = await (ethers as any).getSigners();
+    [wallet, other] = await (ethers as any).getSigners();
   });
 
   beforeEach('deploy test volatilityOracle', async () => {
-    ({ pluginFactory, mockFactory: mockAlgebraFactory } = await loadFixture(pluginFactoryFixture));
+    ({
+      pluginFactory,
+      mockFactory: mockAlgebraFactory,
+      modeSfs: modeSfs,
+      sfsAssignTokenId: sfsAssignTokenId,
+    } = await loadFixture(pluginFactoryFixture));
   });
 
   describe('#Create plugin', () => {
@@ -31,7 +37,8 @@ describe('BasePluginV1Factory', () => {
 
       const pluginFactoryFactory = await ethers.getContractFactory('BasePluginV1Factory');
       const pluginFactoryMock = (await pluginFactoryFactory.deploy(
-        blastGovernor.address,
+        modeSfs.target,
+        sfsAssignTokenId,
         wallet.address,
         pluginImplementation.target
       )) as any as BasePluginV1Factory;
@@ -161,17 +168,35 @@ describe('BasePluginV1Factory', () => {
       await expect(pluginFactory.setFarmingAddress(other.address)).to.be.reverted;
     });
   });
-
-  describe('#setDefaultBlastGovernor', async () => {
-    it('fails if caller not owner', async () => {
-      await expect(pluginFactory.connect(other).setDefaultBlastGovernor(other.address)).to.be.revertedWith('Only administrator');
+  describe('#setDefaultModeSfs', async () => {
+    it('fails if try set ZERO_ADDRESS', async () => {
+      await expect(pluginFactory.setDefaultModeSfs(ZERO_ADDRESS)).to.be.reverted;
     });
-    it('success set new default blast governor address and emit event', async () => {
-      expect(await pluginFactory.defaultBlastGovernor()).to.be.eq(blastGovernor.address);
+    it('fails if caller not owner', async () => {
+      await expect(pluginFactory.connect(other).setDefaultModeSfs(other.address)).to.be.revertedWith('Only administrator');
+    });
+    it('success set new default mode sfs address and emit event', async () => {
+      expect(await pluginFactory.defaultModeSfs()).to.be.eq(modeSfs.target);
 
-      await expect(pluginFactory.setDefaultBlastGovernor(other.address)).to.be.emit(pluginFactory, 'DefaultBlastGovernor').withArgs(other.address);
+      await expect(pluginFactory.setDefaultModeSfs(other.address)).to.be.emit(pluginFactory, 'DefaultModeSfs').withArgs(other.address);
 
-      expect(await pluginFactory.defaultBlastGovernor()).to.be.eq(other.address);
+      expect(await pluginFactory.defaultModeSfs()).to.be.eq(other.address);
+    });
+  });
+
+  describe('#setDefaultSfsAssignTokenId', async () => {
+    it('fails if try set ZERO_ADDRESS', async () => {
+      await expect(pluginFactory.setDefaultSfsAssignTokenId(0)).to.be.reverted;
+    });
+    it('fails if caller not owner', async () => {
+      await expect(pluginFactory.connect(other).setDefaultSfsAssignTokenId(2)).to.be.revertedWith('Only administrator');
+    });
+    it('success set new default sfs assign token id and emit event', async () => {
+      expect(await pluginFactory.defaultSfsAssignTokenId()).to.be.eq(1);
+
+      await expect(pluginFactory.setDefaultSfsAssignTokenId(3)).to.be.emit(pluginFactory, 'DefaultSfsAssignTokenId').withArgs(3);
+
+      expect(await pluginFactory.defaultSfsAssignTokenId()).to.be.eq(3);
     });
   });
   describe('#upgradeTo', () => {

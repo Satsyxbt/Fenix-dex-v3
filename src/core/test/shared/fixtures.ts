@@ -8,28 +8,18 @@ import {
   TestAlgebraRouter,
   MockTimeAlgebraPoolDeployer,
   AlgebraPoolDeployer,
-  BlastMock__factory,
-  BlastMock,
-  BlastPointsMock,
   AlgebraFactoryUpgradeable,
+  ModeSfsMock,
 } from '../../typechain';
-import { setCode } from '@nomicfoundation/hardhat-toolbox/network-helpers';
 
 type Fixture<T> = () => Promise<T>;
 interface FactoryFixture {
   factory: AlgebraFactoryUpgradeable;
   vault: AlgebraCommunityVault;
-  blastPoints: BlastPointsMock;
+  modeSfs: ModeSfsMock;
+  sfsAssignTokenId: number;
 }
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
-
-export async function mockBlastPart(): Promise<BlastPointsMock> {
-  await setCode('0x4300000000000000000000000000000000000002', BlastMock__factory.bytecode);
-
-  let blastPointsMock = (await ethers.deployContract('BlastPointsMock')) as any as BlastPointsMock;
-
-  return blastPointsMock;
-}
 
 export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
   const factoryFactory = await ethers.getContractFactory('AlgebraFactoryUpgradeable');
@@ -44,9 +34,10 @@ export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeab
 }
 
 async function factoryFixture(): Promise<FactoryFixture> {
-  let blastPointsMock = await mockBlastPart();
+  let modeSfsMock = (await ethers.deployContract('ModeSfsMock')) as any as ModeSfsMock;
+  let sfsAssignTokenId = 1;
 
-  const [deployer, governor, blastOperator] = await ethers.getSigners();
+  const [deployer] = await ethers.getSigners();
   // precompute
   const poolDeployerAddress = getCreateAddress({
     from: deployer.address,
@@ -54,23 +45,28 @@ async function factoryFixture(): Promise<FactoryFixture> {
   });
 
   const factory = await createEmptyFactoryProxy();
-  await factory.initialize(governor.address, blastPointsMock.target, blastOperator.address, poolDeployerAddress);
+  await factory.initialize(modeSfsMock.target, sfsAssignTokenId, poolDeployerAddress);
 
   const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');
-  const poolDeployer = (await poolDeployerFactory.deploy(governor.address, factory)) as any as AlgebraPoolDeployer;
+  const poolDeployer = (await poolDeployerFactory.deploy(
+    modeSfsMock.target,
+    sfsAssignTokenId,
+    factory
+  )) as any as AlgebraPoolDeployer;
 
   const vaultFactory = await ethers.getContractFactory('AlgebraCommunityVault');
   const vault = (await vaultFactory.deploy(
-    governor.address,
+    modeSfsMock.target,
+    sfsAssignTokenId,
     factory,
     deployer.address
   )) as any as AlgebraCommunityVault;
 
   const vaultFactoryStubFactory = await ethers.getContractFactory('AlgebraVaultFactoryStub');
-  const vaultFactoryStub = await vaultFactoryStubFactory.deploy(governor.address, vault);
+  const vaultFactoryStub = await vaultFactoryStubFactory.deploy(modeSfsMock.target, sfsAssignTokenId, vault);
 
   await factory.setVaultFactory(vaultFactoryStub);
-  return { factory, vault, blastPoints: blastPointsMock };
+  return { factory, vault, modeSfs: modeSfsMock, sfsAssignTokenId };
 }
 interface TokensFixture {
   token0: TestERC20;
@@ -108,7 +104,7 @@ export const TEST_POOL_START_TIME = 1601906400;
 export const TEST_POOL_DAY_BEFORE_START = 1601906400 - 24 * 60 * 60;
 
 export const poolFixture: Fixture<PoolFixture> = async function (): Promise<PoolFixture> {
-  const { factory, vault, blastPoints } = await factoryFixture();
+  const { factory, vault, modeSfs, sfsAssignTokenId } = await factoryFixture();
   const { token0, token1, token2 } = await tokensFixture();
   //const { dataStorage } = await dataStorageFixture();
 
@@ -129,20 +125,12 @@ export const poolFixture: Fixture<PoolFixture> = async function (): Promise<Pool
     vault,
     swapTargetCallee,
     swapTargetRouter,
-    blastPoints,
+    modeSfs,
+    sfsAssignTokenId,
     createPool: async (firstToken = token0, secondToken = token1) => {
-      const [deployer, governor, blastPointsOperator] = await ethers.getSigners();
-
       const mockTimePoolDeployer =
         (await MockTimeAlgebraPoolDeployerFactory.deploy()) as any as MockTimeAlgebraPoolDeployer;
-      await mockTimePoolDeployer.deployMock(
-        governor.address,
-        blastPoints.target,
-        blastPointsOperator.address,
-        factory,
-        firstToken,
-        secondToken
-      );
+      await mockTimePoolDeployer.deployMock(modeSfs.target, sfsAssignTokenId, factory, firstToken, secondToken);
 
       const firstAddress = await firstToken.getAddress();
       const secondAddress = await secondToken.getAddress();

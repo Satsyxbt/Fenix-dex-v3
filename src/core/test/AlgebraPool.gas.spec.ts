@@ -33,6 +33,7 @@ describe('AlgebraPool gas tests [ @skip-on-coverage ]', () => {
     beforeEach('load fixture', async () => {
       const fix = await poolFixture();
       pool = await fix.createPool();
+
       await pool.initialize(encodePriceSqrt(100001, 100000));
     });
 

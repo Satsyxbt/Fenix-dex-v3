@@ -20,6 +20,7 @@ import { HelperCommands, ERC20Helper } from '../helpers';
 import { createTimeMachine } from '../shared/time';
 import { HelperTypes } from '../helpers/types';
 import { ContractParams } from '../../types/contractParams';
+import ModeSfsMock__Artifact from '@cryptoalgebra/integral-core/artifacts/contracts/test/ModeSfsMock.sol/ModeSfsMock.json';
 
 describe('unit/FarmingCenter', () => {
   let actors: ActorFixture;
@@ -396,8 +397,10 @@ describe('unit/FarmingCenter', () => {
       const nftPosMock = (await nftPosMockFactory.deploy()) as any as NftPosManagerMock;
 
       const farmingCenterFactory = await ethers.getContractFactory('FarmingCenter');
-      const [blast] = await ethers.getSigners();
-      const farmingCenter = (await farmingCenterFactory.deploy(blast.address, ZERO_ADDRESS, nftPosMock)) as any as FarmingCenter;
+      const factoryModeSfs = await ethers.getContractFactoryFromArtifact(ModeSfsMock__Artifact);
+      const modeSfs = await factoryModeSfs.deploy();
+      const sfsAssignTokenId = 1;
+      const farmingCenter = (await farmingCenterFactory.deploy(modeSfs.target, sfsAssignTokenId, ZERO_ADDRESS, nftPosMock)) as any as FarmingCenter;
 
       await nftPosMock.setPosition(0, {
         nonce: 0,
