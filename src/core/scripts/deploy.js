@@ -1,13 +1,24 @@
 const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
+const { getConfig } = require('../../../scripts/networksConfig');
 
 async function main() {
   const { chainId } = await hre.ethers.provider.getNetwork();
+  const [deployer] = await hre.ethers.getSigners();
 
   let Config = getConfig(chainId);
 
-  const [deployer] = await hre.ethers.getSigners();
+  console.log(`Start deploy script
+  \t-- with config: ${JSON.stringify(Config)}
+  \t-- chainId: ${chainId}
+  \t-- deployer: ${deployer.address}, Native balance: ${hre.ethers.formatEther(await hre.ethers.provider.getBalance(deployer.address))} 
+  `);
+
+  console.log(`Validate contract mode config `);
+
+  let sfs = await hre.ethers.getContractAt('ERC721', Config.MODE_SFS);
+  console.log('Sfs assign token id owner:', await sfs.ownerOf(Config.SFS_ASSIGN_NFT_ID));
 
   const ProxyAdminFactory = await hre.ethers.getContractFactory('ProxyAdmin');
   const proxyAdmin = await ProxyAdminFactory.deploy();
@@ -28,10 +39,10 @@ async function main() {
   await proxy.waitForDeployment();
 
   const factory = AlgebraFactory.attach(proxy.target);
-  await factory.initialize(Config.BLAST_GOVERNOR, Config.BLAST_POINTS, Config.BLAST_POINTS_OPERATOR, poolDeployerAddress); // +2
+  await factory.initialize(Config.MODE_SFS, Config.SFS_ASSIGN_NFT_ID, poolDeployerAddress); // +2
 
   const PoolDeployerFactory = await hre.ethers.getContractFactory('AlgebraPoolDeployer');
-  const poolDeployer = await PoolDeployerFactory.deploy(Config.BLAST_GOVERNOR, factory.target);
+  const poolDeployer = await PoolDeployerFactory.deploy(Config.MODE_SFS, Config.SFS_ASSIGN_NFT_ID, factory.target);
 
   await poolDeployer.waitForDeployment();
 
@@ -41,31 +52,18 @@ async function main() {
   console.log('AlgebraFactoryImplementation deployed to:', algebraFactoryImplementation.target);
   console.log('ProxyAdmin deployed to:', proxyAdmin.target);
 
-  const vaultFactory = await hre.ethers.getContractFactory('AlgebraCommunityVault');
-  const vault = await vaultFactory.deploy(Config.BLAST_GOVERNOR, factory, deployer.address);
+  console.log(`\nFinish deploy
+  \t-- deployer: ${deployer.address}, Native balance: ${hre.ethers.formatEther(await hre.ethers.provider.getBalance(deployer.address))} `);
 
-  await vault.waitForDeployment();
-
-  console.log('AlgebraCommunityVault deployed to:', vault.target);
-
-  const vaultFactoryStubFactory = await hre.ethers.getContractFactory('AlgebraVaultFactoryStub');
-  const vaultFactoryStub = await vaultFactoryStubFactory.deploy(Config.BLAST_GOVERNOR, vault);
-
-  await vaultFactoryStub.waitForDeployment();
-
-  console.log('AlgebraVaultFactoryStub deployed to:', vaultFactoryStub.target);
-
-  await factory.setVaultFactory(vaultFactoryStub);
-
-  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
+  const deployDataPath = path.resolve(__dirname, '../../../scripts/deployment/' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
   deploysData.poolDeployer = poolDeployer.target;
   deploysData.factory = factory.target;
   deploysData.algebraFactoryImplementation = algebraFactoryImplementation.target;
   deploysData.proxyAdmin = proxyAdmin.target;
-  deploysData.vault = vault.target;
-  deploysData.vaultFactory = vaultFactoryStub.target;
   fs.writeFileSync(deployDataPath, JSON.stringify(deploysData), 'utf-8');
+
+  console.log(`\nSave to ${deployDataPath}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

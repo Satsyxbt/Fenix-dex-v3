@@ -25,7 +25,7 @@ async function createAndInitialize(token0, token1, reserve0, reserve1) {
   const { chainId } = await hre.ethers.provider.getNetwork();
   let Config = getConfig(chainId);
 
-  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
+  const deployDataPath = path.resolve(__dirname, '../../../scripts/deployment/' + Config.FILE);
   const deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   let deployer = await hre.ethers.getSigners()[0];

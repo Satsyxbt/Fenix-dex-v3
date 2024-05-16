@@ -11,12 +11,18 @@ async function main() {
 
   const [deployer] = await hre.ethers.getSigners();
 
-  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
+  console.log(`Start deploy script
+  \t-- with config: ${JSON.stringify(Config)}
+  \t-- chainId: ${chainId}
+  \t-- deployer: ${deployer.address}, Native balance: ${hre.ethers.formatEther(
+    await hre.ethers.provider.getBalance(deployer.address)
+  )} 
+  `);
+  const deployDataPath = path.resolve(__dirname, '../../../scripts/deployment/' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   // WNativeTokenAddress
   const WNativeTokenAddress = Config.WETH;
-  const signers = await hre.ethers.getSigners();
   const ProxyAdmin = deploysData.proxyAdmin;
 
   deploysData.wrapped = WNativeTokenAddress;
@@ -33,7 +39,8 @@ async function main() {
   // arg2 wnative address
   const QuoterFactory = await hre.ethers.getContractFactory('Quoter');
   const Quoter = await QuoterFactory.deploy(
-    Config.BLAST_GOVERNOR,
+    Config.MODE_SFS,
+    Config.SFS_ASSIGN_NFT_ID,
     deploysData.factory,
     WNativeTokenAddress,
     deploysData.poolDeployer
@@ -48,7 +55,8 @@ async function main() {
   // arg2 wnative address
   const QuoterV2Factory = await hre.ethers.getContractFactory('QuoterV2');
   const QuoterV2 = await QuoterV2Factory.deploy(
-    Config.BLAST_GOVERNOR,
+    Config.MODE_SFS,
+    Config.SFS_ASSIGN_NFT_ID,
     deploysData.factory,
     WNativeTokenAddress,
     deploysData.poolDeployer
@@ -63,7 +71,8 @@ async function main() {
   // arg2 wnative address
   const SwapRouterFactory = await hre.ethers.getContractFactory('SwapRouter');
   const SwapRouter = await SwapRouterFactory.deploy(
-    Config.BLAST_GOVERNOR,
+    Config.MODE_SFS,
+    Config.SFS_ASSIGN_NFT_ID,
     deploysData.factory,
     WNativeTokenAddress,
     deploysData.poolDeployer
@@ -113,7 +122,8 @@ async function main() {
   // // arg3 tokenDescriptor address
   const NonfungiblePositionManagerFactory = await hre.ethers.getContractFactory('NonfungiblePositionManager');
   const NonfungiblePositionManager = await NonfungiblePositionManagerFactory.deploy(
-    Config.BLAST_GOVERNOR,
+    Config.MODE_SFS,
+    Config.SFS_ASSIGN_NFT_ID,
     deploysData.factory,
     WNativeTokenAddress,
     Proxy.target,
@@ -139,7 +149,10 @@ async function main() {
   // await V3Migrator.waitForDeployment();
 
   const AlgebraInterfaceMulticallFactory = await hre.ethers.getContractFactory('AlgebraInterfaceMulticall');
-  const AlgebraInterfaceMulticall = await AlgebraInterfaceMulticallFactory.deploy(Config.BLAST_GOVERNOR);
+  const AlgebraInterfaceMulticall = await AlgebraInterfaceMulticallFactory.deploy(
+    Config.MODE_SFS,
+    Config.SFS_ASSIGN_NFT_ID
+  );
 
   await AlgebraInterfaceMulticall.waitForDeployment();
   deploysData.AlgebraInterfaceMulticall = AlgebraInterfaceMulticall.target;
@@ -148,6 +161,13 @@ async function main() {
   // console.log('V3Migrator deployed to:', V3Migrator.target);
 
   fs.writeFileSync(deployDataPath, JSON.stringify(deploysData), 'utf-8');
+
+  console.log(`\nFinish deploy
+  \t-- deployer: ${deployer.address}, Native balance: ${hre.ethers.formatEther(
+    await hre.ethers.provider.getBalance(deployer.address)
+  )} `);
+
+  console.log(`\nSave to ${deployDataPath}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

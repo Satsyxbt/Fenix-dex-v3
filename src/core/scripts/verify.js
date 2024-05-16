@@ -7,7 +7,7 @@ async function main() {
   const { chainId } = await hre.ethers.provider.getNetwork();
   let Config = getConfig(chainId);
 
-  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
+  const deployDataPath = path.resolve(__dirname, '../../../scripts/deployment/' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   await hre.run('verify:verify', {
@@ -27,17 +27,7 @@ async function main() {
 
   await hre.run('verify:verify', {
     address: deploysData.poolDeployer,
-    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.factory],
-  });
-
-  await hre.run('verify:verify', {
-    address: deploysData.vault,
-    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.factory, deploysData.poolDeployer],
-  });
-
-  await hre.run('verify:verify', {
-    address: deploysData.vaultFactory,
-    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.vault],
+    constructorArguments: [Config.MODE_SFS, Config.SFS_ASSIGN_NFT_ID, deploysData.factory],
   });
 }
 

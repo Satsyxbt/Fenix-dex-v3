@@ -10,18 +10,18 @@ async function main() {
   let Config = getConfig(chainId);
   const [deployer] = await hre.ethers.getSigners();
 
-  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
+  const deployDataPath = path.resolve(__dirname, '../../../scripts/deployment/' + Config.FILE);
 
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   await hre.run('verify:verify', {
     address: deploysData.eternal,
-    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.poolDeployer, deploysData.nonfungiblePositionManager],
+    constructorArguments: [Config.MODE_SFS, Config.SFS_ASSIGN_NFT_ID, deploysData.poolDeployer, deploysData.nonfungiblePositionManager],
   });
 
   await hre.run('verify:verify', {
     address: deploysData.fc,
-    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.eternal, deploysData.nonfungiblePositionManager],
+    constructorArguments: [Config.MODE_SFS, Config.SFS_ASSIGN_NFT_ID, deploysData.eternal, deploysData.nonfungiblePositionManager],
   });
 }
 

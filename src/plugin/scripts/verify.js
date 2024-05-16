@@ -9,15 +9,14 @@ async function main() {
 
   let Config = getConfig(chainId);
 
-  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
+  const deployDataPath = path.resolve(__dirname, '../../../scripts/deployment/' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
-  const [deployer] = await hre.ethers.getSigners();
 
   const BasePluginV1Factory = deploysData.BasePluginV1Factory;
 
   await hre.run('verify:verify', {
     address: BasePluginV1Factory,
-    constructorArguments: [Config.BLAST_GOVERNOR, deploysData.factory, deploysData.AlgebraBasePluginV1],
+    constructorArguments: [Config.MODE_SFS, Config.SFS_ASSIGN_NFT_ID, deploysData.factory, deploysData.AlgebraBasePluginV1],
   });
   await hre.run('verify:verify', {
     address: deploysData.AlgebraBasePluginV1,

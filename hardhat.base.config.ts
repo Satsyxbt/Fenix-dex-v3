@@ -101,6 +101,21 @@ export default {
       gasPrice: 1e3,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
+    modeMainnet: {
+      url: `https://mainnet.mode.network/`,
+      chainId: 34443,
+      gasPrice: 1e3,
+      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
+    },
+    modeTestnet: {
+      url: `https://sepolia.mode.network`,
+      gasPrice: 1e3,
+      chainId: 919,
+      accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
+    },
+  },
+  sourcify: {
+    enabled: true,
   },
   etherscan: {
     apiKey: {

@@ -130,7 +130,7 @@ async function main() {
   const { chainId } = await hre.ethers.provider.getNetwork();
   let Config = getConfig(Number(chainId));
 
-  const deployDataPath = path.resolve(__dirname, '../../../' + Config.FILE);
+  const deployDataPath = path.resolve(__dirname, '../../../scripts/deployment/' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
   let blast = (await hre.ethers.getContractAt('IBlastNearMock', Config.BLAST)) as any as IBlastNearMock;
