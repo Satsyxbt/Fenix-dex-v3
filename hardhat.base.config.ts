@@ -123,6 +123,7 @@ export default {
       blastMainnet: 'blastMainnet',
       blastScanMainnet: `${API_KEY}`,
       blastScanSepolia: `${API_KEY}`,
+      modeTestnet: 'modeTestnet', // apiKey is not required, just set a placeholder
     },
     customChains: [
       {
@@ -171,6 +172,14 @@ export default {
         urls: {
           apiURL: 'https://explorer.mantle.xyz/api',
           browserURL: 'https://explorer.mantle.xyz/',
+        },
+      },
+      {
+        network: 'modeTestnet',
+        chainId: 919,
+        urls: {
+          apiURL: 'https://api.routescan.io/v2/network/testnet/evm/919/etherscan',
+          browserURL: 'https://testnet.modescan.io',
         },
       },
     ],

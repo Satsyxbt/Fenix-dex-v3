@@ -1,0 +1,40 @@
+# Deployed Addresses List
+
+Last updated date: **17.05.2024**
+
+
+
+
+## Addresses
+- `0x9140D359f2855E6540609dd4A93773ED1f45f509` - Deployer
+- `0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6` - Mode Sequence Fee Sharing address
+
+External:
+- `0xc7b06F55FBCD31cd691504f3DFc4efa9082616B7` - WETH
+
+## Deployed Contract Addresses
+```js
+{
+  "poolDeployer": "0x0770F078194C20E764440392c1899Ee14a4DE607",
+  "factory": "0xCF0A6C7cf979Ab031DF787e69dfB94816f6cB3c9",
+  "algebraFactoryImplementation": "0x36381B4588deD7E77995f99E291B45f8CC3A81a6",
+  "proxyAdmin": "0x0bBF7CF0b728F010CD9f2b83B0b756e65B653352",
+  "AlgebraBasePluginV1": "0xc05223E33310D4908aF5c120a152CfE7EbC50827",
+  "BasePluginV1Factory": "0x023aFbB6bAA4085E2e6037F045084c0F7382076F",
+  "wrapped": "0xc7b06F55FBCD31cd691504f3DFc4efa9082616B7",
+  "tickLens": "0xFd4F848B1Ac7c6a1f84Ddb68F9C1D3e47413298C",
+  "quoter": "0xfaFA7B1E1AAD9Db0B40009e1C0522c4aC32F5c5E",
+  "quoterV2": "0x93e83478dBFD170bcd4d56E8FCc4a584743Eb994",
+  "swapRouter": "0x1290c09B8406548209Bf6F6E869cDcc3CB9ec37b",
+  "NFTDescriptor": "0x174137A94899615f2ded72a2B8E7C32b20d19A49",
+  "NonfungibleTokenPositionDescriptor": "0xe36dA13c9e1aC1c3209B14C289cA56630EB43d4d",
+  "proxy": "0x440B530531b8c700CE179c783576F7b09185F9fd",
+  "nonfungiblePositionManager": "0x816965E20D895077395c7A29D1b1336AEF631435",
+  "AlgebraInterfaceMulticall": "0x35B84D38277c388928C1CD42919264b3151F2E0a",
+  "eternal": "0x27B7F5fDD248a42906B74b9bc6e8E083ADdD548C",
+  "fc": "0xB7C25c1B55D344A5baFce70b3a4FDfD7a9B67453"
+}
+```
+## SFS Assign token id 
+- SFS NFT token owner: `0x9140D359f2855E6540609dd4A93773ED1f45f509`
+- Token id: `678`
