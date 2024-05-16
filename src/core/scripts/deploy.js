@@ -1,7 +1,6 @@
 const hre = require('hardhat');
 const fs = require('fs');
 const path = require('path');
-const { getConfig } = require('../../../scripts/networksConfig');
 
 async function main() {
   const { chainId } = await hre.ethers.provider.getNetwork();
