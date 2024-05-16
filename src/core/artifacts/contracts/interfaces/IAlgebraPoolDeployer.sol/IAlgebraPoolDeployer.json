@@ -7,18 +7,13 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "blastGovernor",
+          "name": "modeSfs",
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "blastPoints",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "blastPointsOperator",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "sfsAssignTokenId",
+          "type": "uint256"
         },
         {
           "internalType": "address",
@@ -53,18 +48,13 @@
       "outputs": [
         {
           "internalType": "address",
-          "name": "blastGovernor",
+          "name": "modeSfs",
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "blastPoints",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "blastPointsOperator",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "sfsAssignTokenId",
+          "type": "uint256"
         },
         {
           "internalType": "address",
