@@ -5,7 +5,12 @@ import '../farmings/EternalVirtualPool.sol';
 
 /// @dev Test contract for Eternal virtual pool
 contract TestVirtualPool is EternalVirtualPool {
-  constructor(address _blastGovernor, address _farmingAddress, address _plugin) EternalVirtualPool(_blastGovernor, _farmingAddress, _plugin) {
+  constructor(
+    address _modeSfs,
+    uint256 _sfsAssignTokenId,
+    address _farmingAddress,
+    address _plugin
+  ) EternalVirtualPool(_modeSfs, _sfsAssignTokenId, _farmingAddress, _plugin) {
     //
   }
 

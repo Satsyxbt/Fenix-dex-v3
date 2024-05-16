@@ -63,10 +63,6 @@ interface IAlgebraEternalFarming {
       address pluginAddress
     );
 
-  /// @notice Returns the current default blast governor
-  /// @return The address of the default blast governor
-  function defaultBlastGovernor() external view returns (address);
-
   /// @notice Check if incentive is deactivated (manually or automatically)
   /// @dev Does not check if the incentive is indeed currently connected to the Algebra pool or not
   /// @param incentiveId The ID of the incentive computed from its parameters
@@ -101,10 +97,6 @@ interface IAlgebraEternalFarming {
   /// @dev only farmings administrator
   /// @param newStatus The new status of `isEmergencyWithdrawActivated`.
   function setEmergencyWithdrawStatus(bool newStatus) external;
-
-  /// @dev updates default blast governor address on the factory
-  /// @param defaultBlastGovernor_ The new defautl blast governor address
-  function setDefaultBlastGovernor(address defaultBlastGovernor_) external;
 
   /// @notice Returns amount of created incentives
   function numOfIncentives() external view returns (uint256);
@@ -280,8 +272,4 @@ interface IAlgebraEternalFarming {
   /// @notice Emitted when status of `isEmergencyWithdrawActivated` changes
   /// @param newStatus New value of `isEmergencyWithdrawActivated`. Users can withdraw liquidity without any checks if active.
   event EmergencyWithdraw(bool newStatus);
-
-  /// @dev Emitted when set new default blast governor address is changed.
-  /// @param defaultBlastGovernor The new default blast governor address
-  event DefaultBlastGovernor(address indexed defaultBlastGovernor);
 }
