@@ -4,18 +4,17 @@ import fs from 'fs';
 import { ethers } from 'hardhat';
 
 import { getConfig } from '../../../scripts/networksConfig';
-import { AlgebraCommunityVault, AlgebraFactoryUpgradeable, AlgebraVaultFactoryStub, IBlastNearMock } from '../typechain';
+import { AlgebraCommunityVault, AlgebraFactoryUpgradeable, AlgebraVaultFactoryStub, IFeeSharing } from '../typechain';
 
-async function logFactory(factory: AlgebraFactoryUpgradeable, USDB: string, WETH: string) {
+async function logFactory(factory: AlgebraFactoryUpgradeable) {
   console.log(`\nAlgebraFactory (${factory.target}):
       \tOwner:\t${await factory.owner()}
       \tPools Administrator Role:\t${await factory.POOLS_ADMINISTRATOR_ROLE()}
       \tPools Creator Role:\t${await factory.POOLS_CREATOR_ROLE()}
       \tPool Init Code Hash:\t${await factory.POOL_INIT_CODE_HASH()}
       \tPool Deployer:\t${await factory.poolDeployer()}
-      \tDefault Blast Governor:\t${await factory.defaultBlastGovernor()}
-      \tDefault Blast Points:\t${await factory.defaultBlastPoints()}
-      \tDefault Blast Points Operator:\t${await factory.defaultBlastPointsOperator()}
+      \tDefault Mode Sfs:\t${await factory.defaultModeSfs()}
+      \tDefault Sfs Assign Token Id:\t${await factory.defaultSfsAssignTokenId()}
       \tPublic Pool Creation Mode:\t${await factory.isPublicPoolCreationMode()}
       \tDefault Community Fee:\t${await factory.defaultCommunityFee()}
       \tDefault Fee:\t${await factory.defaultFee()}
@@ -23,37 +22,17 @@ async function logFactory(factory: AlgebraFactoryUpgradeable, USDB: string, WETH
       \tRenounce Ownership Start Timestamp:\t${await factory.renounceOwnershipStartTimestamp()}
       \tDefault Plugin Factory:\t${await factory.defaultPluginFactory()}
       \tVault Factory:\t${await factory.vaultFactory()}
-      \tWETH mode:\t${await factory.isRebaseToken(WETH)} \t${await factory.configurationForBlastRebaseTokens(WETH)} 
-      \tUSDB mode:\t${await factory.isRebaseToken(USDB)} \t${await factory.configurationForBlastRebaseTokens(WETH)} 
     `);
 }
 
-async function logAlgebraVaultFactoryStub(vaultStub: AlgebraVaultFactoryStub) {
-  console.log(`AlgebraVaultFactoryStub (${vaultStub.target}):
-    \tDefault Algebra Community Vault:\t${await vaultStub.defaultAlgebraCommunityVault()}
-    `);
-}
-async function logBlast(deploysData: any, blast: IBlastNearMock) {
-  console.log(`\nBlast`);
+async function logSfs(deploysData: any, feeSharing: IFeeSharing) {
+  console.log(`\IFeeSharing`);
 
   let keys = Object.keys(deploysData);
   for (let index = 0; index < keys.length; index++) {
     const key = keys[index];
-    console.log(`- ${key}\t${deploysData[key]}\t${await blast.governorMap(deploysData[key])}\t${await blast.readGasParams(deploysData[key])}`);
+    console.log(`- ${key}\t${deploysData[key]}\t${await feeSharing.feeRecipient(deploysData[key])}`);
   }
-}
-
-async function logAlgebraCommunityVault(vault: AlgebraCommunityVault) {
-  console.log(`AlgebraCommunityVault (${vault.target}):
-    \tCommunity Fee Withdrawer Role:\t${await vault.COMMUNITY_FEE_WITHDRAWER_ROLE()}
-    \tCommunity Fee Vault Administrator:\t${await vault.COMMUNITY_FEE_VAULT_ADMINISTRATOR()}
-    \tCommunity Fee Receiver:\t${await vault.communityFeeReceiver()}
-    \tAlgebra Fee:\t${await vault.algebraFee()}
-    \tHas New Algebra Fee Proposal:\t${await vault.hasNewAlgebraFeeProposal()}
-    \tProposed New Algebra Fee:\t${await vault.proposedNewAlgebraFee()}
-    \tAlgebra Fee Receiver:\t${await vault.algebraFeeReceiver()}
-    \tAlgebra Fee Manager:\t${await vault.algebraFeeManager()}
-    `);
 }
 
 async function logNonfungiblePositionManager(positionManager: any) {
@@ -101,7 +80,8 @@ async function logBasePluginV1Factory(pluginFactory: any) {
     \tAlgebra Factory Address:\t${await pluginFactory.algebraFactory()}
     \tDefault Fee Configuration Address:\t${await pluginFactory.defaultFeeConfiguration()}
     \tFarming Address:\t${await pluginFactory.farmingAddress()}
-    \tDefault Blast Governor Address:\t${await pluginFactory.defaultBlastGovernor()}
+    \tDefault Mode Sfs:\t${await pluginFactory.defaultModeSfs()}
+    \tDefault Assign Token Id:\t${await pluginFactory.defaultSfsAssignTokenId()}
     \tImplementation Address:\t${await pluginFactory.implementation()}
     `);
 }
@@ -119,7 +99,8 @@ async function logAlgebraEternalFarming(eternalFarming: any) {
     \tIncentive Maker Role:\t${await eternalFarming.INCENTIVE_MAKER_ROLE()}
     \tFarmings Administrator Role:\t${await eternalFarming.FARMINGS_ADMINISTRATOR_ROLE()}
     \tNonfungible Position Manager Address:\t${await eternalFarming.nonfungiblePositionManager()}
-    \tDefault Blast Governor Address:\t${await eternalFarming.defaultBlastGovernor()}
+    \tDefault Mode Sfs:\t${await eternalFarming.defaultModeSfs()}
+    \tDefault Mode Assign token id:\t${await eternalFarming.defaultSfsAssignTokenId()}
     \tFarming Center Address:\t${await eternalFarming.farmingCenter()}
     \tIs Emergency Withdraw Activated:\t${await eternalFarming.isEmergencyWithdrawActivated()}
     \tNumber of Incentives:\t${await eternalFarming.numOfIncentives()}
@@ -133,17 +114,11 @@ async function main() {
   const deployDataPath = path.resolve(__dirname, '../../../scripts/deployment/' + Config.FILE);
   let deploysData = JSON.parse(fs.readFileSync(deployDataPath, 'utf8'));
 
-  let blast = (await hre.ethers.getContractAt('IBlastNearMock', Config.BLAST)) as any as IBlastNearMock;
-  await logBlast(deploysData, blast);
+  let feeSharing = (await hre.ethers.getContractAt('IFeeSharing', Config.MODE_SFS)) as any as IFeeSharing;
+  await logSfs(deploysData, feeSharing);
 
   let factory = (await hre.ethers.getContractAt('AlgebraFactoryUpgradeable', deploysData.factory)) as any as AlgebraFactoryUpgradeable;
-  await logFactory(factory, Config.USDB, Config.WETH);
-
-  let vaultFactoryStub = (await hre.ethers.getContractAt('AlgebraVaultFactoryStub', deploysData.vaultFactory)) as any as AlgebraVaultFactoryStub;
-  await logAlgebraVaultFactoryStub(vaultFactoryStub);
-
-  let vault = (await hre.ethers.getContractAt('AlgebraCommunityVault', deploysData.vault)) as any as AlgebraCommunityVault;
-  await logAlgebraCommunityVault(vault);
+  await logFactory(factory);
 
   const posPath = path.resolve(
     __dirname,
