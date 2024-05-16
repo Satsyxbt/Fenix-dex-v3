@@ -8,7 +8,6 @@ import './base/Positions.sol';
 import './base/SwapCalculation.sol';
 import './base/ReservesManager.sol';
 import './base/TickStructure.sol';
-import './base/BlastERC20RebasingManage.sol';
 
 import './libraries/FullMath.sol';
 import './libraries/Constants.sol';
@@ -388,13 +387,6 @@ contract AlgebraPool is AlgebraPoolBase, TickStructure, ReentrancyGuard, Positio
   /// @dev using function to save bytecode
   function _checkIfAdministrator() private view {
     if (!IAlgebraFactory(factory).hasRoleOrOwner(Constants.POOLS_ADMINISTRATOR_ROLE, msg.sender)) revert notAllowed();
-  }
-
-  /// @inheritdoc BlastERC20RebasingManage
-  function _checkAccessForManageBlastERC20Rebasing() internal virtual override {
-    if (msg.sender != factory) {
-      _checkIfAdministrator();
-    }
   }
 
   // permissioned actions use reentrancy lock to prevent call from callback (to keep the correct order of events, etc.)

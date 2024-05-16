@@ -10,9 +10,8 @@ pragma solidity >=0.5.0;
 interface IAlgebraPoolDeployer {
   /// @notice Get the parameters to be used in constructing the pool, set transiently during pool creation.
   /// @dev Called by the pool constructor to fetch the parameters of the pool
-  /// @return blastGovernor The blastgovernro address for set in Blast ecosystem contract
-  /// @return blastPoints The address of the Blast Points contract, used for managing points within the ecosystem.
-  /// @return blastPointsOperator The address of the operator authorized to manage points in the Blast Points contract.
+  ///  @return modeSfs Address of the Mode SFS contract.
+  ///  @return sfsAssignTokenId The token ID for SFS assignment.
   /// @return plugin The pool associated plugin (if any)
   /// @return factory The Algebra Factory address
   /// @return token0 The first token of the pool by address sort order
@@ -20,30 +19,14 @@ interface IAlgebraPoolDeployer {
   function getDeployParameters()
     external
     view
-    returns (
-      address blastGovernor,
-      address blastPoints,
-      address blastPointsOperator,
-      address plugin,
-      address factory,
-      address token0,
-      address token1
-    );
+    returns (address modeSfs, uint256 sfsAssignTokenId, address plugin, address factory, address token0, address token1);
 
   /// @dev Deploys a pool with the given parameters by transiently setting the parameters in cache.
-  /// @param blastGovernor The blast governor address for set to Blast ecosystem contract
-  /// @param blastPoints The address of the Blast Points contract, used for managing points within the ecosystem.
-  /// @param blastPointsOperator The address of the operator authorized to manage points in the Blast Points contract.
+  ///  @param modeSfs Address of the Mode SFS contract.
+  ///  @param sfsAssignTokenId The token ID for SFS assignment.
   /// @param plugin The pool associated plugin (if any)
   /// @param token0 The first token of the pool by address sort order
   /// @param token1 The second token of the pool by address sort order
   /// @return pool The deployed pool's address
-  function deploy(
-    address blastGovernor,
-    address blastPoints,
-    address blastPointsOperator,
-    address plugin,
-    address token0,
-    address token1
-  ) external returns (address pool);
+  function deploy(address modeSfs, uint256 sfsAssignTokenId, address plugin, address token0, address token1) external returns (address pool);
 }

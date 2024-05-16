@@ -5,13 +5,10 @@ import './libraries/Constants.sol';
 
 import './interfaces/IAlgebraFactory.sol';
 import './interfaces/IAlgebraPoolDeployer.sol';
-import './interfaces/IBlastERC20RebasingManage.sol';
-
 import './interfaces/vault/IAlgebraVaultFactory.sol';
 import './interfaces/plugin/IAlgebraPluginFactory.sol';
-
 import './AlgebraCommunityVault.sol';
-import './base/BlastGovernorSetup.sol';
+import './base/ModeSfsSetupFactoryManager.sol';
 
 import '@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol';
@@ -19,7 +16,7 @@ import '@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgrad
 /// @title Algebra factory
 /// @notice Is used to deploy pools and its plugins
 /// @dev Version: Algebra Integral 1.0
-contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, AccessControlEnumerableUpgradeable, BlastGovernorSetup {
+contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, AccessControlEnumerableUpgradeable, ModeSfsSetupFactoryManager {
   /// @inheritdoc IAlgebraFactory
   bytes32 public constant override POOLS_ADMINISTRATOR_ROLE = keccak256('POOLS_ADMINISTRATOR'); // it`s here for the public visibility of the value
 
@@ -28,19 +25,10 @@ contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, 
 
   /// @inheritdoc IAlgebraFactory
   /// @dev keccak256 of AlgebraPool init bytecode. Used to compute pool address deterministically
-  bytes32 public constant override POOL_INIT_CODE_HASH = 0xf45e886a0794c1d80aeae5ab5befecd4f0f2b77c0cf627f7c46ec92dc1fa00e4;
+  bytes32 public constant override POOL_INIT_CODE_HASH = 0x35a8ee9eeee4778406e9cd380f1e66fe0254ed59c57b4fb26d921f280018a1cc;
 
   /// @inheritdoc IAlgebraFactory
   address public override poolDeployer;
-
-  /// @inheritdoc IAlgebraFactory
-  address public override defaultBlastGovernor;
-
-  /// @inheritdoc IAlgebraFactory
-  address public override defaultBlastPoints;
-
-  /// @inheritdoc IAlgebraFactory
-  address public override defaultBlastPointsOperator;
 
   ///@inheritdoc IAlgebraFactory
   bool public override isPublicPoolCreationMode;
@@ -66,12 +54,6 @@ contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, 
   /// @inheritdoc IAlgebraFactory
   mapping(address => mapping(address => address)) public override poolByPair;
 
-  /// @inheritdoc IAlgebraFactory
-  mapping(address => YieldMode) public override configurationForBlastRebaseTokens;
-
-  /// @inheritdoc IAlgebraFactory
-  mapping(address => bool) public override isRebaseToken;
-
   /// @dev time delay before ownership renouncement can be finished
   uint256 private constant RENOUNCE_OWNERSHIP_DELAY = 1 days;
 
@@ -82,18 +64,13 @@ contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, 
     _disableInitializers();
   }
 
-  function initialize(address _blastGovernor, address _blastPoints, address _blastPointsOperaotor, address _poolDeployer) external initializer {
+  function initialize(address _modeSfs, uint256 _sfsAssignTokenId, address _poolDeployer) external initializer {
     require(_poolDeployer != address(0));
-    require(_blastPoints != address(0));
-    require(_blastPointsOperaotor != address(0));
+
+    __ModeSfsSetupFactoryManager_init(_modeSfs, _sfsAssignTokenId);
 
     __AccessControlEnumerable_init();
     __Ownable2Step_init();
-    __BlastGovernorSetup_init(_blastGovernor);
-
-    defaultBlastGovernor = _blastGovernor;
-    defaultBlastPoints = _blastPoints;
-    defaultBlastPointsOperator = _blastPointsOperaotor;
 
     poolDeployer = _poolDeployer;
     defaultTickspacing = Constants.INIT_DEFAULT_TICK_SPACING;
@@ -145,22 +122,7 @@ contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, 
       defaultPlugin = defaultPluginFactory.createPlugin(computePoolAddress(token0, token1), token0, token1);
     }
 
-    pool = IAlgebraPoolDeployer(poolDeployer).deploy(
-      defaultBlastGovernor,
-      defaultBlastPoints,
-      defaultBlastPointsOperator,
-      defaultPlugin,
-      token0,
-      token1
-    );
-
-    if (isRebaseToken[token0]) {
-      IBlastERC20RebasingManage(pool).configure(token0, configurationForBlastRebaseTokens[token0]);
-    }
-
-    if (isRebaseToken[token1]) {
-      IBlastERC20RebasingManage(pool).configure(token1, configurationForBlastRebaseTokens[token1]);
-    }
+    pool = IAlgebraPoolDeployer(poolDeployer).deploy(defaultModeSfs, defaultSfsAssignTokenId, defaultPlugin, token0, token1);
 
     poolByPair[token0][token1] = pool; // to avoid future addresses comparison we are populating the mapping twice
     poolByPair[token1][token0] = pool;
@@ -170,34 +132,6 @@ contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, 
       vaultFactory.createVaultForPool(pool);
       vaultFactory.afterPoolInitialize(pool);
     }
-  }
-
-  /// @inheritdoc IAlgebraFactory
-  function setConfigurationForRebaseToken(address token_, bool isRebase_, YieldMode mode_) external override onlyOwner {
-    isRebaseToken[token_] = isRebase_;
-    configurationForBlastRebaseTokens[token_] = mode_;
-    emit ConfigurationForRebaseToken(token_, isRebase_, mode_);
-  }
-
-  /// @inheritdoc IAlgebraFactory
-  function setDefaultBlastGovernor(address defaultBlastGovernor_) external override onlyOwner {
-    require(defaultBlastGovernor_ != address(0));
-    defaultBlastGovernor = defaultBlastGovernor_;
-    emit DefaultBlastGovernor(defaultBlastGovernor_);
-  }
-
-  /// @inheritdoc IAlgebraFactory
-  function setDefaultBlastPoints(address defaultBlastPoints_) external override onlyOwner {
-    require(defaultBlastPoints_ != address(0));
-    defaultBlastPoints = defaultBlastPoints_;
-    emit DefaultBlastPoints(defaultBlastPoints_);
-  }
-
-  /// @inheritdoc IAlgebraFactory
-  function setDefaultBlastPointsOperator(address defaultBlastPointsOperator_) external override onlyOwner {
-    require(defaultBlastPointsOperator_ != address(0));
-    defaultBlastPointsOperator = defaultBlastPointsOperator_;
-    emit DefaultBlastPointsOperator(defaultBlastPointsOperator_);
   }
 
   /// @inheritdoc IAlgebraFactory
@@ -282,6 +216,11 @@ contract AlgebraFactoryUpgradeable is IAlgebraFactory, Ownable2StepUpgradeable, 
       _grantRole(DEFAULT_ADMIN_ROLE, owner());
     }
   }
+
+  /**
+   * @dev Overrides `ModeSfsSetupFactoryManager#_checkAccessForModeSfsSetupFactoryManager` to add custom access control logic.
+   */
+  function _checkAccessForModeSfsSetupFactoryManager() internal virtual override onlyOwner {}
 
   /**
    * @dev This empty reserved space is put in place to allow future versions to add new
