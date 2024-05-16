@@ -7,7 +7,7 @@ Algebra Integral 1.0 eternal virtual pool
 
 used to track active liquidity in farming and distribute rewards
 
-**Inherits:** Timestamp [VirtualTickStructure](../base/VirtualTickStructure.md) [BlastGovernorSetup](../../Core/base/BlastGovernorSetup.md)
+**Inherits:** Timestamp [VirtualTickStructure](../base/VirtualTickStructure.md) [ModeSfsSetup](../../Core/base/ModeSfsSetup.md)
 ## Modifiers
 ### onlyFromFarming
 
@@ -78,14 +78,15 @@ Returns true if virtual pool is deactivated
 ### constructor
 
 ```solidity
-constructor(address _blastGovernor, address _farmingAddress, address _plugin) public
+constructor(address _modeSfs, uint256 _sfsAssignTokenId, address _farmingAddress, address _plugin) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _farmingAddress | address |  |
 | _plugin | address |  |
 

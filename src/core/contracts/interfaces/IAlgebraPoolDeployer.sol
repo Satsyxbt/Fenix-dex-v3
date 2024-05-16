@@ -10,8 +10,8 @@ pragma solidity >=0.5.0;
 interface IAlgebraPoolDeployer {
   /// @notice Get the parameters to be used in constructing the pool, set transiently during pool creation.
   /// @dev Called by the pool constructor to fetch the parameters of the pool
-  ///  @return modeSfs Address of the Mode SFS contract.
-  ///  @return sfsAssignTokenId The token ID for SFS assignment.
+  /// @return modeSfs Address of the Mode SFS contract.
+  /// @return sfsAssignTokenId The token ID for SFS assignment.
   /// @return plugin The pool associated plugin (if any)
   /// @return factory The Algebra Factory address
   /// @return token0 The first token of the pool by address sort order

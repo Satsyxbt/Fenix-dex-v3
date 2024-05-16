@@ -10,7 +10,7 @@ Router for stateless execution of swaps against Algebra
 *Developer note: Credit to Uniswap Labs under GPL-2.0-or-later license:
 https://github.com/Uniswap/v3-periphery*
 
-**Inherits:** [ISwapRouter](interfaces/ISwapRouter.md) [PeripheryImmutableState](base/PeripheryImmutableState.md) PeripheryValidation [PeripheryPaymentsWithFee](base/PeripheryPaymentsWithFee.md) [Multicall](base/Multicall.md) [SelfPermit](base/SelfPermit.md) [BlastGovernorSetup](../Core/base/BlastGovernorSetup.md)
+**Inherits:** [ISwapRouter](interfaces/ISwapRouter.md) [PeripheryImmutableState](base/PeripheryImmutableState.md) PeripheryValidation [PeripheryPaymentsWithFee](base/PeripheryPaymentsWithFee.md) [Multicall](base/Multicall.md) [SelfPermit](base/SelfPermit.md) [ModeSfsSetup](../Core/base/ModeSfsSetup.md)
 
 ## Structs
 ### SwapCallbackData
@@ -29,14 +29,15 @@ struct SwapCallbackData {
 ### constructor
 
 ```solidity
-constructor(address _blastGovernor, address _factory, address _WNativeToken, address _poolDeployer) public
+constructor(address _modeSfs, uint256 _sfsAssignTokenId, address _factory, address _WNativeToken, address _poolDeployer) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _factory | address |  |
 | _WNativeToken | address |  |
 | _poolDeployer | address |  |

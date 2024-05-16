@@ -135,62 +135,6 @@ Emitted when the pools creation mode is changed
 | ---- | ---- | ----------- |
 | mode_ | bool | The new pools creation mode |
 
-### DefaultBlastGovernor
-
-```solidity
-event DefaultBlastGovernor(address defaultBlastGovernor)
-```
-
-
-
-*Developer note: Emitted when set new default blast governor address is changed.*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor | address | The new default blast governor address |
-
-### DefaultBlastPoints
-
-```solidity
-event DefaultBlastPoints(address defaultBlastPoints)
-```
-
-
-
-*Developer note: Emitted when set new default blast points address is changed.*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastPoints | address | The new default blast points address |
-
-### DefaultBlastPointsOperator
-
-```solidity
-event DefaultBlastPointsOperator(address defaultBlastPointsOperator)
-```
-
-
-
-*Developer note: Emitted when set new default blast points operator address is changed.*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastPointsOperator | address | The new default blast points operator address |
-
-### ConfigurationForRebaseToken
-
-```solidity
-event ConfigurationForRebaseToken(address token, bool isRebase, enum YieldMode mode)
-```
-
-Emitted when the rebase configuration for a token is set or updated
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| token | address | The address of the token whose rebase configuration has been set or updated |
-| isRebase | bool | Indicates whether the token is set as a rebasing token |
-| mode | enum YieldMode | The yield mode that has been set for the token, defining its rebasing behavior |
-
 
 ## Functions
 ### POOLS_ADMINISTRATOR_ROLE
@@ -259,89 +203,6 @@ Returns the current owner of the factory
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | [0] | address | The address of the factory owner |
-
-### defaultBlastGovernor
-
-```solidity
-function defaultBlastGovernor() external view returns (address)
-```
-**Selector**: `0xfb6cd276`
-
-Returns the current default blast governor
-
-**Returns:**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | address | The address of the default blast governor |
-
-### defaultBlastPoints
-
-```solidity
-function defaultBlastPoints() external view returns (address)
-```
-**Selector**: `0xa6df1ec9`
-
-Returns the current default blast points
-
-**Returns:**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | address | The address of the default blast points |
-
-### defaultBlastPointsOperator
-
-```solidity
-function defaultBlastPointsOperator() external view returns (address)
-```
-**Selector**: `0x32cf1b01`
-
-Returns the current default blast points operator
-
-**Returns:**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | address | The address of the default blast points operator |
-
-### configurationForBlastRebaseTokens
-
-```solidity
-function configurationForBlastRebaseTokens(address token) external view returns (enum YieldMode)
-```
-**Selector**: `0xd1dc415e`
-
-Retrieves the yield mode configuration for a specified token
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| token | address | The address of the token for which to retrieve the yield mode |
-
-**Returns:**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | enum YieldMode | The yield mode (rebasing configuration) set for the given token |
-
-### isRebaseToken
-
-```solidity
-function isRebaseToken(address token) external view returns (bool)
-```
-**Selector**: `0xc073b7a5`
-
-Return if a token is marked as a rebasing token in the factory configuration
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| token | address | The address of the token to check |
-
-**Returns:**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | bool | True if the token is a rebasing token, false otherwise |
 
 ### poolDeployer
 
@@ -588,21 +449,6 @@ function setIsPublicPoolCreationMode(bool mode_) external
 | ---- | ---- | ----------- |
 | mode_ | bool | the new mode for pools creation proccess |
 
-### setConfigurationForRebaseToken
-
-```solidity
-function setConfigurationForRebaseToken(address token_, bool isRebase_, enum YieldMode mode_) external
-```
-**Selector**: `0x3821a08a`
-
-Sets the rebase configuration for a specific token
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| token_ | address | The address of the token to configure |
-| isRebase_ | bool | A boolean indicating whether the token is a rebasing token or not |
-| mode_ | enum YieldMode | The yield mode to apply, defining how the rebasing mechanism should operate |
-
 ### setDefaultCommunityFee
 
 ```solidity
@@ -696,49 +542,4 @@ function stopRenounceOwnership() external
 **Selector**: `0x238a1d74`
 
 Stops process of renounceOwnership and removes timer.
-
-### setDefaultBlastGovernor
-
-```solidity
-function setDefaultBlastGovernor(address defaultBlastGovernor_) external
-```
-**Selector**: `0x998709e0`
-
-
-
-*Developer note: updates default blast governor address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor_ | address | The new defautl blast governor address |
-
-### setDefaultBlastPoints
-
-```solidity
-function setDefaultBlastPoints(address defaultBlastPoints_) external
-```
-**Selector**: `0x5f67e7bc`
-
-
-
-*Developer note: updates default blast points address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastPoints_ | address | The new defautl blast points address |
-
-### setDefaultBlastPointsOperator
-
-```solidity
-function setDefaultBlastPointsOperator(address defaultBlastPointsOperator_) external
-```
-**Selector**: `0xe72b63de`
-
-
-
-*Developer note: updates default blast points operator address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastPointsOperator_ | address | The new defautl blast points operator address |
 

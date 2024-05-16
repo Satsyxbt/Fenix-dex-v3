@@ -17,7 +17,7 @@ https://github.com/Uniswap/v3-core/tree/main/contracts/interfaces*
 ### getDeployParameters
 
 ```solidity
-function getDeployParameters() external view returns (address blastGovernor, address blastPoints, address blastPointsOperator, address plugin, address factory, address token0, address token1)
+function getDeployParameters() external view returns (address modeSfs, uint256 sfsAssignTokenId, address plugin, address factory, address token0, address token1)
 ```
 **Selector**: `0x04889e26`
 
@@ -29,9 +29,8 @@ Get the parameters to be used in constructing the pool, set transiently during p
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| blastGovernor | address | The blastgovernro address for set in Blast ecosystem contract |
-| blastPoints | address | The address of the Blast Points contract, used for managing points within the ecosystem. |
-| blastPointsOperator | address | The address of the operator authorized to manage points in the Blast Points contract. |
+| modeSfs | address | Address of the Mode SFS contract. |
+| sfsAssignTokenId | uint256 | The token ID for SFS assignment. |
 | plugin | address | The pool associated plugin (if any) |
 | factory | address | The Algebra Factory address |
 | token0 | address | The first token of the pool by address sort order |
@@ -40,19 +39,20 @@ Get the parameters to be used in constructing the pool, set transiently during p
 ### deploy
 
 ```solidity
-function deploy(address blastGovernor, address blastPoints, address blastPointsOperator, address plugin, address token0, address token1) external returns (address pool)
+function deploy(address modeSfs, uint256 sfsAssignTokenId, address plugin, address token0, address token1) external returns (address pool)
 ```
-**Selector**: `0x0bcf6b4c`
+**Selector**: `0x09b01d0f`
 
 
 
-*Developer note: Deploys a pool with the given parameters by transiently setting the parameters in cache.*
+*Developer note: Deploys a pool with the given parameters by transiently setting the parameters in cache.
+ @param modeSfs Address of the Mode SFS contract.
+ @param sfsAssignTokenId The token ID for SFS assignment.*
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| blastGovernor | address | The blast governor address for set to Blast ecosystem contract |
-| blastPoints | address | The address of the Blast Points contract, used for managing points within the ecosystem. |
-| blastPointsOperator | address | The address of the operator authorized to manage points in the Blast Points contract. |
+| modeSfs | address |  |
+| sfsAssignTokenId | uint256 |  |
 | plugin | address | The pool associated plugin (if any) |
 | token0 | address | The first token of the pool by address sort order |
 | token1 | address | The second token of the pool by address sort order |

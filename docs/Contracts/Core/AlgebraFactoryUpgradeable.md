@@ -9,7 +9,7 @@ Is used to deploy pools and its plugins
 
 *Developer note: Version: Algebra Integral 1.0*
 
-**Inherits:** [IAlgebraFactory](interfaces/IAlgebraFactory.md) [Ownable2StepUpgradeable](https://docs.openzeppelin.com/contracts/4.x/) [AccessControlEnumerableUpgradeable](https://docs.openzeppelin.com/contracts/4.x/) [BlastGovernorSetup](base/BlastGovernorSetup.md)
+**Inherits:** [IAlgebraFactory](interfaces/IAlgebraFactory.md) [Ownable2StepUpgradeable](https://docs.openzeppelin.com/contracts/4.x/) [AccessControlEnumerableUpgradeable](https://docs.openzeppelin.com/contracts/4.x/) [ModeSfsSetupFactoryManager](base/ModeSfsSetupFactoryManager.md)
 
 ## Public variables
 ### POOLS_ADMINISTRATOR_ROLE
@@ -32,7 +32,7 @@ role that can create pools when public pool creation is disabled
 
 ### POOL_INIT_CODE_HASH
 ```solidity
-bytes32 constant POOL_INIT_CODE_HASH = 0xf45e886a0794c1d80aeae5ab5befecd4f0f2b77c0cf627f7c46ec92dc1fa00e4
+bytes32 constant POOL_INIT_CODE_HASH = 0x98e8ef3bef2019fe9d416945abf3adf0edda3541cbc7a02a6b3de5316a2bba40
 ```
 **Selector**: `0xdc6fd8ab`
 
@@ -47,33 +47,6 @@ address poolDeployer
 **Selector**: `0x3119049a`
 
 Returns the current poolDeployerAddress
-
-
-### defaultBlastGovernor
-```solidity
-address defaultBlastGovernor
-```
-**Selector**: `0xfb6cd276`
-
-Returns the current default blast governor
-
-
-### defaultBlastPoints
-```solidity
-address defaultBlastPoints
-```
-**Selector**: `0xa6df1ec9`
-
-Returns the current default blast points
-
-
-### defaultBlastPointsOperator
-```solidity
-address defaultBlastPointsOperator
-```
-**Selector**: `0x32cf1b01`
-
-Returns the current default blast points operator
 
 
 ### isPublicPoolCreationMode
@@ -151,24 +124,6 @@ Returns the pool address for a given pair of tokens, or address 0 if it does not
 
 *Developer note: tokenA and tokenB may be passed in either token0/token1 or token1/token0 order*
 
-### configurationForBlastRebaseTokens
-```solidity
-mapping(address => enum YieldMode) configurationForBlastRebaseTokens
-```
-**Selector**: `0xd1dc415e`
-
-Retrieves the yield mode configuration for a specified token
-
-
-### isRebaseToken
-```solidity
-mapping(address => bool) isRebaseToken
-```
-**Selector**: `0xc073b7a5`
-
-Return if a token is marked as a rebasing token in the factory configuration
-
-
 
 ## Functions
 ### constructor
@@ -184,17 +139,16 @@ constructor() public
 ### initialize
 
 ```solidity
-function initialize(address _blastGovernor, address _blastPoints, address _blastPointsOperaotor, address _poolDeployer) external
+function initialize(address _modeSfs, uint256 _sfsAssignTokenId, address _poolDeployer) external
 ```
-**Selector**: `0xf8c8765e`
+**Selector**: `0xc350a1b5`
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
-| _blastPoints | address |  |
-| _blastPointsOperaotor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _poolDeployer | address |  |
 
 ### owner
@@ -300,66 +254,6 @@ The call will revert if the pool already exists or the token arguments are inval
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | pool | address | The address of the newly created pool |
-
-### setConfigurationForRebaseToken
-
-```solidity
-function setConfigurationForRebaseToken(address token_, bool isRebase_, enum YieldMode mode_) external
-```
-**Selector**: `0x3821a08a`
-
-Sets the rebase configuration for a specific token
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| token_ | address | The address of the token to configure |
-| isRebase_ | bool | A boolean indicating whether the token is a rebasing token or not |
-| mode_ | enum YieldMode | The yield mode to apply, defining how the rebasing mechanism should operate |
-
-### setDefaultBlastGovernor
-
-```solidity
-function setDefaultBlastGovernor(address defaultBlastGovernor_) external
-```
-**Selector**: `0x998709e0`
-
-
-
-*Developer note: updates default blast governor address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor_ | address | The new defautl blast governor address |
-
-### setDefaultBlastPoints
-
-```solidity
-function setDefaultBlastPoints(address defaultBlastPoints_) external
-```
-**Selector**: `0x5f67e7bc`
-
-
-
-*Developer note: updates default blast points address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastPoints_ | address | The new defautl blast points address |
-
-### setDefaultBlastPointsOperator
-
-```solidity
-function setDefaultBlastPointsOperator(address defaultBlastPointsOperator_) external
-```
-**Selector**: `0xe72b63de`
-
-
-
-*Developer note: updates default blast points operator address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastPointsOperator_ | address | The new defautl blast points operator address |
 
 ### setIsPublicPoolCreationMode
 

@@ -7,7 +7,7 @@ Algebra Integral 1.0 default plugin factory
 
 This contract creates Algebra default plugins for Algebra liquidity pools
 
-**Inherits:** [IBasePluginV1Factory](interfaces/IBasePluginV1Factory.md) [BlastGovernorSetup](../Core/base/BlastGovernorSetup.md)
+**Inherits:** [IBasePluginV1Factory](interfaces/IBasePluginV1Factory.md) [ModeSfsSetupFactoryManager](../Core/base/ModeSfsSetupFactoryManager.md)
 ## Modifiers
 ### onlyAdministrator
 
@@ -58,15 +58,6 @@ address farmingAddress
 Returns current farming address
 
 
-### defaultBlastGovernor
-```solidity
-address defaultBlastGovernor
-```
-**Selector**: `0xfb6cd276`
-
-Returns current default blast governor address
-
-
 ### implementation
 ```solidity
 address implementation
@@ -93,14 +84,15 @@ Returns address of plugin created for given AlgebraPool
 ### constructor
 
 ```solidity
-constructor(address _blastGovernor, address _algebraFactory, address _basePluginV1Implementation) public
+constructor(address _modeSfs, uint256 _sfsAssignTokenId, address _algebraFactory, address _basePluginV1Implementation) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _algebraFactory | address |  |
 | _basePluginV1Implementation | address |  |
 
@@ -111,11 +103,11 @@ function createPlugin(address pool, address, address) external returns (address)
 ```
 **Selector**: `0x9533ff10`
 
-Deploys new plugin contract for pool
+
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| pool | address | The address of the pool for which the new plugin will be created |
+| pool | address |  |
 |  | address |  |
 |  | address |  |
 
@@ -123,7 +115,7 @@ Deploys new plugin contract for pool
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | address | New plugin address |
+| [0] | address |  |
 
 ### createPluginForExistingPool
 
@@ -144,21 +136,6 @@ Create plugin for already existing pool
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | [0] | address | The address of created plugin |
-
-### setDefaultBlastGovernor
-
-```solidity
-function setDefaultBlastGovernor(address defaultBlastGovernor_) external
-```
-**Selector**: `0x998709e0`
-
-
-
-*Developer note: updates default blast governor address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor_ | address | The new defautl blast governor address |
 
 ### setDefaultFeeConfiguration
 

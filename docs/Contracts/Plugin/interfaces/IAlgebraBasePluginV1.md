@@ -26,9 +26,9 @@ Initialize the plugin externally
 ### initialize
 
 ```solidity
-function initialize(address _blastGovernor, address _pool, address _factory, address _pluginFactory) external
+function initialize(address _modeSfs, uint256 _sfsAssignTokenId, address _pool, address _factory, address _pluginFactory) external
 ```
-**Selector**: `0xf8c8765e`
+**Selector**: `0xa01ef25f`
 
 Initialize the plugin instead of the constructor flow, for proxy
 
@@ -36,7 +36,8 @@ Initialize the plugin instead of the constructor flow, for proxy
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _pool | address |  |
 | _factory | address |  |
 | _pluginFactory | address |  |

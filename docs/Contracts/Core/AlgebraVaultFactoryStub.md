@@ -7,7 +7,7 @@ Algebra vault factory stub
 
 This contract is used to set AlgebraCommunityVault as communityVault in new pools
 
-**Inherits:** [IAlgebraVaultFactory](interfaces/vault/IAlgebraVaultFactory.md) [BlastGovernorSetup](base/BlastGovernorSetup.md)
+**Inherits:** [IAlgebraVaultFactory](interfaces/vault/IAlgebraVaultFactory.md) [ModeSfsSetup](base/ModeSfsSetup.md)
 
 ## Public variables
 ### defaultAlgebraCommunityVault
@@ -24,14 +24,15 @@ the address of AlgebraCommunityVault
 ### constructor
 
 ```solidity
-constructor(address _blastGovernor, address _algebraCommunityVault) public
+constructor(address _modeSfs, uint256 _sfsAssignTokenId, address _algebraCommunityVault) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _algebraCommunityVault | address |  |
 
 ### getVaultForPool

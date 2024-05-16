@@ -50,20 +50,6 @@ event Upgraded(address implementation)
 | ---- | ---- | ----------- |
 | implementation | address | The new implementation address after changed |
 
-### DefaultBlastGovernor
-
-```solidity
-event DefaultBlastGovernor(address defaultBlastGovernor)
-```
-
-
-
-*Developer note: Emitted when set new default blast governor address is changed.*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor | address | The new default blast governor address |
-
 
 ## Functions
 ### ALGEBRA_BASE_PLUGIN_FACTORY_ADMINISTRATOR
@@ -137,21 +123,6 @@ Returns current farming address
 | ---- | ---- | ----------- |
 | [0] | address | The farming contract address |
 
-### defaultBlastGovernor
-
-```solidity
-function defaultBlastGovernor() external view returns (address)
-```
-**Selector**: `0xfb6cd276`
-
-Returns current default blast governor address
-
-**Returns:**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | address | The default blast governor address for futurees pools |
-
 ### pluginByPool
 
 ```solidity
@@ -221,21 +192,6 @@ function setFarmingAddress(address newFarmingAddress) external
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | newFarmingAddress | address | The new tokenomics contract address |
-
-### setDefaultBlastGovernor
-
-```solidity
-function setDefaultBlastGovernor(address defaultBlastGovernor_) external
-```
-**Selector**: `0x998709e0`
-
-
-
-*Developer note: updates default blast governor address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor_ | address | The new defautl blast governor address |
 
 
 ## Errors

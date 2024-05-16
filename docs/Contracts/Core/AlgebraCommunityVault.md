@@ -10,7 +10,7 @@ Community fee from pools is sent here, if it is enabled
 *Developer note: Role system is used to withdraw tokens
 Version: Algebra Integral 1.0*
 
-**Inherits:** [IAlgebraCommunityVault](interfaces/vault/IAlgebraCommunityVault.md) [BlastGovernorSetup](base/BlastGovernorSetup.md)
+**Inherits:** [IAlgebraCommunityVault](interfaces/vault/IAlgebraCommunityVault.md) [ModeSfsSetup](base/ModeSfsSetup.md)
 ## Modifiers
 ### onlyAdministrator
 
@@ -118,14 +118,15 @@ Address of Algebra fee manager
 ### constructor
 
 ```solidity
-constructor(address _blastGovernor, address _factory, address _algebraFeeManager) public
+constructor(address _modeSfs, uint256 _sfsAssignTokenId, address _factory, address _algebraFeeManager) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _factory | address |  |
 | _algebraFeeManager | address |  |
 

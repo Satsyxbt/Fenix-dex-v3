@@ -168,20 +168,6 @@ Emitted when status of &#x60;isEmergencyWithdrawActivated&#x60; changes
 | ---- | ---- | ----------- |
 | newStatus | bool | New value of `isEmergencyWithdrawActivated`. Users can withdraw liquidity without any checks if active. |
 
-### DefaultBlastGovernor
-
-```solidity
-event DefaultBlastGovernor(address defaultBlastGovernor)
-```
-
-
-
-*Developer note: Emitted when set new default blast governor address is changed.*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor | address | The new default blast governor address |
-
 
 ## Structs
 ### IncentiveParams
@@ -268,21 +254,6 @@ Represents a farming incentive
 | minimalPositionWidth | uint24 |  |
 | deactivated | bool |  |
 | pluginAddress | address |  |
-
-### defaultBlastGovernor
-
-```solidity
-function defaultBlastGovernor() external view returns (address)
-```
-**Selector**: `0xfb6cd276`
-
-Returns the current default blast governor
-
-**Returns:**
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | address | The address of the default blast governor |
 
 ### isIncentiveDeactivated
 
@@ -394,21 +365,6 @@ _Must_ only be used in emergency situations. Farmings may be unusable after acti
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | newStatus | bool | The new status of `isEmergencyWithdrawActivated`. |
-
-### setDefaultBlastGovernor
-
-```solidity
-function setDefaultBlastGovernor(address defaultBlastGovernor_) external
-```
-**Selector**: `0x998709e0`
-
-
-
-*Developer note: updates default blast governor address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor_ | address | The new defautl blast governor address |
 
 ### numOfIncentives
 

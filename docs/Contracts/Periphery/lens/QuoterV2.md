@@ -12,20 +12,21 @@ the swap and check the amounts in the callback.
 Credit to Uniswap Labs under GPL-2.0-or-later license:
 https://github.com/Uniswap/v3-periphery*
 
-**Inherits:** [IQuoterV2](../interfaces/IQuoterV2.md) [IAlgebraSwapCallback](../../Core/interfaces/callback/IAlgebraSwapCallback.md) [PeripheryImmutableState](../base/PeripheryImmutableState.md) [BlastGovernorSetup](../../Core/base/BlastGovernorSetup.md)
+**Inherits:** [IQuoterV2](../interfaces/IQuoterV2.md) [IAlgebraSwapCallback](../../Core/interfaces/callback/IAlgebraSwapCallback.md) [PeripheryImmutableState](../base/PeripheryImmutableState.md) [ModeSfsSetup](../../Core/base/ModeSfsSetup.md)
 
 ## Functions
 ### constructor
 
 ```solidity
-constructor(address _blastGovernor, address _factory, address _WNativeToken, address _poolDeployer) public
+constructor(address _modeSfs, uint256 _sfsAssignTokenId, address _factory, address _WNativeToken, address _poolDeployer) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _factory | address |  |
 | _WNativeToken | address |  |
 | _poolDeployer | address |  |

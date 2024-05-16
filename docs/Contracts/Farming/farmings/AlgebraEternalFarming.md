@@ -7,7 +7,7 @@ Algebra Integral 1.0  eternal (v2-like) farming
 
 Manages rewards and virtual pools
 
-**Inherits:** [IAlgebraEternalFarming](../interfaces/IAlgebraEternalFarming.md) [BlastGovernorSetup](../../Core/base/BlastGovernorSetup.md)
+**Inherits:** [IAlgebraEternalFarming](../interfaces/IAlgebraEternalFarming.md) [ModeSfsSetupFactoryManager](../../Core/base/ModeSfsSetupFactoryManager.md)
 ## Modifiers
 ### onlyIncentiveMaker
 
@@ -93,15 +93,6 @@ contract INonfungiblePositionManager immutable nonfungiblePositionManager
 The nonfungible position manager with which this farming contract is compatible
 
 
-### defaultBlastGovernor
-```solidity
-address defaultBlastGovernor
-```
-**Selector**: `0xfb6cd276`
-
-Returns the current default blast governor
-
-
 ### farmingCenter
 ```solidity
 address farmingCenter
@@ -164,14 +155,15 @@ Returns amounts of reward tokens owed to a given address according to the last t
 ### constructor
 
 ```solidity
-constructor(address _blastGovernor, contract IAlgebraPoolDeployer _deployer, contract INonfungiblePositionManager _nonfungiblePositionManager) public
+constructor(address _modeSfs, uint256 _sfsAssignTokenId, contract IAlgebraPoolDeployer _deployer, contract INonfungiblePositionManager _nonfungiblePositionManager) public
 ```
 
 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _blastGovernor | address |  |
+| _modeSfs | address |  |
+| _sfsAssignTokenId | uint256 |  |
 | _deployer | contract IAlgebraPoolDeployer | pool deployer contract address |
 | _nonfungiblePositionManager | contract INonfungiblePositionManager | the NFT position manager contract address |
 
@@ -257,21 +249,6 @@ Updates farming center address
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | _farmingCenter | address | The new farming center contract address |
-
-### setDefaultBlastGovernor
-
-```solidity
-function setDefaultBlastGovernor(address defaultBlastGovernor_) external
-```
-**Selector**: `0x998709e0`
-
-
-
-*Developer note: updates default blast governor address on the factory*
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| defaultBlastGovernor_ | address | The new defautl blast governor address |
 
 ### setEmergencyWithdrawStatus
 
