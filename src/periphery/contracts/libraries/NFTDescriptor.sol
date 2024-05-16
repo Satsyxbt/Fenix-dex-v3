@@ -102,7 +102,7 @@ library NFTDescriptor {
         return
             string(
                 abi.encodePacked(
-                    'This NFT represents a liquidity position in a Fenix ',
+                    'This NFT represents a liquidity position in a SolExchange ',
                     quoteTokenSymbol,
                     '-',
                     baseTokenSymbol,
@@ -143,7 +143,7 @@ library NFTDescriptor {
         return
             string(
                 abi.encodePacked(
-                    'Fenix - ',
+                    'SolExchange - ',
                     escapeQuotes(params.quoteTokenSymbol),
                     '/',
                     escapeQuotes(params.baseTokenSymbol),

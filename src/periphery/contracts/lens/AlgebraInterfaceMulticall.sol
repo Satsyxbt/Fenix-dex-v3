@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.20;
 
-import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
+import '@cryptoalgebra/integral-core/contracts/base/ModeSfsSetup.sol';
 
 /// @notice A fork of Multicall2 specifically tailored for the Algebra Interface
 /// @dev Credit to Uniswap Labs under GPL-2.0-or-later license:
 /// https://github.com/Uniswap/v3-periphery
-contract AlgebraInterfaceMulticall is BlastGovernorSetup {
-    constructor(address _blastGovernor) {
-        __BlastGovernorSetup_init(_blastGovernor);
+contract AlgebraInterfaceMulticall is ModeSfsSetup {
+    constructor(address _modeSfs, uint256 _sfsAssignTokenId) {
+        __ModeSfsSetup__init(_modeSfs, _sfsAssignTokenId);
     }
 
     struct Call {

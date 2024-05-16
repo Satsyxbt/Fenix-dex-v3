@@ -2,7 +2,7 @@
 pragma solidity =0.8.20;
 
 import '@cryptoalgebra/integral-core/contracts/libraries/LowGasSafeMath.sol';
-import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
+import '@cryptoalgebra/integral-core/contracts/base/ModeSfsSetup.sol';
 
 import './interfaces/external/IUniswapV2Pair.sol';
 import './interfaces/external/IWNativeToken.sol';
@@ -19,26 +19,20 @@ import './libraries/TransferHelper.sol';
 /// @title Algebra Migrator
 /// @dev Credit to Uniswap Labs under GPL-2.0-or-later license:
 /// https://github.com/Uniswap/v3-periphery
-contract V3Migrator is
-    IV3Migrator,
-    PeripheryImmutableState,
-    PoolInitializer,
-    Multicall,
-    SelfPermit,
-    BlastGovernorSetup
-{
+contract V3Migrator is IV3Migrator, PeripheryImmutableState, PoolInitializer, Multicall, SelfPermit, ModeSfsSetup {
     using LowGasSafeMath for uint256;
 
     address public immutable nonfungiblePositionManager;
 
     constructor(
-        address _blastGovernor,
+        address _modeSfs,
+        uint256 _sfsAssignTokenId,
         address _factory,
         address _WNativeToken,
         address _nonfungiblePositionManager,
         address _poolDeployer
     ) PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer) {
-        __BlastGovernorSetup_init(_blastGovernor);
+        __ModeSfsSetup__init(_modeSfs, _sfsAssignTokenId);
         nonfungiblePositionManager = _nonfungiblePositionManager;
     }
 

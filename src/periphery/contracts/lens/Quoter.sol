@@ -3,7 +3,7 @@ pragma solidity =0.8.20;
 
 import '@cryptoalgebra/integral-core/contracts/libraries/SafeCast.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/TickMath.sol';
-import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
+import '@cryptoalgebra/integral-core/contracts/base/ModeSfsSetup.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/FullMath.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraPool.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/callback/IAlgebraSwapCallback.sol';
@@ -20,7 +20,7 @@ import '../libraries/CallbackValidation.sol';
 /// the swap and check the amounts in the callback.
 /// Credit to Uniswap Labs under GPL-2.0-or-later license:
 /// https://github.com/Uniswap/v3-periphery
-contract Quoter is IQuoter, IAlgebraSwapCallback, PeripheryImmutableState, BlastGovernorSetup {
+contract Quoter is IQuoter, IAlgebraSwapCallback, PeripheryImmutableState, ModeSfsSetup {
     using Path for bytes;
     using SafeCast for uint256;
 
@@ -28,12 +28,13 @@ contract Quoter is IQuoter, IAlgebraSwapCallback, PeripheryImmutableState, Blast
     uint256 private amountOutCached;
 
     constructor(
-        address _blastGovernor,
+        address _modeSfs,
+        uint256 _sfsAssignTokenId,
         address _factory,
         address _WNativeToken,
         address _poolDeployer
     ) PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer) {
-        __BlastGovernorSetup_init(_blastGovernor);
+        __ModeSfsSetup__init(_modeSfs, _sfsAssignTokenId);
     }
 
     function getPool(address tokenA, address tokenB) private view returns (IAlgebraPool) {

@@ -5,7 +5,7 @@ import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraPool.sol';
 import '@cryptoalgebra/integral-core/contracts/interfaces/IAlgebraFactory.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/Constants.sol';
 import '@cryptoalgebra/integral-core/contracts/libraries/FullMath.sol';
-import '@cryptoalgebra/integral-core/contracts/base/BlastGovernorSetup.sol';
+import '@cryptoalgebra/integral-core/contracts/base/ModeSfsSetup.sol';
 
 import './interfaces/INonfungiblePositionManager.sol';
 import './interfaces/INonfungibleTokenPositionDescriptor.sol';
@@ -33,7 +33,7 @@ contract NonfungiblePositionManager is
     LiquidityManagement,
     PeripheryValidation,
     SelfPermit,
-    BlastGovernorSetup
+    ModeSfsSetup
 {
     using PoolInteraction for IAlgebraPool;
 
@@ -87,16 +87,17 @@ contract NonfungiblePositionManager is
     }
 
     constructor(
-        address _blastGovernor,
+        address _modeSfs,
+        uint256 _sfsAssignTokenId,
         address _factory,
         address _WNativeToken,
         address _tokenDescriptor_,
         address _poolDeployer
     )
-        ERC721Permit('Fenix Positions NFT-V2', 'FNX-POS', '2')
+        ERC721Permit('SolExchange Positions NFT-V2', 'SOLEX-POS', '2')
         PeripheryImmutableState(_factory, _WNativeToken, _poolDeployer)
     {
-        __BlastGovernorSetup_init(_blastGovernor);
+        __ModeSfsSetup__init(_modeSfs, _sfsAssignTokenId);
         _tokenDescriptor = _tokenDescriptor_;
     }
 
