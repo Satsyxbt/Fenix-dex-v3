@@ -269,12 +269,12 @@ Check setuped governor address for vault - 0xA217EA054466e4f4cE5B994B193eBcdFcf1
 -- Deployer - 0x4867664BaAFE5926B3cA338e96c88fB5a5FeAb30
 ---- the deployer is an authorized address set claimable gas
 ProviderError: nonce too low: next nonce 131, tx nonce 130
-    at HttpProvider.request (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\providers\http.ts:88:21)
+    at HttpProvider.request (fenix-dex-v3node_modules\hardhat\src\internal\core\providers\http.ts:88:21)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async HardhatEthersSigner.sendTransaction (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-ethers\src\signers.ts:125:18)
-    at async send (E:\aegas\fenix-dex-v3\node_modules\ethers\src.ts\contract\contract.ts:313:20)
-    at async Proxy.configureContract (E:\aegas\fenix-dex-v3\node_modules\ethers\src.ts\contract\contract.ts:352:16)
-    at async main (E:\aegas\fenix-dex-v3\src\core\scripts\2_setup_blast_configuration_mainnet.ts:30:7)
+    at async HardhatEthersSigner.sendTransaction (fenix-dex-v3node_modules\@nomicfoundation\hardhat-ethers\src\signers.ts:125:18)
+    at async send (fenix-dex-v3node_modules\ethers\src.ts\contract\contract.ts:313:20)
+    at async Proxy.configureContract (fenix-dex-v3node_modules\ethers\src.ts\contract\contract.ts:352:16)
+    at async main (fenix-dex-v3src\core\scripts\2_setup_blast_configuration_mainnet.ts:30:7)
 PS fenix-dex-v3\src\core> npx hardhat run .\scripts\2_setup_blast_configuration_mainnet.ts --network blastMainnet
 Check setuped governor address for poolDeployer - 0x5aCCAc55f692Ae2F065CEdDF5924C8f6B53cDaa8
 -- Governor - 0xb279Cb42Ab3d598Eb3A864399C11a52a5f506bA4

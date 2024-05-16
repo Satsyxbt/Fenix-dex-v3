@@ -35,6 +35,12 @@ External:
   "fc": "0xB7C25c1B55D344A5baFce70b3a4FDfD7a9B67453"
 }
 ```
+
+## Config
+- Community fee - `10%`
+- CommunityVault Factory - `0xf60E464166D6AbDC56C9ce9CC792F3aD38fcF8b7`
+- Creation Mode - `Public creation mode`
+
 ## SFS Assign token id 
 - SFS NFT token owner: `0x9140D359f2855E6540609dd4A93773ED1f45f509`
 - Token id: `678`

@@ -56,16 +56,16 @@ await run("verify:verify", {
 <other args>,
 contract: "contracts/Example.sol:ExampleContract"
 };
-    at extractInferredContractInformation (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\solc\artifacts.ts:148:11)
-    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\index.ts:240:31)
-    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
-    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
-    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:129:62)
-    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
-    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
-    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\index.ts:284:9)
-    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
-    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at extractInferredContractInformation (fenix-dex-v3node_modules\@nomicfoundation\hardhat-verify\src\internal\solc\artifacts.ts:148:11)
+    at async SimpleTaskDefinition.action (fenix-dex-v3node_modules\@nomicfoundation\hardhat-verify\src\index.ts:240:31)
+    at async Environment._runTaskDefinition (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at async SimpleTaskDefinition.action (fenix-dex-v3node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:129:62)
+    at async Environment._runTaskDefinition (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at async SimpleTaskDefinition.action (fenix-dex-v3node_modules\@nomicfoundation\hardhat-verify\src\index.ts:284:9)
+    at async Environment._runTaskDefinition (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
 node:child_process:965
     throw err;
     ^
@@ -73,7 +73,7 @@ node:child_process:965
 Error: Command failed: cd src/core && npx hardhat run --network blastMainnet scripts/verify.js
     at checkExecSyncError (node:child_process:890:11)
     at execSync (node:child_process:962:15)
-    at Object.<anonymous> (E:\aegas\fenix-dex-v3\scripts\verifyAll.js:5:1)
+    at Object.<anonymous> (fenix-dex-v3scripts\verifyAll.js:5:1)
     at Module._compile (node:internal/modules/cjs/loader:1241:14)
     at Module._extensions..js (node:internal/modules/cjs/loader:1295:10)
     at Module.load (node:internal/modules/cjs/loader:1091:32)

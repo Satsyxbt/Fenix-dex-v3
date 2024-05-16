@@ -15,7 +15,7 @@ ProxyAdmin deployed to: 0x0bBF7CF0b728F010CD9f2b83B0b756e65B653352
 Finish deploy
         -- deployer: 0x9140D359f2855E6540609dd4A93773ED1f45f509, Native balance: 2.104115248958565583 
 
-Save to E:\aegas\fenix-dex-v3\scripts\deployment\mode_testnet_deploy.json
+Save to fenix-dex-v3scripts\deployment\mode_testnet_deploy.json
 Start deploy script
         -- with config: {"FILE":"mode_testnet_deploy.json","MODE_SFS":"0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6","SFS_ASSIGN_NFT_ID":678,"WETH":"0xc7b06F55FBCD31cd691504f3DFc4efa9082616B7"}
         -- chainId: 919
@@ -28,7 +28,7 @@ Updated plugin factory address in factory
 Finish deploy
         -- deployer: 0x9140D359f2855E6540609dd4A93773ED1f45f509, Native balance: 2.099260393949884055
 
-Save to E:\aegas\fenix-dex-v3\scripts\deployment\mode_testnet_deploy.json
+Save to fenix-dex-v3scripts\deployment\mode_testnet_deploy.json
 Start deploy script
         -- with config: {"FILE":"mode_testnet_deploy.json","MODE_SFS":"0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6","SFS_ASSIGN_NFT_ID":678,"WETH":"0xc7b06F55FBCD31cd691504f3DFc4efa9082616B7"}        
         -- chainId: 919
@@ -46,7 +46,7 @@ AlgebraInterfaceMulticall deployed to: 0x35B84D38277c388928C1CD42919264b3151F2E0
 Finish deploy
         -- deployer: 0x9140D359f2855E6540609dd4A93773ED1f45f509, Native balance: 2.077475523524802727
 
-Save to E:\aegas\fenix-dex-v3\scripts\deployment\mode_testnet_deploy.json
+Save to fenix-dex-v3scripts\deployment\mode_testnet_deploy.json
 Start deploy script
         -- with config: {"FILE":"mode_testnet_deploy.json","MODE_SFS":"0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6","SFS_ASSIGN_NFT_ID":678,"WETH":"0xc7b06F55FBCD31cd691504f3DFc4efa9082616B7"}        
         -- chainId: 919
@@ -60,7 +60,7 @@ Updated farming center address in plugin factory
 Finish deploy
         -- deployer: 0x9140D359f2855E6540609dd4A93773ED1f45f509, Native balance: 2.070102140874294298
 
-Save to E:\aegas\fenix-dex-v3\scripts\deployment\mode_testnet_deploy.json
+Save to fenix-dex-v3scripts\deployment\mode_testnet_deploy.json
 
 
 
@@ -173,3 +173,33 @@ for verification on the block explorer. Waiting for verification result...
 
 Successfully verified contract FarmingCenter on the block explorer.
 https://testnet.modescan.io/address/0xB7C25c1B55D344A5baFce70b3a4FDfD7a9B67453#code
+
+npx hardhat run .\scripts\finish_deploy_after_fenix_core.js --network modeTestnet
+Start deploy script
+        -- with config: {"FILE":"mode_testnet_deploy.json","MODE_SFS":"0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6","SFS_ASSIGN_NFT_ID":678,"WETH":"0xc7b06F55FBCD31cd691504f3DFc4efa9082616B7"}
+        -- chainId: 919
+        -- deployer: 0x9140D359f2855E6540609dd4A93773ED1f45f509, Native balance: 1.964191861001868206
+
+  await factory.setIsPublicPoolCreationMode(true);
+  await factory.setVaultFactory(FEES_VAULT_FACTORY_V3);  
+  await factory.setDefaultCommunityFee(10); 
+ProviderError: execution reverted
+    at HttpProvider.request (fenix-dex-v3node_modules\hardhat\src\internal\core\providers\http.ts:88:21)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async HardhatEthersProvider.estimateGas (fenix-dex-v3node_modules\@nomicfoundation\hardhat-ethers\src\internal\hardhat-ethers-provider.ts:237:27)  
+    at async fenix-dex-v3node_modules\@nomicfoundation\hardhat-ethers\src\signers.ts:235:35
+    at async Promise.all (index 0)
+    at async HardhatEthersSigner._sendUncheckedTransaction (fenix-dex-v3node_modules\@nomicfoundation\hardhat-ethers\src\signers.ts:256:7)
+    at async HardhatEthersSigner.sendTransaction (fenix-dex-v3node_modules\@nomicfoundation\hardhat-ethers\src\signers.ts:125:18)
+    at async send (fenix-dex-v3node_modules\ethers\src.ts\contract\contract.ts:313:20)
+    at async Proxy.setDefaultCommunityFee (fenix-dex-v3node_modules\ethers\src.ts\contract\contract.ts:352:16)
+    at async main (fenix-dex-v3src\core\scripts\finish_deploy_after_fenix_core.js:32:3)
+
+
+    npx hardhat run .\scripts\finish_deploy_after_fenix_core.js --network modeTestnet
+Start deploy script
+        -- with config: {"FILE":"mode_testnet_deploy.json","MODE_SFS":"0xBBd707815a7F7eb6897C7686274AFabd7B579Ff6","SFS_ASSIGN_NFT_ID":678,"WETH":"0xc7b06F55FBCD31cd691504f3DFc4efa9082616B7"}
+        -- chainId: 919
+        -- deployer: 0x9140D359f2855E6540609dd4A93773ED1f45f509, Native balance: 1.964142321634798714
+
+  await factory.setDefaultCommunityFee(10);

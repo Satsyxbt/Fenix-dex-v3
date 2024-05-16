@@ -75,9 +75,9 @@ https://testnet.blastscan.io/address/0xC65506ce86220685158cf87491A5994231A33E62#
 
 The contract 0x3DF526734576650A103A608704eee8be51CEde94 has already been verified on Etherscan.
 https://testnet.blastscan.io/address/0x3DF526734576650A103A608704eee8be51CEde94#code
-PS E:\aegas\fenix-dex-v3\src\plugin> cd ..
-PS E:\aegas\fenix-dex-v3\src> cd .\periphery\
-PS E:\aegas\fenix-dex-v3\src\periphery> npx hardhat run .\scripts\deploy.js --network blastSepolia
+PS fenix-dex-v3src\plugin> cd ..
+PS fenix-dex-v3src> cd .\periphery\
+PS fenix-dex-v3src\periphery> npx hardhat run .\scripts\deploy.js --network blastSepolia
 TickLens deployed to: 0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987
 Quoter deployed to: 0x13fc9B642b0a8C54284967c207AC61B456dFF82B
 QuoterV2 deployed to: 0xf0e9Cd2F37c565adb33287aF7ecc0cAa5B742A6C
@@ -86,7 +86,7 @@ NonfungibleTokenPositionDescriptor deployed to: 0x4478Ff742c9B90d50E49C9e71d5558
 Proxy deployed to: 0x105920Dc65a8343f49Fe1fca78ad75fC2D7c99a5
 NonfungiblePositionManager deployed to: 0x6b170BA012b15AC0294c5Ce2797eBe651b71F35A
 AlgebraInterfaceMulticall deployed to: 0x07Fa0eCc32E7A824c3a5f2771344608CA3cbD217
-PS E:\aegas\fenix-dex-v3\src\periphery> npx hardhat run .\scripts\verify.js --network blastSepolia
+PS fenix-dex-v3src\periphery> npx hardhat run .\scripts\verify.js --network blastSepolia
 The contract 0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987 has already been verified on Etherscan.
 https://testnet.blastscan.io/address/0x123687Aa0fAb375D7AaDF47Be7bE1D204DEbF987#code
 Successfully submitted source code for contract
@@ -328,17 +328,17 @@ Please report this issue to the Hardhat team.
 Error Details: The Etherscan API responded with a failure status.
 The verification may still succeed but should be checked manually.
 Reason: Fail - Unable to verify. Please check if the correct constructor argument was entered.
-    at Etherscan.getVerificationStatus (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\etherscan.ts:260:13)
+    at Etherscan.getVerificationStatus (fenix-dex-v3node_modules\@nomicfoundation\hardhat-verify\src\internal\etherscan.ts:260:13)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:313:9)
-    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
-    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
-    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:155:7)
-    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
-    at async Environment.run (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
-    at async SimpleTaskDefinition.action (E:\aegas\fenix-dex-v3\node_modules\@nomicfoundation\hardhat-verify\src\index.ts:284:9)
-    at async Environment._runTaskDefinition (E:\aegas\fenix-dex-v3\node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
-PS E:\aegas\fenix-dex-v3\src\farming> npx hardhat run .\scripts\verify.js --network blastScanSepolia
+    at async SimpleTaskDefinition.action (fenix-dex-v3node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:313:9)
+    at async Environment._runTaskDefinition (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at async SimpleTaskDefinition.action (fenix-dex-v3node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:155:7)
+    at async Environment._runTaskDefinition (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+    at async Environment.run (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:191:14)
+    at async SimpleTaskDefinition.action (fenix-dex-v3node_modules\@nomicfoundation\hardhat-verify\src\index.ts:284:9)
+    at async Environment._runTaskDefinition (fenix-dex-v3node_modules\hardhat\src\internal\core\runtime-environment.ts:358:14)
+PS fenix-dex-v3src\farming> npx hardhat run .\scripts\verify.js --network blastScanSepolia
 The contract 0x313E865510080B723338953a9dcAb7bf22444eD3 has already been verified on Etherscan.
 https://sepolia.blastscan.io/address/0x313E865510080B723338953a9dcAb7bf22444eD3#code
 Successfully submitted source code for contract
