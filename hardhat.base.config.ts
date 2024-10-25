@@ -11,6 +11,7 @@ export default {
       evm: 'paris',
     },
     localhost: {
+      url: `http://127.0.0.1:8545`,
       accounts: [`0x${MNEMONIC || '1000000000000000000000000000000000000000000000000000000000000000'}`],
     },
     localHardhat: {
