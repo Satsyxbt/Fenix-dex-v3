@@ -17,7 +17,7 @@ External:
 {
   "poolDeployer": "0x383F8153913c2Da0769aCe87F20ED18A45f2E3C7",
   "factory": "0x242A0C57EAf78A061db42D913DE7FA4eA648a1Ef",
-  "algebraFactoryImplementation": "0x12403d620C5930dA572Fe0ad2093886a9fa1d8c8",
+  "algebraFactoryImplementation": "0x3103DE5e9b33725399D0D76d08ad9E435A84Cbb8",
   "proxyAdmin": "0x44b43b13052Ea0ff260d67F177d9932570Bd5C33",
   "vault": "0x3B82e2e3E94ff846E3396c98E4CC58841476bfaC",
   "vaultFactory": "0xD270BfCC3b8d3cfafd928205Ce0E785BbBcaAC3f",
