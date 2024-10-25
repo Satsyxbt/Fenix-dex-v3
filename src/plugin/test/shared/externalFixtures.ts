@@ -59,10 +59,10 @@ export async function tokensFixture(): Promise<TokensFixture> {
   return { token0, token1 };
 }
 
-export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
+export async function createEmptyFactoryProxy(governor: string): Promise<AlgebraFactoryUpgradeable> {
   const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
 
-  const factoryImplementation = await factoryFactory.deploy();
+  const factoryImplementation = await factoryFactory.deploy(governor);
   const proxyAdminFactory = await ethers.getContractFactory(PROXY_ADMIN_ABI, PROXY_ADMIN_BYTECODE);
 
   const proxyAdmin = await proxyAdminFactory.deploy();
@@ -97,7 +97,7 @@ export const algebraPoolDeployerMockFixture: () => Promise<MockPoolDeployerFixtu
     nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
   });
 
-  const factory = await createEmptyFactoryProxy();
+  const factory = await createEmptyFactoryProxy(governor.address);
   await factory.initialize(governor.address, poolDeployerAddress, blastPointsOperator.address, blastPoints.target);
 
   const poolDeployerFactory = await ethers.getContractFactory(POOL_DEPLOYER_ABI, POOL_DEPLOYER_BYTECODE);

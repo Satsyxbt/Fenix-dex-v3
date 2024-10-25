@@ -33,7 +33,7 @@ describe('AlgebraCommunityVault', () => {
       nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 1,
     });
 
-    const _factory = await createEmptyFactoryProxy();
+    const _factory = await createEmptyFactoryProxy(governor.address);
     await _factory.initialize(governor.address, blastPointsMock.target, governor.address, poolDeployerAddress);
 
     const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');

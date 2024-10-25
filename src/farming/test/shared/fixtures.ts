@@ -71,10 +71,10 @@ export async function mockBlastPart() {
   return blastPointsMock;
 }
 
-export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
+export async function createEmptyFactoryProxy(governor: string): Promise<AlgebraFactoryUpgradeable> {
   const factoryFactory = await ethers.getContractFactory(FACTORY_ABI, FACTORY_BYTECODE);
 
-  const factoryImplementation = await factoryFactory.deploy();
+  const factoryImplementation = await factoryFactory.deploy(governor);
   const proxyAdminFactory = await ethers.getContractFactory(PROXY_ADMIN_ABI, PROXY_ADMIN_BYTECODE);
 
   const proxyAdmin = await proxyAdminFactory.deploy();
@@ -94,7 +94,7 @@ const v3CoreFactoryFixture: () => Promise<[IAlgebraFactory, IAlgebraPoolDeployer
     nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 4,
   });
 
-  const _factory = await createEmptyFactoryProxy();
+  const _factory = await createEmptyFactoryProxy(blastGovernor.address);
   await _factory.initialize(blastGovernor.address, blastPoints.target, blastPointsOperator.address, poolDeployerAddress);
 
   const poolDeployerFactory = await ethers.getContractFactory(AlgebraPoolDeployerJson.abi, AlgebraPoolDeployerJson.bytecode);

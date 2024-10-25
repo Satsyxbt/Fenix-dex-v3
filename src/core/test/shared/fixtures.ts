@@ -31,9 +31,9 @@ export async function mockBlastPart(): Promise<BlastPointsMock> {
   return blastPointsMock;
 }
 
-export async function createEmptyFactoryProxy(): Promise<AlgebraFactoryUpgradeable> {
+export async function createEmptyFactoryProxy(governor: string): Promise<AlgebraFactoryUpgradeable> {
   const factoryFactory = await ethers.getContractFactory('AlgebraFactoryUpgradeable');
-  const factoryImplementation = await factoryFactory.deploy();
+  const factoryImplementation = await factoryFactory.deploy(governor);
 
   const proxyAdmin = await ethers.deployContract('ProxyAdmin');
 
@@ -53,7 +53,7 @@ async function factoryFixture(): Promise<FactoryFixture> {
     nonce: (await ethers.provider.getTransactionCount(deployer.address)) + 4,
   });
 
-  const factory = await createEmptyFactoryProxy();
+  const factory = await createEmptyFactoryProxy(governor.address);
   await factory.initialize(governor.address, blastPointsMock.target, blastOperator.address, poolDeployerAddress);
 
   const poolDeployerFactory = await ethers.getContractFactory('AlgebraPoolDeployer');

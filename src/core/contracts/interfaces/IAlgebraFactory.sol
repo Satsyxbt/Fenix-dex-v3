@@ -71,6 +71,11 @@ interface IAlgebraFactory {
   /// @param mode The yield mode that has been set for the token, defining its rebasing behavior
   event ConfigurationForRebaseToken(address token, bool isRebase, YieldMode mode);
 
+  /// @dev Emitted when the rebasing tokens governor address is set.
+  /// @param oldRebasingTokensGovernor The previous address of the rebasing tokens governor.
+  /// @param newRebasingTokensGovernor The new address of the rebasing tokens governor.
+  event SetRebasingTokensGovernor(address indexed oldRebasingTokensGovernor, address indexed newRebasingTokensGovernor);
+
   /// @notice role that can change communityFee and tickspacing in pools
   /// @return The hash corresponding to this role
   function POOLS_ADMINISTRATOR_ROLE() external view returns (bytes32);
@@ -137,6 +142,10 @@ interface IAlgebraFactory {
   /// @return Algebra plugin factory
   function defaultPluginFactory() external view returns (IAlgebraPluginFactory);
 
+  /// @notice Address of the rebasing tokens governor
+  /// @return rebasing tokens governor
+  function rebasingTokensGovernor() external view returns (address);
+
   /// @notice Return the current vaultFactory address
   /// @dev This contract is used to automatically set a vault address in new liquidity pools
   /// @return Algebra vault factory
@@ -191,6 +200,12 @@ interface IAlgebraFactory {
   /// @param isRebase_ A boolean indicating whether the token is a rebasing token or not
   /// @param mode_ The yield mode to apply, defining how the rebasing mechanism should operate
   function setConfigurationForRebaseToken(address token_, bool isRebase_, YieldMode mode_) external;
+
+  /// @notice Sets the address of the rebasing tokens governor.
+  /// @dev Updates the address of the rebasing tokens governor. Can only be called by an account with the DEFAULT_ADMIN_ROLE.
+  /// @param rebasingTokensGovernor_ The new address of the rebasing tokens governor.
+  /// Emits a {SetRebasingTokensGovernor} event.
+  function setRebasingTokensGovernor(address rebasingTokensGovernor_) external;
 
   /// @dev updates default community fee for new pools
   /// @param newDefaultCommunityFee The new community fee, _must_ be <= MAX_COMMUNITY_FEE
