@@ -1,7 +1,7 @@
 import hre, { ethers } from 'hardhat';
 
 async function main() {
-  const BLAST_GOVERNOR = '0x5D72e06D2A2d9b897Ea84Cd88606Ad9E40ba4228';
+  const BLAST_GOVERNOR = '0x72e47b1eaAAaC6c07Ea4071f1d0d355f603E1cc1';
 
   let newImplementation = await ethers.deployContract('AlgebraFactoryUpgradeable', [BLAST_GOVERNOR]);
   await newImplementation.waitForDeployment();
