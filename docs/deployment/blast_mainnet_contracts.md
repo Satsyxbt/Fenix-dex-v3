@@ -18,7 +18,7 @@ External:
 |---------------------------------------|----------------------------------------------|
 | Pool Deployer                         | `0x5aCCAc55f692Ae2F065CEdDF5924C8f6B53cDaa8` |
 | AlgebraFactory                        | `0x7a44CD060afC1B6F4c80A2B9b37f4473E74E25Df` |
-| AlgebraFactory Implementation         | `0xab8edDD8193eE4A5459f4245eAc980279774a278` |
+| AlgebraFactory Implementation         | `0xab8edDD8193eE4A5459f4245eAc980279774a278`, (future new `0x34dEf159fEACe10E88595Ebd5C50edba0631b4B3`) |
 | ProxyAdmin                            | `0xA1DA767b77FdfF57A7D8191861d73ac02Bbd5696` |
 | AlgebraBasePluginV1 Implementation    | `0x87F6AF89Ab8F6E11f06cf76b17F2208255247013` |
 | BasePluginV1Factory                   | `0x118A7D61bd36215a01Ab8A29Eb1e5b830c32FA23` |
