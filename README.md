@@ -1,4 +1,27 @@
 
+# :bangbang: Fenix Protocol — Repository Relocation
+:bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang: :bangbang:
+## We’ve Moved!
+This repository has been **migrated** and is now maintained at our new home:
+
+- **[FenixProtocol/fenix-core](https://github.com/FenixProtocol/fenix-core)**
+- **[FenixProtocol/fenix-algebra](https://github.com/FenixProtocol/fenix-algebra)**
+
+---
+
+### :warning: Important Notice
+- The **outdated** `https://github.com/Satsyxbt/Fenix-dex-v3` repository is no longer actively maintained.
+- The **outdated** `https://github.com/Satsyxbt/Fenix` repository is no longer actively maintained.
+
+---
+
+> **Happy Building** :rocket:  
+> The Fenix Protocol Team
+
+
+
+---
+
 ## Project overiew
 This repository is a fork of [Algebrta Integral V1](https://github.com/cryptoalgebra/Algebra), with the following new features implemented:
 
